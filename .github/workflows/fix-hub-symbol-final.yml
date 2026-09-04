@@ -1,0 +1,35 @@
+name: Fix Qanteak hub symbol final
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/fix-hub-symbol-final.yml']
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply corrected symbol
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('docs/index.html')
+          s=p.read_text()
+          s=s.replace('assets/qanteak-hub-symbol-v2.png','assets/qanteak-hub-symbol-fixed.png?v=3')
+          s=s.replace('assets/qanteak-hub-symbol.png','assets/qanteak-hub-symbol-fixed.png?v=3')
+          s=s.replace('.hubMark img{display:block;width:36px;height:36px;object-fit:contain}', '.hubMark img{display:block;width:30px;height:30px;object-fit:contain;object-position:center}')
+          s=s.replace('.hubMark img{display:block;width:32px;height:32px;object-fit:contain;object-position:center}', '.hubMark img{display:block;width:30px;height:30px;object-fit:contain;object-position:center}')
+          s += '\n<style>.hubMark img{display:block;width:30px;height:30px;object-fit:contain;object-position:center}@media(max-width:900px){.hubMark img{width:28px;height:28px}}@media(max-width:560px){.hubMark img{width:26px;height:26px}}</style>\n'
+          p.write_text(s)
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Fix cropped Qanteak hub symbol'
+          git push
