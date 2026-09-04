@@ -1,0 +1,5 @@
+Contact: mailto:hamza.workjo@gmail.com
+Preferred-Languages: en, ar
+Canonical: https://hqawasmeh.github.io/CreativeOS-Releases/.well-known/security.txt
+Policy: https://hqawasmeh.github.io/CreativeOS-Releases/security.html
+Expires: 2027-09-04T00:00:00Z
