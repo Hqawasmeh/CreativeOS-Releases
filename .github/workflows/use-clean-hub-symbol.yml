@@ -1,0 +1,35 @@
+name: Use clean Qanteak hub symbol
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/use-clean-hub-symbol.yml']
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace cropped hub asset
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('docs/index.html')
+          s=p.read_text()
+          s=s.replace('assets/qanteak-hub-symbol-v2.png','assets/qanteak-hub-symbol.svg')
+          s=s.replace('assets/qanteak-hub-symbol.png','assets/qanteak-hub-symbol.svg')
+          s=s.replace('.hubMark img{display:block;width:32px;height:32px;object-fit:contain;object-position:center}', '.hubMark img{display:block;width:30px;height:30px;object-fit:contain;object-position:center}')
+          s=s.replace('@media(max-width:900px){.hubMark img{width:30px;height:30px}}','@media(max-width:900px){.hubMark img{width:28px;height:28px}}')
+          s=s.replace('@media(max-width:560px){.hubMark img{width:26px;height:26px}}','@media(max-width:560px){.hubMark img{width:24px;height:24px}}')
+          p.write_text(s)
+          PY
+      - name: Commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Use clean Qanteak symbol in solution hub'
+          git push
