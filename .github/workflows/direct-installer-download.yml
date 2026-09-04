@@ -1,0 +1,33 @@
+name: Direct installer download
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/direct-installer-download.yml']
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Point website buttons directly to RC8 installer
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('docs/index.html')
+          s=p.read_text()
+          old='https://github.com/Hqawasmeh/CreativeOS-Releases/releases/latest'
+          new='https://github.com/Hqawasmeh/CreativeOS-Releases/releases/download/v1.0.0-rc.8/QanteakOS-Setup-1.0.0-rc.8.exe'
+          count=s.count(old)
+          if count == 0:
+              raise SystemExit('No releases/latest download links found')
+          s=s.replace(old,new)
+          p.write_text(s)
+          print(f'Replaced {count} download link(s)')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/index.html
+          git commit -m 'Make website download buttons fetch RC8 installer directly'
+          git push
