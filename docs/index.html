@@ -228,7 +228,7 @@ small,.featureUi small,.workflowCard small,.flowCard small,.flowStep small,
 .billingBtn span{font-size:10px;margin-left:5px;color:var(--blue)}
 .billingBtn.active{background:#090b12;color:#fff;transform:scale(1.02)}
 .billingBtn.active span{color:var(--cyan)}
-.plansV3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;max-width:1080px;margin:34px auto 0;align-items:stretch}
+.plansV3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;max-width:1120px;margin:34px auto 0;align-items:stretch}
 .priceCard{position:relative;display:flex;flex-direction:column;min-width:0;border:1px solid #dfe5ee;border-radius:28px;padding:24px;background:#fff;overflow:hidden;transition:transform .38s cubic-bezier(.2,1.45,.45,1),box-shadow .32s ease,border-color .32s ease}
 .priceCard.basicCard{background:linear-gradient(180deg,#f7fbff 0%,#fff 34%)}
 .priceCard.proCard{background:linear-gradient(180deg,#edfaff 0%,#fff 36%);border-color:#82c9ff}
@@ -246,20 +246,19 @@ small,.featureUi small,.workflowCard small,.flowCard small,.flowStep small,
 .oldPrice{display:none;font-size:21px;color:#a0a7b1;text-decoration:line-through;text-decoration-thickness:2px}
 .plansV3[data-billing-state="annual"] .oldPrice{display:inline}
 .plansV3[data-billing-state="annual"] .priceUnit:after{content:' billed annually';display:block;font-size:10px;color:#68717d;margin-top:3px}
-.featurePanel{margin:20px 0 18px;padding:18px;border-radius:17px;background:#f3f9ff;display:grid;gap:13px;min-height:316px}
+.featurePanel{margin:20px 0 18px;padding:18px 16px;border-radius:17px;background:#f3f9ff;display:grid;gap:11px;align-content:start;min-height:592px}
 .proCard .featurePanel{background:linear-gradient(135deg,#eefaff,#e7fcff)}
 .teamsCard .featurePanel{background:#eef6ff}
-.featureLine{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.4;color:#343c47}
-.featureLine .check{width:20px;height:20px;border-radius:50%;border:1px solid #a9c9eb;color:var(--blue);display:grid;place-items:center;font-size:11px;font-weight:800;flex:0 0 20px;background:#fff}
-.featureLine b{color:var(--navy)}
+.featureLine{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.45;color:#29313b}
+.featureLine .mark{width:16px;flex:0 0 16px;font-size:17px;line-height:1.05;font-weight:700;color:#111;text-align:center}
+.featureLine.off{color:#a7adb5}
+.featureLine.off .mark{color:#b8bdc3;font-weight:500}
 .planSummary{font-size:14px!important;line-height:1.5!important;color:#313842!important;margin:0 0 18px!important;min-height:63px}
 .chooseBtn{display:flex;align-items:center;justify-content:center;min-height:50px;border-radius:15px;font-size:14px;font-weight:800;margin-top:auto;transition:transform .22s ease,box-shadow .22s ease}
-.chooseBtn.dark{background:#0a0b10;color:#fff}
-.chooseBtn.gradient{background:linear-gradient(100deg,var(--navy),var(--blue) 62%,var(--cyan));color:#fff}
-.chooseBtn:hover{transform:translateY(-2px)}
+.chooseBtn.dark{background:#0a0b10;color:#fff}.chooseBtn.gradient{background:linear-gradient(100deg,var(--navy),var(--blue) 62%,var(--cyan));color:#fff}.chooseBtn:hover{transform:translateY(-2px)}
 .pricingNote{text-align:center;margin:18px 0 0;font-size:12px;color:#7b8490}
 @media(max-width:980px){.plansV3{grid-template-columns:1fr;max-width:620px}.featurePanel{min-height:auto}.planSummary{min-height:auto}.planFor{min-height:auto}}
-@media(max-width:680px){.pricingV3{padding:30px 18px!important}.billingToggle{width:100%;display:grid;grid-template-columns:1fr 1fr}.billingBtn{padding:11px 8px}.billingBtn span{display:block;margin:2px 0 0}.priceCard{padding:20px;border-radius:22px}.currentPrice{font-size:46px}.priceNameRow h3{font-size:23px!important}.planFor,.featureLine,.planSummary{font-size:14px!important}.featurePanel{padding:16px;gap:12px}.bestBadge{right:16px;top:16px}}
+@media(max-width:680px){.pricingV3{padding:30px 18px!important}.billingToggle{width:100%;display:grid;grid-template-columns:1fr 1fr}.billingBtn{padding:11px 8px}.billingBtn span{display:block;margin:2px 0 0}.priceCard{padding:20px;border-radius:22px}.currentPrice{font-size:46px}.priceNameRow h3{font-size:23px!important}.planFor,.featureLine,.planSummary{font-size:14px!important}.featurePanel{padding:16px;gap:11px}.bestBadge{right:16px;top:16px}}
 @media(prefers-reduced-motion:reduce){.priceCard,.billingBtn,.chooseBtn{transition:none}.priceCard.priceBounce{animation:none}}
 /* QANTEAK_PRICING_V3_END */
 
@@ -299,22 +298,26 @@ small,.featureUi small,.workflowCard small,.flowCard small,.flowStep small,
     <article class="priceCard basicCard" data-monthly="18" data-annual="15">
       <div class="priceHead">
         <div class="priceNameRow"><h3>Basic</h3></div>
-        <p class="planFor">For solo creatives who need the full core workspace.</p>
-        <div class="priceRow">
-          <span class="oldPrice" aria-hidden="true">$18</span>
-          <strong class="currentPrice">$18</strong>
-          <span class="priceUnit">/month</span>
-        </div>
+        <p class="planFor">For solo creatives who need the core workspace.</p>
+        <div class="priceRow"><span class="oldPrice" aria-hidden="true">$18</span><strong class="currentPrice">$18</strong><span class="priceUnit">/month</span></div>
       </div>
       <div class="featurePanel">
-        <div class="featureLine"><span class="check">✓</span><span><b>Unlimited</b> projects</span></div>
-        <div class="featureLine"><span class="check">✓</span><span><b>Unlimited</b> clients</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Tasks, calendar & invoices</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Client reviews & approvals</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Local file management</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>10 GB cloud storage</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Limited Qanteak AI</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Basic business analytics</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Unlimited projects</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Unlimited clients</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Tasks &amp; calendar</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Invoices</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Client reviews</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Local file management</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Cloud storage — 10 GB</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Qanteak AI — Limited</span></div>
+        <div class="featureLine off"><span class="mark">×</span><span>File intelligence</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Basic analytics</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Automations — Limited</span></div>
+        <div class="featureLine off"><span class="mark">×</span><span>Shared workspaces</span></div>
+        <div class="featureLine off"><span class="mark">×</span><span>Roles &amp; permissions</span></div>
+        <div class="featureLine off"><span class="mark">×</span><span>Workload management</span></div>
+        <div class="featureLine off"><span class="mark">×</span><span>Centralized billing</span></div>
+        <div class="featureLine off"><span class="mark">×</span><span>Priority support</span></div>
       </div>
       <p class="planSummary">Everything you need to run your creative work in one connected place.</p>
       <a class="chooseBtn dark" href="#download">Choose Basic</a>
@@ -325,21 +328,25 @@ small,.featureUi small,.workflowCard small,.flowCard small,.flowStep small,
       <div class="priceHead">
         <div class="priceNameRow"><h3>Pro</h3></div>
         <p class="planFor">For professionals who want Qanteak's full intelligence layer.</p>
-        <div class="priceRow">
-          <span class="oldPrice" aria-hidden="true">$29</span>
-          <strong class="currentPrice">$29</strong>
-          <span class="priceUnit">/month</span>
-        </div>
+        <div class="priceRow"><span class="oldPrice" aria-hidden="true">$29</span><strong class="currentPrice">$29</strong><span class="priceUnit">/month</span></div>
       </div>
       <div class="featurePanel">
-        <div class="featureLine"><span class="check">✓</span><span>Everything in Basic</span></div>
-        <div class="featureLine"><span class="check">✓</span><span><b>Full Qanteak AI</b></span></div>
-        <div class="featureLine"><span class="check">✓</span><span>AI project & business insights</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Advanced file intelligence</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>100 GB cloud storage</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Advanced analytics</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>High-limit automations</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Priority support</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Unlimited projects</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Unlimited clients</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Tasks &amp; calendar</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Invoices</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Client reviews</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Local file management</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Cloud storage — 100 GB</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Qanteak AI — Unlimited</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>File intelligence</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Advanced analytics</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Automations — Unlimited</span></div>
+        <div class="featureLine off"><span class="mark">×</span><span>Shared workspaces</span></div>
+        <div class="featureLine off"><span class="mark">×</span><span>Roles &amp; permissions</span></div>
+        <div class="featureLine off"><span class="mark">×</span><span>Workload management</span></div>
+        <div class="featureLine off"><span class="mark">×</span><span>Centralized billing</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Priority support</span></div>
       </div>
       <p class="planSummary">Work faster with AI, smarter files, deeper insight and less admin.</p>
       <a class="chooseBtn gradient" href="#download">Choose Pro</a>
@@ -349,21 +356,25 @@ small,.featureUi small,.workflowCard small,.flowCard small,.flowStep small,
       <div class="priceHead">
         <div class="priceNameRow"><h3>Teams</h3></div>
         <p class="planFor">For agencies, studios and companies working together.</p>
-        <div class="priceRow">
-          <span class="oldPrice" aria-hidden="true">$38</span>
-          <strong class="currentPrice">$38</strong>
-          <span class="priceUnit">/seat/month</span>
-        </div>
+        <div class="priceRow"><span class="oldPrice" aria-hidden="true">$38</span><strong class="currentPrice">$38</strong><span class="priceUnit">/seat/month</span></div>
       </div>
       <div class="featurePanel">
-        <div class="featureLine"><span class="check">✓</span><span>Everything in Pro</span></div>
-        <div class="featureLine"><span class="check">✓</span><span><b>Unlimited</b> shared workspaces</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Roles & permissions</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Shared AI knowledge</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>100 GB+ cloud / seat</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Team & workload analytics</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Centralized billing</span></div>
-        <div class="featureLine"><span class="check">✓</span><span>Shared automations</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Unlimited projects</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Unlimited clients</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Tasks &amp; calendar</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Invoices</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Client reviews</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Local file management</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Cloud storage — 100 GB / seat</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Qanteak AI — Unlimited + shared context</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>File intelligence</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Team analytics</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Automations — Unlimited</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Shared workspaces</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Roles &amp; permissions</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Workload management</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Centralized billing</span></div>
+        <div class="featureLine"><span class="mark">✓</span><span>Priority support</span></div>
       </div>
       <p class="planSummary">Give the whole team shared context, control and intelligence.</p>
       <a class="chooseBtn dark" href="#download">Choose Teams</a>
@@ -436,6 +447,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 
 
+
+
+
 <script id="qanteak-pricing-toggle">
 (()=>{
   const root=document.querySelector('.pricingV3');
@@ -452,9 +466,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       const node=card.querySelector('.currentPrice');
       node.style.opacity='0';node.style.transform='translateY(6px)';
       setTimeout(()=>{node.textContent='$'+price;node.style.opacity='1';node.style.transform='translateY(0)'},120);
-      card.classList.remove('priceBounce');
-      void card.offsetWidth;
-      setTimeout(()=>card.classList.add('priceBounce'),index*55);
+      card.classList.remove('priceBounce');void card.offsetWidth;setTimeout(()=>card.classList.add('priceBounce'),index*55);
     });
   };
   buttons.forEach(btn=>btn.addEventListener('click',()=>setBilling(btn.dataset.billing)));
