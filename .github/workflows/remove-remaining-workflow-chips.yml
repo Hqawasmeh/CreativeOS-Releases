@@ -1,0 +1,49 @@
+name: Remove remaining workflow chips
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/remove-remaining-workflow-chips.yml']
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove Client Brief Tasks Files Reviews Invoice chips
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('docs/index.html')
+          s=p.read_text(encoding='utf-8')
+          marker='<!-- QANTEAK_REMOVE_WORKFLOW_CHIPS -->'
+          script=r'''
+          <!-- QANTEAK_REMOVE_WORKFLOW_CHIPS -->
+          <script>
+          document.addEventListener('DOMContentLoaded',()=>{
+            const wanted=['Client','Brief','Tasks','Files','Reviews','Invoice'];
+            const nodes=[...document.querySelectorAll('div,ul,nav')];
+            for(const el of nodes){
+              const kids=[...el.children];
+              if(kids.length<5||kids.length>8) continue;
+              const texts=kids.map(k=>k.textContent.trim());
+              const joined=texts.join('|');
+              if(wanted.every(x=>texts.includes(x)) && wanted.every(x=>joined.includes(x))){
+                el.remove();
+              }
+            }
+          });
+          </script>
+          '''
+          if marker not in s:
+              s=s.replace('</body>',script+'\n</body>',1)
+          p.write_text(s,encoding='utf-8')
+      - name: Commit chip removal
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Remove remaining workflow chips'
+          git push
