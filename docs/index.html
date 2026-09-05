@@ -220,6 +220,27 @@ small,.featureUi small,.workflowCard small,.flowCard small,.flowStep small,
 }
 /* QANTEAK_TYPOGRAPHY_SYSTEM_END */
 
+
+/* QANTEAK_PRICING_V2_START */
+.pricingV2{background:linear-gradient(180deg,#fbfcff,#f3f8ff)}
+.billingNote{display:inline-flex;margin-top:18px;padding:8px 13px;border:1px solid #dce6f3;border-radius:999px;background:#fff;font-size:12px;color:#657080}
+.plansV2{max-width:none!important;grid-template-columns:repeat(3,1fr)!important;gap:18px!important;align-items:stretch}
+.planV2{padding:0!important;border-radius:26px!important;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 16px 45px rgba(5,5,93,.07)}
+.planV2.featured{background:#fff!important;color:var(--ink)!important;border:1px solid #8ecaff!important;box-shadow:0 22px 60px rgba(13,127,242,.16)}
+.planTop{padding:26px 26px 24px;background:#f6f8fb;min-height:315px}
+.basicPlan .planTop{background:linear-gradient(145deg,#f8f9fc,#edf3ff)}
+.proPlan .planTop{background:radial-gradient(circle at 88% 5%,rgba(24,232,255,.45),transparent 34%),linear-gradient(145deg,#eef5ff,#dffbff 72%,#eaf0ff)}
+.teamsPlan .planTop{background:radial-gradient(circle at 92% 8%,rgba(24,232,255,.38),transparent 32%),linear-gradient(145deg,#eef1ff,#e6f8ff)}
+.planIcon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--navy),var(--blue),var(--cyan));color:#fff;font-weight:800;font-size:17px;margin-bottom:16px}
+.planAudience{font-size:12px;color:#667180}.planV2 h3{font-size:26px!important;margin:8px 0 6px!important}.planV2 .price{margin:8px 0 10px!important}.planV2 .price strong{font-size:48px;letter-spacing:-.05em;color:#070914}.planV2 .price span{font-size:13px!important;color:#667180!important;margin-left:5px}.planV2 p{font-size:14px!important;line-height:1.5!important;color:#5f6977!important;min-height:63px}
+.planCta{display:flex;align-items:center;justify-content:center;margin-top:18px;min-height:48px;border-radius:13px;background:#080a10;color:#fff;font-size:14px;font-weight:700}.proPlan .planCta{background:linear-gradient(100deg,var(--navy),var(--blue) 68%,var(--cyan))}
+.planFeatures{list-style:none!important;margin:0!important;padding:24px 26px 18px!important;display:grid;gap:13px;flex:1}.planFeatures li{display:flex;align-items:center;gap:10px;font-size:14px!important;line-height:1.35!important;color:#333b47!important}.planFeatures i{width:21px;height:21px;border-radius:50%;border:1px solid #b8c7d9;display:grid;place-items:center;font-style:normal;font-size:11px;color:var(--blue);flex:0 0 auto}.planFeatures b{color:var(--navy)}
+.annualLine{margin:0 26px 24px;padding-top:16px;border-top:1px solid #e7ebf1;font-size:12px;color:#707a87}.annualLine b{color:var(--navy)}
+.popularBadge{position:absolute;right:18px;top:18px;padding:7px 10px;border-radius:999px;background:linear-gradient(100deg,var(--navy),var(--blue),var(--cyan));color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;z-index:2}.trialNote{text-align:center!important;min-height:0!important;margin:22px 0 0!important;font-size:13px!important;color:#687380!important}
+@media(max-width:980px){.plansV2{grid-template-columns:1fr!important;max-width:620px!important}.planTop{min-height:0}.planV2 p{min-height:0}}
+@media(max-width:680px){.pricingV2{padding:28px 18px!important}.plansV2{gap:15px!important}.planTop{padding:22px 20px}.planFeatures{padding:21px 20px 16px!important}.annualLine{margin:0 20px 22px}.planV2 .price strong{font-size:44px}.planV2 h3{font-size:24px!important}}
+/* QANTEAK_PRICING_V2_END */
+
 </style>
 
 <style>
@@ -241,7 +262,68 @@ small,.featureUi small,.workflowCard small,.flowCard small,.flowStep small,
 <section class="section" id="feedback"><div class="shell panel sectionPanel feedbackPanel"><div class="feedbackLayout"><div class="feedbackIntro"><span class="kicker">Private beta feedback</span><h2 class="sectionTitle"><span class="blue">30+ testers</span> are shaping what ships next.</h2><p class="lead">Designers, developers, IT, marketers, sales teams and business leads are testing Qanteak across different workflows before public launch.</p><div class="feedbackStats"><div class="feedbackStat"><b>30+</b><span>early testers</span></div><div class="feedbackStat"><b>7+</b><span>role groups represented</span></div></div></div><div class="feedbackBoard reveal"><article class="feedbackCard"><span class="tag">Testing now</span><h3>Where does the workflow still create friction?</h3><p>We are collecting feedback on navigation, project context, file handling, reviews, admin tasks and how quickly users can understand what needs attention.</p></article><article class="feedbackCard"><span class="tag">Feedback loop</span><h3>Tester feedback goes directly into the release cycle.</h3><p>Issues and suggestions are reviewed, prioritized and tested again in the next release candidate.</p><div class="feedbackSteps"><div class="feedbackStep">1 · Test</div><div class="feedbackStep">2 · Prioritize</div><div class="feedbackStep">3 · Ship</div></div></article><article class="feedbackCard"><span class="tag">Published comments</span><h3>Real quotes only — with tester approval.</h3><p>We will publish individual feedback here once testers approve their comments for public use.</p><div class="consentNote"><b>Testimonials are currently private.</b><span>No invented reviews, names or ratings are being used on the public site.</span></div></article></div></div></div></section>
 <section class="section" id="workflow"><div class="shell panel sectionPanel workflowPanel"><div class="sectionHead center"><span class="kicker">How it works</span><h2 class="sectionTitle">From account to delivery in one <span class="blue">continuous flow.</span></h2><p class="lead">Qanteak keeps the operational layer connected while you keep creating in the tools you already use.</p></div><div class="workflow reveal"><article class="step"><div class="stepNum">1</div><h3>Create your workspace</h3><p>Verify your account and set up your environment.</p></article><article class="step"><div class="stepNum">2</div><h3>Add clients & projects</h3><p>Bring briefs, files, deadlines and tasks together.</p></article><article class="step"><div class="stepNum">3</div><h3>Create & review</h3><p>Work in your tools while Qanteak tracks the workflow around them.</p></article><article class="step"><div class="stepNum">4</div><h3>Deliver & manage</h3><p>Finish reviews, send files and preserve project history.</p></article></div><div class="systemStats reveal"><div class="systemStat"><b>8</b><span>connected work areas</span></div><div class="systemStat"><b>30+</b><span>early testers</span></div><div class="systemStat"><b>RC.7</b><span>current Windows beta</span></div><div class="systemStat blue"><b>1</b><span>operating layer around the work</span></div></div></div></section>
 <section class="section"><div class="shell panel sectionPanel rolePanel"><div class="sectionHead center"><span class="kicker">Built for creative workflows</span><h2 class="sectionTitle">One system. <span class="cyan">Different disciplines.</span></h2></div><div class="roleGrid reveal"><article class="role"><small>01</small><h3>Designers</h3><p>References, revisions, files, approvals and invoices in one project view.</p></article><article class="role focus"><small>02</small><h3>Video & photo</h3><p>Shoots, footage, edit tasks, review notes and delivery milestones.</p></article><article class="role"><small>03</small><h3>Content teams</h3><p>Campaign tasks, assets, approvals and repeatable production workflows.</p></article><article class="role"><small>04</small><h3>Freelancers</h3><p>Client work and business admin without building a stack of tools.</p></article><article class="role"><small>05</small><h3>Studios</h3><p>Multiple clients, collaborators and projects visible without losing context.</p></article><article class="role"><small>06</small><h3>Marketers</h3><p>Campaign files, production tasks, approvals and handoffs.</p></article></div></div></section>
-<section class="section" id="pricing"><div class="shell panel sectionPanel pricingPanel"><div class="sectionHead center"><span class="kicker">Pricing</span><h2 class="sectionTitle">Simple access to the <span class="blue">full workspace.</span></h2><p class="lead">Checkout will be connected after merchant review is completed.</p></div><div class="plans reveal"><article class="plan featured"><small>Most popular</small><h3>Pro</h3><div class="price">$18 <span>/ month</span></div><p>For independent creative professionals.</p><ul><li>Projects, clients, tasks and files</li><li>Reviews and version workflow</li><li>Invoices and business tools</li><li>Qanteak AI and automations</li></ul><a class="btn primary" href="mailto:hamza.workjo@gmail.com?subject=Qanteak%20OS%20Pro">Join Pro beta</a></article><article class="plan"><small>For teams</small><h3>Studio</h3><div class="price">$32 <span>/ user / month</span></div><p>For small studios and agencies.</p><ul><li>Everything in Pro</li><li>Team-oriented workflows</li><li>Expanded collaboration</li><li>Higher workspace capacity</li></ul><a class="btn" href="mailto:hamza.workjo@gmail.com?subject=Qanteak%20OS%20Studio">Join Studio beta</a></article></div></div></section>
+<section class="section" id="pricing">
+<div class="shell panel sectionPanel pricingPanel pricingV2">
+  <div class="sectionHead center">
+    <div class="kicker">Pricing</div>
+    <h2 class="sectionTitle">Choose how far you want <span class="blue">Qanteak to go.</span></h2>
+    <p class="lead">Start with the complete creative workspace. Upgrade when you want deeper AI, cloud intelligence or a connected team.</p>
+    <div class="billingNote">Monthly pricing · annual plans save around 16–20%</div>
+  </div>
+  <div class="plans plansV2">
+    <article class="plan planV2 basicPlan">
+      <div class="planTop">
+        <div class="planIcon">B</div><span class="planAudience">For solo creatives</span>
+        <h3>Basic</h3>
+        <div class="price"><strong>$18</strong><span>/month</span></div>
+        <p>Everything you need to run your creative work in one connected place.</p>
+        <a class="planCta" href="#download">Start with Basic</a>
+      </div>
+      <ul class="planFeatures">
+        <li><i>✓</i><b>Unlimited</b> projects</li><li><i>✓</i><b>Unlimited</b> clients</li>
+        <li><i>✓</i>Tasks, calendar & invoices</li><li><i>✓</i>Client reviews & approvals</li>
+        <li><i>✓</i>Local file management</li><li><i>✓</i>10 GB cloud storage</li>
+        <li><i>✓</i>Limited Qanteak AI</li><li><i>✓</i>Basic business analytics</li>
+      </ul>
+      <div class="annualLine">Annual · <b>$15/mo</b> billed yearly</div>
+    </article>
+    <article class="plan planV2 proPlan featured">
+      <div class="popularBadge">MOST POPULAR</div>
+      <div class="planTop">
+        <div class="planIcon">✦</div><span class="planAudience">For professional freelancers</span>
+        <h3>Pro</h3>
+        <div class="price"><strong>$29</strong><span>/month</span></div>
+        <p>Unlock Qanteak's intelligence layer for faster decisions, smarter files and less admin.</p>
+        <a class="planCta" href="#download">Start Pro trial</a>
+      </div>
+      <ul class="planFeatures">
+        <li><i>✓</i>Everything in Basic</li><li><i>✓</i><b>Full Qanteak AI</b></li>
+        <li><i>✓</i>AI project & business insights</li><li><i>✓</i>Advanced file intelligence</li>
+        <li><i>✓</i>100 GB cloud storage</li><li><i>✓</i>Advanced analytics</li>
+        <li><i>✓</i>High-limit automations</li><li><i>✓</i>Priority support</li>
+      </ul>
+      <div class="annualLine">Annual · <b>$24/mo</b> billed yearly</div>
+    </article>
+    <article class="plan planV2 teamsPlan">
+      <div class="planTop">
+        <div class="planIcon">◎</div><span class="planAudience">For agencies & studios</span>
+        <h3>Teams</h3>
+        <div class="price"><strong>$38</strong><span>/seat/month</span></div>
+        <p>Give the whole team one operating layer with shared context, control and intelligence.</p>
+        <a class="planCta" href="#download">Start with Teams</a>
+      </div>
+      <ul class="planFeatures">
+        <li><i>✓</i>Everything in Pro</li><li><i>✓</i><b>Unlimited</b> shared workspaces</li>
+        <li><i>✓</i>Roles & permissions</li><li><i>✓</i>Shared AI knowledge</li>
+        <li><i>✓</i>100 GB+ cloud / seat</li><li><i>✓</i>Team & workload analytics</li>
+        <li><i>✓</i>Centralized billing</li><li><i>✓</i>Shared automations</li>
+      </ul>
+      <div class="annualLine">Annual · <b>$32/seat/mo</b> billed yearly</div>
+    </article>
+  </div>
+  <p class="trialNote">14-day Pro trial · no credit card required</p>
+</div>
+</section>
 <section class="section" id="faq"><div class="shell panel sectionPanel faqPanel"><div class="sectionHead center"><span class="kicker">FAQ</span><h2 class="sectionTitle">Before you install.</h2></div><div class="faqWrap"><div class="qa"><button class="q">What is Qanteak OS?<span class="plus">+</span></button><div class="a">A Windows desktop workspace that connects projects, clients, files, reviews, invoices, automation and AI for creative professionals.</div></div><div class="qa"><button class="q">Does it replace Photoshop or DaVinci Resolve?<span class="plus">+</span></button><div class="a">No. Qanteak organizes the workflow around your creative applications instead of replacing them.</div></div><div class="qa"><button class="q">Is it available now?<span class="plus">+</span></button><div class="a">The product is currently in release-candidate testing while payment and final production systems are completed.</div></div><div class="qa"><button class="q">Do I need a subscription?<span class="plus">+</span></button><div class="a">Yes. Production access requires a verified account with an active subscription.</div></div></div></div></section>
 <section class="cta" id="contact"><div class="shell panel ctaPanel"><div><h2 class="ctaTitle">Stop managing creative work across disconnected tools.</h2><p>Keep the project, files, feedback and business side connected in one operating layer.</p></div><div class="ctaActions"><a class="btn dark" href="https://github.com/Hqawasmeh/CreativeOS-Releases/releases/download/v1.0.0-rc.8/QanteakOS-Setup-1.0.0-rc.8.exe">Download for Windows</a><a class="btn" href="mailto:hamza.workjo@gmail.com?subject=Qanteak%20OS%20Beta">Join testing</a></div></div></section>
 </main>
