@@ -254,6 +254,39 @@ document.querySelectorAll('.qa').forEach(x=>x.querySelector('.q').addEventListen
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.08});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
+
+<!-- QANTEAK_REMOVE_TINY_UI_START -->
+<script>
+(() => {
+  const groups = [
+    ['Client','Brief','Tasks','Files','Reviews','Invoice'],
+    ['Client review','Delivery files','Invoice'],
+    ['Summarize review','Prepare invoice','Create follow-up','Group delivery files'],
+    ['1 · Test','2 · Prioritize','3 · Ship'],
+    ['1 · Test','2 · Prioritize','3 · Ship'.replace(' · ',' - ')]
+  ];
+  const norm = s => (s || '').replace(/\s+/g,' ').trim();
+  const removeGroup = labels => {
+    const leaves = [...document.querySelectorAll('body *')].filter(el => el.children.length === 0);
+    const seed = leaves.find(el => norm(el.textContent) === labels[0]);
+    if (!seed) return;
+    let node = seed.parentElement;
+    for (let depth=0; node && depth<6; depth++, node=node.parentElement) {
+      const text = norm(node.textContent);
+      const hits = labels.filter(x => text.includes(x)).length;
+      if (hits >= Math.min(labels.length,3) && text.length < 180) {
+        node.remove();
+        return;
+      }
+    }
+  };
+  const run = () => groups.forEach(removeGroup);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, {once:true});
+  else run();
+})();
+</script>
+<!-- QANTEAK_REMOVE_TINY_UI_END -->
+
 </body>
 </html>
 
