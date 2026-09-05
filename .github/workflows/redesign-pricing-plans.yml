@@ -1,0 +1,117 @@
+name: Redesign Qanteak pricing plans
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/redesign-pricing-plans.yml']
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace pricing section
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p=Path('docs/index.html')
+          s=p.read_text(encoding='utf-8')
+          # Replace pricing section contents while preserving surrounding page.
+          pattern=r'<section class="section" id="pricing">.*?</section>'
+          section=r'''<section class="section" id="pricing">
+          <div class="shell panel sectionPanel pricingPanel pricingV2">
+            <div class="sectionHead center">
+              <div class="kicker">Pricing</div>
+              <h2 class="sectionTitle">Choose how far you want <span class="blue">Qanteak to go.</span></h2>
+              <p class="lead">Start with the complete creative workspace. Upgrade when you want deeper AI, cloud intelligence or a connected team.</p>
+              <div class="billingNote">Monthly pricing · annual plans save around 16–20%</div>
+            </div>
+            <div class="plans plansV2">
+              <article class="plan planV2 basicPlan">
+                <div class="planTop">
+                  <div class="planIcon">B</div><span class="planAudience">For solo creatives</span>
+                  <h3>Basic</h3>
+                  <div class="price"><strong>$18</strong><span>/month</span></div>
+                  <p>Everything you need to run your creative work in one connected place.</p>
+                  <a class="planCta" href="#download">Start with Basic</a>
+                </div>
+                <ul class="planFeatures">
+                  <li><i>✓</i><b>Unlimited</b> projects</li><li><i>✓</i><b>Unlimited</b> clients</li>
+                  <li><i>✓</i>Tasks, calendar & invoices</li><li><i>✓</i>Client reviews & approvals</li>
+                  <li><i>✓</i>Local file management</li><li><i>✓</i>10 GB cloud storage</li>
+                  <li><i>✓</i>Limited Qanteak AI</li><li><i>✓</i>Basic business analytics</li>
+                </ul>
+                <div class="annualLine">Annual · <b>$15/mo</b> billed yearly</div>
+              </article>
+              <article class="plan planV2 proPlan featured">
+                <div class="popularBadge">MOST POPULAR</div>
+                <div class="planTop">
+                  <div class="planIcon">✦</div><span class="planAudience">For professional freelancers</span>
+                  <h3>Pro</h3>
+                  <div class="price"><strong>$29</strong><span>/month</span></div>
+                  <p>Unlock Qanteak's intelligence layer for faster decisions, smarter files and less admin.</p>
+                  <a class="planCta" href="#download">Start Pro trial</a>
+                </div>
+                <ul class="planFeatures">
+                  <li><i>✓</i>Everything in Basic</li><li><i>✓</i><b>Full Qanteak AI</b></li>
+                  <li><i>✓</i>AI project & business insights</li><li><i>✓</i>Advanced file intelligence</li>
+                  <li><i>✓</i>100 GB cloud storage</li><li><i>✓</i>Advanced analytics</li>
+                  <li><i>✓</i>High-limit automations</li><li><i>✓</i>Priority support</li>
+                </ul>
+                <div class="annualLine">Annual · <b>$24/mo</b> billed yearly</div>
+              </article>
+              <article class="plan planV2 teamsPlan">
+                <div class="planTop">
+                  <div class="planIcon">◎</div><span class="planAudience">For agencies & studios</span>
+                  <h3>Teams</h3>
+                  <div class="price"><strong>$38</strong><span>/seat/month</span></div>
+                  <p>Give the whole team one operating layer with shared context, control and intelligence.</p>
+                  <a class="planCta" href="#download">Start with Teams</a>
+                </div>
+                <ul class="planFeatures">
+                  <li><i>✓</i>Everything in Pro</li><li><i>✓</i><b>Unlimited</b> shared workspaces</li>
+                  <li><i>✓</i>Roles & permissions</li><li><i>✓</i>Shared AI knowledge</li>
+                  <li><i>✓</i>100 GB+ cloud / seat</li><li><i>✓</i>Team & workload analytics</li>
+                  <li><i>✓</i>Centralized billing</li><li><i>✓</i>Shared automations</li>
+                </ul>
+                <div class="annualLine">Annual · <b>$32/seat/mo</b> billed yearly</div>
+              </article>
+            </div>
+            <p class="trialNote">14-day Pro trial · no credit card required</p>
+          </div>
+          </section>'''
+          s,n=re.subn(pattern,section,s,count=1,flags=re.S)
+          if n!=1: raise SystemExit('Pricing section not found')
+          css=r'''
+          /* QANTEAK_PRICING_V2_START */
+          .pricingV2{background:linear-gradient(180deg,#fbfcff,#f3f8ff)}
+          .billingNote{display:inline-flex;margin-top:18px;padding:8px 13px;border:1px solid #dce6f3;border-radius:999px;background:#fff;font-size:12px;color:#657080}
+          .plansV2{max-width:none!important;grid-template-columns:repeat(3,1fr)!important;gap:18px!important;align-items:stretch}
+          .planV2{padding:0!important;border-radius:26px!important;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 16px 45px rgba(5,5,93,.07)}
+          .planV2.featured{background:#fff!important;color:var(--ink)!important;border:1px solid #8ecaff!important;box-shadow:0 22px 60px rgba(13,127,242,.16)}
+          .planTop{padding:26px 26px 24px;background:#f6f8fb;min-height:315px}
+          .basicPlan .planTop{background:linear-gradient(145deg,#f8f9fc,#edf3ff)}
+          .proPlan .planTop{background:radial-gradient(circle at 88% 5%,rgba(24,232,255,.45),transparent 34%),linear-gradient(145deg,#eef5ff,#dffbff 72%,#eaf0ff)}
+          .teamsPlan .planTop{background:radial-gradient(circle at 92% 8%,rgba(24,232,255,.38),transparent 32%),linear-gradient(145deg,#eef1ff,#e6f8ff)}
+          .planIcon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--navy),var(--blue),var(--cyan));color:#fff;font-weight:800;font-size:17px;margin-bottom:16px}
+          .planAudience{font-size:12px;color:#667180}.planV2 h3{font-size:26px!important;margin:8px 0 6px!important}.planV2 .price{margin:8px 0 10px!important}.planV2 .price strong{font-size:48px;letter-spacing:-.05em;color:#070914}.planV2 .price span{font-size:13px!important;color:#667180!important;margin-left:5px}.planV2 p{font-size:14px!important;line-height:1.5!important;color:#5f6977!important;min-height:63px}
+          .planCta{display:flex;align-items:center;justify-content:center;margin-top:18px;min-height:48px;border-radius:13px;background:#080a10;color:#fff;font-size:14px;font-weight:700}.proPlan .planCta{background:linear-gradient(100deg,var(--navy),var(--blue) 68%,var(--cyan))}
+          .planFeatures{list-style:none!important;margin:0!important;padding:24px 26px 18px!important;display:grid;gap:13px;flex:1}.planFeatures li{display:flex;align-items:center;gap:10px;font-size:14px!important;line-height:1.35!important;color:#333b47!important}.planFeatures i{width:21px;height:21px;border-radius:50%;border:1px solid #b8c7d9;display:grid;place-items:center;font-style:normal;font-size:11px;color:var(--blue);flex:0 0 auto}.planFeatures b{color:var(--navy)}
+          .annualLine{margin:0 26px 24px;padding-top:16px;border-top:1px solid #e7ebf1;font-size:12px;color:#707a87}.annualLine b{color:var(--navy)}
+          .popularBadge{position:absolute;right:18px;top:18px;padding:7px 10px;border-radius:999px;background:linear-gradient(100deg,var(--navy),var(--blue),var(--cyan));color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;z-index:2}.trialNote{text-align:center!important;min-height:0!important;margin:22px 0 0!important;font-size:13px!important;color:#687380!important}
+          @media(max-width:980px){.plansV2{grid-template-columns:1fr!important;max-width:620px!important}.planTop{min-height:0}.planV2 p{min-height:0}}
+          @media(max-width:680px){.pricingV2{padding:28px 18px!important}.plansV2{gap:15px!important}.planTop{padding:22px 20px}.planFeatures{padding:21px 20px 16px!important}.annualLine{margin:0 20px 22px}.planV2 .price strong{font-size:44px}.planV2 h3{font-size:24px!important}}
+          /* QANTEAK_PRICING_V2_END */
+          '''
+          s=s.replace('</style>',css+'\n</style>',1)
+          p.write_text(s,encoding='utf-8')
+      - name: Commit pricing redesign
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Redesign pricing into Basic Pro and Teams'
+          git push
