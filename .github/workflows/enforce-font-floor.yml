@@ -1,0 +1,67 @@
+name: Enforce Qanteak website font floor
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/enforce-font-floor.yml']
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce minimum readable text size
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('docs/index.html')
+          s=p.read_text(encoding='utf-8')
+          a='/* QANTEAK_FONT_FLOOR_START */'
+          b='/* QANTEAK_FONT_FLOOR_END */'
+          css=r'''
+          /* QANTEAK_FONT_FLOOR_START */
+          /* Global minimum for secondary/micro copy. Headings keep their existing larger sizes. */
+          .metaItem span,.metric span,.uiCard small,.taskLine,.status,.floatCard span,
+          .pill,.eyebrow,.kicker,.problemStat span,.problemCard p,
+          .featureNum,.feature p,.featureUi small,.featureUi span,.featureUi b,.frow,.frow b,
+          .folder span,.comment,.solutionNode span,.solutionFooter,
+          .workflowCard p,.workflowCard small,.flowCard p,.flowCard small,.flowStep p,.flowStep small,
+          .testerCard p,.testerCard small,.feedbackCard p,.feedbackCard small,.betaCard p,.betaCard small,
+          [class*="workflow"] p,[class*="workflow"] small,[class*="flow"] p,[class*="flow"] small,
+          [class*="tester"] p,[class*="tester"] small,[class*="feedback"] p,[class*="feedback"] small,
+          [class*="stat"] span,[class*="step"] span,[class*="step"] small,[class*="tag"],[class*="badge"]{
+            font-size:max(13px,1em)!important;
+            line-height:1.5!important;
+          }
+          /* Tiny interface mockups need a slightly smaller floor so layouts remain intact. */
+          .appShell small,.appShell span,.appShell .taskLine,.appShell .status,
+          .featureUi small,.featureUi span,.featureUi .frow,.featureUi .folder span{
+            font-size:12px!important;
+            line-height:1.45!important;
+          }
+          @media(max-width:680px){
+            .metaItem span,.problemStat span,.problemCard p,.feature p,
+            .workflowCard p,.flowCard p,.flowStep p,.testerCard p,.feedbackCard p,.betaCard p,
+            [class*="workflow"] p,[class*="flow"] p,[class*="tester"] p,[class*="feedback"] p{
+              font-size:14px!important;
+            }
+            .eyebrow,.kicker,[class*="tag"],[class*="badge"],[class*="step"] small{
+              font-size:12px!important;
+            }
+          }
+          /* QANTEAK_FONT_FLOOR_END */
+          '''
+          if a in s and b in s:
+              i=s.index(a); j=s.index(b,i)+len(b); s=s[:i]+css.strip()+s[j:]
+          else:
+              s=s.replace('</style>',css+'\n</style>',1)
+          p.write_text(s,encoding='utf-8')
+      - name: Commit font floor
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Enforce minimum readable font sizes site-wide'
+          git push
