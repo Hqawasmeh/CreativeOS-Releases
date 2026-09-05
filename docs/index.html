@@ -287,6 +287,24 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 </script>
 <!-- QANTEAK_REMOVE_TINY_UI_END -->
 
+
+<!-- QANTEAK_REMOVE_WORKFLOW_CHIPS -->
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const wanted=['Client','Brief','Tasks','Files','Reviews','Invoice'];
+  const nodes=[...document.querySelectorAll('div,ul,nav')];
+  for(const el of nodes){
+    const kids=[...el.children];
+    if(kids.length<5||kids.length>8) continue;
+    const texts=kids.map(k=>k.textContent.trim());
+    const joined=texts.join('|');
+    if(wanted.every(x=>texts.includes(x)) && wanted.every(x=>joined.includes(x))){
+      el.remove();
+    }
+  }
+});
+</script>
+
 </body>
 </html>
 
