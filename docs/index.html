@@ -114,79 +114,111 @@
 /* QANTEAK_FEATURE_READABILITY_END */
 
 
-/* QANTEAK_GLOBAL_READABILITY_START */
-/* Readability floor: supporting copy should never look like UI microprint. */
-.topbar{font-size:12px}
-.links{font-size:14px}
-.btn{font-size:13px}
-.eyebrow,.kicker{font-size:11px;line-height:1.4}
-.heroCopy,.lead{font-size:16px;line-height:1.65}
-.metaItem span{font-size:13px;line-height:1.35}
-.proofLead{font-size:14px}.pill{font-size:12px}
-.problemCard p{font-size:14px;line-height:1.55}
-.problemStat span{font-size:12px;line-height:1.35}
-.problemStat b{font-size:18px}
-.workflowCard p,.flowCard p,.flowStep p{font-size:14px!important;line-height:1.55!important}
-.workflowCard small,.flowCard small,.flowStep small{font-size:11px!important;line-height:1.4!important}
-.testerCard p,.feedbackCard p,.betaCard p{font-size:14px!important;line-height:1.55!important}
-.testerCard small,.feedbackCard small,.betaCard small{font-size:11px!important;line-height:1.4!important}
-.solutionNode span{font-size:11px;line-height:1.35}.solutionNode b{font-size:13px}
-.solutionFooter{font-size:13px}
-@media(max-width:680px){
-  .shell{width:min(100% - 28px,1180px)}
-  .heroCopy,.lead{font-size:16px;line-height:1.6}
-  .metaItem span{font-size:13px}
-  .metaItem b{font-size:24px}
-  .problemCard p{font-size:15px;line-height:1.55}
-  .problemStat span{font-size:13px}.problemStat b{font-size:19px}
-  .workflowCard p,.flowCard p,.flowStep p{font-size:15px!important;line-height:1.55!important}
-  .workflowCard small,.flowCard small,.flowStep small{font-size:12px!important}
-  .testerCard p,.feedbackCard p,.betaCard p{font-size:15px!important;line-height:1.55!important}
-  .testerCard small,.feedbackCard small,.betaCard small{font-size:12px!important}
-  .feature p{font-size:15px;line-height:1.55}
-  .featureUi small,.featureUi span,.folder span{font-size:12px}
-  .frow,.frow b{font-size:13px}
-  .solutionNode span{font-size:10px}.solutionNode b{font-size:12px}
-  .solutionFooter{font-size:14px}
-}
-@media(max-width:380px){
-  .heroCopy,.lead,.problemCard p,.workflowCard p,.flowCard p,.flowStep p,.testerCard p,.feedbackCard p,.betaCard p,.feature p{font-size:14px!important}
-  .solutionNode span{font-size:9px}
-}
-/* QANTEAK_GLOBAL_READABILITY_END */
 
 
-/* QANTEAK_FONT_FLOOR_START */
-/* Global minimum for secondary/micro copy. Headings keep their existing larger sizes. */
-.metaItem span,.metric span,.uiCard small,.taskLine,.status,.floatCard span,
-.pill,.eyebrow,.kicker,.problemStat span,.problemCard p,
-.featureNum,.feature p,.featureUi small,.featureUi span,.featureUi b,.frow,.frow b,
-.folder span,.comment,.solutionNode span,.solutionFooter,
-.workflowCard p,.workflowCard small,.flowCard p,.flowCard small,.flowStep p,.flowStep small,
-.testerCard p,.testerCard small,.feedbackCard p,.feedbackCard small,.betaCard p,.betaCard small,
-[class*="workflow"] p,[class*="workflow"] small,[class*="flow"] p,[class*="flow"] small,
-[class*="tester"] p,[class*="tester"] small,[class*="feedback"] p,[class*="feedback"] small,
-[class*="stat"] span,[class*="step"] span,[class*="step"] small,[class*="tag"],[class*="badge"]{
-  font-size:max(13px,1em)!important;
+
+
+
+
+/* QANTEAK_TYPOGRAPHY_SYSTEM_START */
+:root{
+  --type-display:60px;
+  --type-section:44px;
+  --type-card:24px;
+  --type-body:16px;
+  --type-secondary:14px;
+  --type-micro:12px;
+}
+
+/* 01 — Display / hero */
+.heroTitle,.ctaTitle,.display{
+  font-size:var(--type-display)!important;
+  line-height:.98!important;
+}
+
+/* 02 — Section titles */
+.sectionTitle,
+.solutionTop .sectionTitle,
+.productIntro .sectionTitle,
+.problemIntro .sectionTitle{
+  font-size:var(--type-section)!important;
+  line-height:1.05!important;
+}
+
+/* 03 — Card / feature titles */
+.feature h3,.problemCard h3,.workflowCard h3,.flowCard h3,.flowStep h3,
+.testerCard h3,.feedbackCard h3,.betaCard h3,
+.uiCard h4,.solutionNode b,
+.sectionPanel h3,.sectionPanel h4{
+  font-size:var(--type-card)!important;
+  line-height:1.18!important;
+}
+
+/* 04 — Primary body copy */
+.heroCopy,.lead,
+.problemCard p,.feature p,
+.workflowCard p,.flowCard p,.flowStep p,
+.testerCard p,.feedbackCard p,.betaCard p,
+.sectionPanel>p,.sectionPanel article p,
+[class*="workflow"] p,[class*="flow"] p,
+[class*="tester"] p,[class*="feedback"] p{
+  font-size:var(--type-body)!important;
+  line-height:1.62!important;
+}
+
+/* 05 — Secondary copy */
+.metaItem span,.proofLead,.pill,.problemStat span,
+.featureUi span,.featureUi b,.frow,.frow b,.folder span,.comment,
+.solutionFooter,.floatCard span,.links,.btn,
+[class*="stat"] span,[class*="step"] span,
+[class*="workflow"] span,[class*="flow"] span,
+[class*="tester"] span,[class*="feedback"] span{
+  font-size:var(--type-secondary)!important;
   line-height:1.5!important;
 }
-/* Tiny interface mockups need a slightly smaller floor so layouts remain intact. */
+
+/* 06 — Micro labels / compact UI */
+.eyebrow,.kicker,.featureNum,.status,
+small,.featureUi small,.workflowCard small,.flowCard small,.flowStep small,
+.testerCard small,.feedbackCard small,.betaCard small,
+[class*="badge"],[class*="tag"],
 .appShell small,.appShell span,.appShell .taskLine,.appShell .status,
-.featureUi small,.featureUi span,.featureUi .frow,.featureUi .folder span{
-  font-size:12px!important;
-  line-height:1.45!important;
+.solutionNode span{
+  font-size:var(--type-micro)!important;
+  line-height:1.4!important;
 }
+
+/* Preserve numerical hierarchy */
+.metaItem b,.problemStat b,.metric b,.folder b{
+  font-size:24px!important;
+  line-height:1.1!important;
+}
+
+/* Compact product/interface mockups should obey the same floor without breaking layout */
+.appShell .appTop b,.floatCard b{font-size:14px!important}
+.featureUi input,.featureUi button{font-size:var(--type-secondary)!important}
+
 @media(max-width:680px){
-  .metaItem span,.problemStat span,.problemCard p,.feature p,
-  .workflowCard p,.flowCard p,.flowStep p,.testerCard p,.feedbackCard p,.betaCard p,
-  [class*="workflow"] p,[class*="flow"] p,[class*="tester"] p,[class*="feedback"] p{
-    font-size:14px!important;
+  :root{
+    --type-display:44px;
+    --type-section:34px;
+    --type-card:21px;
+    --type-body:16px;
+    --type-secondary:14px;
+    --type-micro:12px;
   }
-  .eyebrow,.kicker,[class*="tag"],[class*="badge"],[class*="step"] small{
-    font-size:12px!important;
+  .heroTitle{line-height:1!important}
+  .sectionTitle{line-height:1.08!important}
+}
+
+@media(max-width:380px){
+  :root{
+    --type-display:40px;
+    --type-section:31px;
+    --type-card:20px;
   }
 }
-/* QANTEAK_FONT_FLOOR_END */
+/* QANTEAK_TYPOGRAPHY_SYSTEM_END */
 
 </style>
 
