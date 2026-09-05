@@ -1,0 +1,67 @@
+name: Remove tiny decorative UI rows
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/remove-tiny-ui-rows.yml']
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove tiny decorative rows
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('docs/index.html')
+          s=p.read_text(encoding='utf-8')
+          a='<!-- QANTEAK_REMOVE_TINY_UI_START -->'
+          b='<!-- QANTEAK_REMOVE_TINY_UI_END -->'
+          script=r'''
+          <!-- QANTEAK_REMOVE_TINY_UI_START -->
+          <script>
+          (() => {
+            const groups = [
+              ['Client','Brief','Tasks','Files','Reviews','Invoice'],
+              ['Client review','Delivery files','Invoice'],
+              ['Summarize review','Prepare invoice','Create follow-up','Group delivery files'],
+              ['1 · Test','2 · Prioritize','3 · Ship'],
+              ['1 · Test','2 · Prioritize','3 · Ship'.replace(' · ',' - ')]
+            ];
+            const norm = s => (s || '').replace(/\s+/g,' ').trim();
+            const removeGroup = labels => {
+              const leaves = [...document.querySelectorAll('body *')].filter(el => el.children.length === 0);
+              const seed = leaves.find(el => norm(el.textContent) === labels[0]);
+              if (!seed) return;
+              let node = seed.parentElement;
+              for (let depth=0; node && depth<6; depth++, node=node.parentElement) {
+                const text = norm(node.textContent);
+                const hits = labels.filter(x => text.includes(x)).length;
+                if (hits >= Math.min(labels.length,3) && text.length < 180) {
+                  node.remove();
+                  return;
+                }
+              }
+            };
+            const run = () => groups.forEach(removeGroup);
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, {once:true});
+            else run();
+          })();
+          </script>
+          <!-- QANTEAK_REMOVE_TINY_UI_END -->
+          '''
+          if a in s and b in s:
+              i=s.index(a); j=s.index(b,i)+len(b); s=s[:i]+script.strip()+s[j:]
+          else:
+              s=s.replace('</body>',script+'\n</body>',1)
+          p.write_text(s,encoding='utf-8')
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Remove tiny decorative workflow UI rows'
+          git push
