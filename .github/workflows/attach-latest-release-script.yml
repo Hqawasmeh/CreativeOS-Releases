@@ -1,0 +1,48 @@
+name: Attach latest release detector
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/attach-latest-release-script.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  attach:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Attach latest-release.js to website
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('docs/index.html')
+          text = path.read_text(encoding='utf-8')
+          marker = '<script src="latest-release.js"></script>'
+          if marker not in text:
+              if '</body>' not in text:
+                  raise SystemExit('docs/index.html has no </body> tag')
+              text = text.replace('</body>', f'{marker}\n</body>', 1)
+              path.write_text(text, encoding='utf-8')
+              print('Attached latest-release.js')
+          else:
+              print('latest-release.js already attached')
+          PY
+
+      - name: Commit website change
+        run: |
+          if git diff --quiet -- docs/index.html; then
+            echo "No website change needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/index.html
+          git commit -m "Use automatic latest Qanteak release on website"
+          git push origin main
