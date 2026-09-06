@@ -1,0 +1,39 @@
+name: Fix Windows download link
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-windows-download.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-download-link:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update RC8 download links to RC9 V0.3
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('docs/index.html')
+          s = p.read_text(encoding='utf-8')
+          old = 'https://github.com/Hqawasmeh/CreativeOS-Releases/releases/download/v1.0.0-rc.8/QanteakOS-Setup-1.0.0-rc.8.exe'
+          new = 'https://github.com/Hqawasmeh/CreativeOS-Releases/releases/download/v1.0.0-rc.9.3/QanteakOS-Setup-1.0.0-rc.9.3.exe'
+          count = s.count(old)
+          if count == 0:
+              raise SystemExit('RC8 download URL not found; refusing to make an unrelated change')
+          s = s.replace(old, new)
+          s = s.replace('Qanteak OS RC.7 — Windows beta access is open', 'Qanteak OS RC9 V0.3 — Windows beta access is open')
+          p.write_text(s, encoding='utf-8')
+          print(f'Updated {count} Windows download link(s).')
+          PY
+      - name: Commit website fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Point Windows download to RC9 V0.3'
+          git push
