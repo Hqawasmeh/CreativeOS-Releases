@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#05055d">
+<title>Qanteak RC9 V0.1 — Command Center</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><img src="../assets/qanteak-hub-symbol.svg" alt="Qanteak"><div class="brandText">Qanteak<span>RC9 V0.1 workspace</span></div></div>
+    <button class="quickSearch" id="openCommand" type="button" aria-label="Open universal search"><span>⌕</span><input aria-label="Universal search" tabindex="-1" placeholder="Search everything" readonly><span class="key">Ctrl K</span></button>
+
+    <nav class="navSection" aria-label="Primary">
+      <div class="navLabel">Workspace</div>
+      <button class="navItem active" data-page="home"><span class="navIcon">⌂</span>Home</button>
+      <button class="navItem" data-page="work"><span class="navIcon">▦</span>Work</button>
+      <button class="navItem" data-page="clients"><span class="navIcon">◉</span>Clients</button>
+      <button class="navItem" data-page="documents"><span class="navIcon">▤</span>Documents</button>
+      <button class="navItem" data-page="files"><span class="navIcon">◇</span>Files</button>
+    </nav>
+
+    <nav class="navSection" aria-label="Business">
+      <div class="navLabel">Operations</div>
+      <button class="navItem" data-page="business"><span class="navIcon">$</span>Business</button>
+      <button class="navItem" data-page="automations"><span class="navIcon">↯</span>Automations</button>
+      <button class="navItem" id="openAiFromNav" data-page="ai"><span class="navIcon">✦</span>Qanteak AI</button>
+    </nav>
+
+    <div class="sidebarBottom">
+      <button class="navItem" id="openNotificationsSide"><span class="navIcon">●</span>Notifications<span class="count">4</span></button>
+      <button class="navItem"><span class="navIcon">⚙</span>Settings</button>
+      <div class="profile"><div class="avatar">HQ</div><div><b>Hamza</b><span>Workspace owner</span></div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="iconBtn mobileMenu" id="mobileMenu" type="button" aria-label="Open navigation">☰</button>
+        <div class="pageTitle"><h1 id="pageHeading">Home</h1><p id="pageSubheading">Your command center for work, clients and business.</p></div>
+      </div>
+      <div class="topActions">
+        <button class="iconBtn" id="notificationButton" type="button" aria-label="Notifications">◌<span class="badge"></span></button>
+        <button class="secondaryBtn" id="askButton" type="button">✦ Ask Qanteak</button>
+        <button class="primaryBtn" id="newButton" type="button">+ New</button>
+      </div>
+    </header>
+
+    <section class="content" id="homePage">
+      <div class="welcome"><div><h2>Good morning, Hamza.</h2><p>Here is what needs attention across Qanteak today.</p></div><div class="dateChip" id="todayLabel">Today</div></div>
+
+      <div class="grid metrics">
+        <article class="card metricCard"><div class="cardLabel"><span>Tasks due today</span><span class="metricIcon">✓</span></div><div class="metricValue"><strong>3</strong><span class="up">2 ready</span></div><div class="metricFoot">Across 4 active projects</div></article>
+        <article class="card metricCard"><div class="cardLabel"><span>Reviews waiting</span><span class="metricIcon">◎</span></div><div class="metricValue"><strong>2</strong><span class="down">1 overdue</span></div><div class="metricFoot">Oldest waiting for 3 days</div></article>
+        <article class="card metricCard"><div class="cardLabel"><span>Outstanding</span><span class="metricIcon">$</span></div><div class="metricValue"><strong>$6.9k</strong><span class="up">3 invoices</span></div><div class="metricFoot">$2,400 currently overdue</div></article>
+        <article class="card metricCard"><div class="cardLabel"><span>Pipeline</span><span class="metricIcon">↗</span></div><div class="metricValue"><strong>$18.4k</strong><span class="up">+14%</span></div><div class="metricFoot">4 opportunities in progress</div></article>
+      </div>
+
+      <div class="grid dashboard">
+        <div class="stack">
+          <article class="card sectionCard">
+            <div class="sectionHead"><div><h3>Current projects</h3><p>Status, progress and next action in one view.</p></div><button class="textBtn" type="button">View all</button></div>
+            <div class="projectList">
+              <div class="project"><div class="projectTitle"><div class="projectMark">NC</div><div><b>Nike Campaign</b><span>Nike · Brand campaign</span></div></div><div><div class="progressTrack"><i style="width:78%"></i></div><div class="progressLabel"><span>Progress</span><b>78%</b></div></div><span class="statusPill waiting">Client review</span><button class="miniBtn">Open</button></div>
+              <div class="project"><div class="projectTitle"><div class="projectMark">BI</div><div><b>Brand Identity</b><span>North Studio · Identity system</span></div></div><div><div class="progressTrack"><i style="width:55%"></i></div><div class="progressLabel"><span>Progress</span><b>55%</b></div></div><span class="statusPill active">On track</span><button class="miniBtn">Open</button></div>
+              <div class="project"><div class="projectTitle"><div class="projectMark">WF</div><div><b>Wedding Film</b><span>Sarah & Adam · Delivery</span></div></div><div><div class="progressTrack"><i style="width:92%"></i></div><div class="progressLabel"><span>Progress</span><b>92%</b></div></div><span class="statusPill risk">Due tomorrow</span><button class="miniBtn">Open</button></div>
+            </div>
+          </article>
+
+          <div class="grid analyticsGrid">
+            <article class="card sectionCard">
+              <div class="sectionHead"><div><h3>Workload this week</h3><p>Completed work compared with new assignments.</p></div><div class="legend"><span><i></i>Work completed</span></div></div>
+              <div class="chart" aria-label="Weekly workload bar chart">
+                <span class="bar" style="height:34%"></span><span class="bar" style="height:49%"></span><span class="bar" style="height:44%"></span><span class="bar" style="height:70%"></span><span class="bar" style="height:63%"></span><span class="bar" style="height:87%"></span><span class="bar" style="height:74%"></span><span class="bar" style="height:92%"></span><span class="bar" style="height:66%"></span><span class="bar" style="height:82%"></span>
+              </div>
+            </article>
+            <article class="card sectionCard">
+              <div class="sectionHead"><div><h3>Business snapshot</h3><p>Current month.</p></div></div>
+              <div class="moneyRows"><div class="moneyRow"><span>Revenue</span><b>$12,000</b></div><div class="moneyRow"><span>Expenses</span><b>$3,200</b></div><div class="moneyRow"><span>Time cost</span><b>$2,100</b></div><div class="moneyRow"><span>Profit</span><b class="profit">$6,700</b></div></div>
+            </article>
+          </div>
+        </div>
+
+        <div class="stack">
+          <article class="card sectionCard">
+            <div class="sectionHead"><div><h3>Needs attention</h3><p>Prioritized across the workspace.</p></div></div>
+            <div class="focusList">
+              <div class="focusItem"><span class="focusDot danger"></span><div><b>Invoice #104 is overdue</b><span>Nike · $2,400 outstanding</span></div><time>7d</time></div>
+              <div class="focusItem"><span class="focusDot warning"></span><div><b>Client approval waiting</b><span>Nike Campaign · Final creative review</span></div><time>3d</time></div>
+              <div class="focusItem"><span class="focusDot warning"></span><div><b>Wedding Film deadline</b><span>Final export and delivery package</span></div><time>1d</time></div>
+              <div class="focusItem"><span class="focusDot"></span><div><b>4 new files detected</b><span>Unsorted assets from connected folder</span></div><time>2h</time></div>
+            </div>
+          </article>
+
+          <article class="card sectionCard">
+            <div class="sectionHead"><div><h3>Today</h3><p>Your task queue.</p></div><button class="textBtn">Add task</button></div>
+            <div class="taskList">
+              <div class="task"><button class="taskCheck" aria-label="Complete task"></button><div class="taskText"><b>Prepare campaign review</b><span>Nike Campaign</span></div><span class="due">10:30</span></div>
+              <div class="task"><button class="taskCheck" aria-label="Complete task"></button><div class="taskText"><b>Send revised proposal</b><span>North Studio</span></div><span class="due">13:00</span></div>
+              <div class="task"><button class="taskCheck" aria-label="Complete task"></button><div class="taskText"><b>Final export</b><span>Wedding Film</span></div><span class="due late">Today</span></div>
+              <div class="task done"><button class="taskCheck" aria-label="Task completed">✓</button><div class="taskText"><b>Review intake form</b><span>New lead</span></div><span class="due">Done</span></div>
+            </div>
+          </article>
+
+          <article class="card aiCard">
+            <div class="aiHeader"><small>Qanteak AI daily brief</small><h3>Three things deserve your attention.</h3><p>Nike is waiting on approval, one invoice is overdue, and tomorrow's delivery still needs a final export.</p></div>
+            <div class="aiBody">
+              <div class="aiSuggestion"><div class="aiSpark">✦</div><div><b>Prepare the Nike review</b><span>I can summarize the latest project files, comments and open tasks.</span></div></div>
+              <div class="aiSuggestion"><div class="aiSpark">$</div><div><b>Draft an invoice reminder</b><span>Invoice #104 has been overdue for seven days.</span></div></div>
+              <div class="aiSuggestion"><div class="aiSpark">↯</div><div><b>Create a delivery checklist</b><span>Generate a checklist from the Wedding Film project context.</span></div></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="scrim" id="scrim"></div>
+
+<section class="drawer" id="notifications" aria-hidden="true">
+  <div class="drawerHead"><div><h3>Notifications</h3><div class="metaText">One inbox for work, clients, finance and AI.</div></div><button class="closeBtn" data-close="drawer">×</button></div>
+  <div class="drawerBody">
+    <div class="notification"><b>Nike Campaign · Client review</b><span>Sarah commented on Review #3: “Can we see the alternate headline?”</span></div>
+    <div class="notification"><b>Invoice #104 overdue</b><span>$2,400 is now seven days overdue. Qanteak can prepare a reminder.</span></div>
+    <div class="notification"><b>Wedding Film · deadline risk</b><span>The delivery date is tomorrow and the final export task is still open.</span></div>
+    <div class="notification"><b>Files · 4 new assets</b><span>New files were detected and are ready to be linked to a project.</span></div>
+  </div>
+</section>
+
+<section class="command" id="commandPalette" aria-hidden="true">
+  <div class="commandInput"><span>⌕</span><input id="commandSearch" placeholder="Search projects, clients, files, docs or run an action"><span class="key">Esc</span></div>
+  <div class="commandList" id="commandList">
+    <div class="commandGroup">Quick actions</div>
+    <div class="commandItem active" data-keywords="project create new"><i>＋</i><div><b>Create project</b><span>Start a new project and connect a client.</span></div><kbd>↵</kbd></div>
+    <div class="commandItem" data-keywords="invoice finance create"><i>$</i><div><b>Create invoice</b><span>Create an invoice from project context.</span></div></div>
+    <div class="commandItem" data-keywords="task overdue today work"><i>✓</i><div><b>Show overdue tasks</b><span>Filter work that needs immediate attention.</span></div></div>
+    <div class="commandGroup">Open</div>
+    <div class="commandItem" data-keywords="nike campaign project"><i>NC</i><div><b>Nike Campaign</b><span>Project · 78% complete · Client review</span></div></div>
+    <div class="commandItem" data-keywords="north studio client"><i>NS</i><div><b>North Studio</b><span>Client · 1 active project</span></div></div>
+    <div class="commandItem" data-keywords="invoice 104 overdue nike"><i>#</i><div><b>Invoice #104</b><span>$2,400 · Overdue</span></div></div>
+  </div>
+</section>
+
+<section class="aiPanel" id="aiPanel" aria-hidden="true">
+  <div class="aiPanelHead"><div><b>✦ Ask Qanteak</b><div class="aiContext">Context: Home · all active workspace data</div></div><button class="closeBtn" data-close="ai" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff">×</button></div>
+  <div class="aiMessages" id="aiMessages"><div class="bubble ai">I can act on projects, tasks, files, clients and business context. Try “What should I focus on today?”</div></div>
+  <form class="aiComposer" id="aiForm"><input id="aiInput" autocomplete="off" placeholder="Ask Qanteak or request an action"><button type="submit">→</button></form>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
