@@ -1,48 +1,36 @@
 # Qanteak OS RC9 V0.1 auto-update
 
-RC9 V0.1 remains part of the RC9 release family. For Electron/electron-updater ordering, the package version is `1.0.0-rc.9.1` while the user-facing release name remains **RC9 V0.1**.
+RC9 V0.1 now uses the same proven publishing pattern as the original RC9 launch-prep folder.
 
-## Release assets
+The key difference is that publishing does **not** use `electron-builder --publish always` and does not ask the user to paste a `GH_TOKEN`. The original RC9 publisher used the authenticated GitHub CLI session stored in the Windows keyring, built the installer locally exactly once, verified the generated artifacts, and then uploaded those verified artifacts with `gh release create`.
 
-A finished Windows build must publish all three artifacts to the GitHub release tag `v1.0.0-rc.9.1`:
+## Release identity
+
+- User-facing name: **Qanteak OS RC9 V0.1**
+- Machine/update version: `1.0.0-rc.9.1`
+- GitHub release tag: `v1.0.0-rc.9.1`
+
+Required release assets:
 
 - `latest.yml`
 - `QanteakOS-Setup-1.0.0-rc.9.1.exe`
 - `QanteakOS-Setup-1.0.0-rc.9.1.exe.blockmap`
 
-This preserves the same update mechanism already used by the RC9 GitHub release.
+## Proven RC9 publisher flow
 
-## Publisher authentication
+1. Read the version from `package.json`.
+2. Require Node.js, npm, and GitHub CLI (`gh.exe`).
+3. Verify the existing GitHub CLI login with `gh auth status --hostname github.com`.
+4. Verify access to `Hqawasmeh/CreativeOS-Releases`.
+5. Refuse to overwrite an existing version tag.
+6. Install dependencies.
+7. Validate/build the application.
+8. Run signing preflight.
+9. Build the Windows NSIS installer **once** with `electron-builder --publish never`.
+10. Verify `latest.yml`, SHA512, installer size, and `.blockmap`.
+11. Check Authenticode status; signing is mandatory only when release policy explicitly requires it.
+12. Create the GitHub prerelease and upload the already-verified files using `gh release create`.
 
-`PUBLISH_UPDATE.cmd` should reuse the GitHub sign-in already present on the Windows PC rather than asking the user to paste a token.
+If Windows has lost the existing GitHub CLI login, run `gh auth login` once. Normal Qanteak publishing should not prompt for a Personal Access Token.
 
-Credential discovery order:
-
-1. an existing `GH_TOKEN` / `GITHUB_TOKEN`,
-2. local `.env`,
-3. the authenticated GitHub CLI session (`gh auth token`),
-4. Git Credential Manager / GitHub Desktop credentials via `git credential fill`.
-
-The recovered credential is process-local, is not printed, and is not written into the source tree. A brand-new PC may require one normal GitHub sign-in first, but normal Qanteak publishes should not require a manual PAT paste.
-
-## Integration
-
-1. Add `electron-updater` to the desktop application.
-2. Use `electron-builder.yml` when packaging the Windows build.
-3. Load `updater.js` from the Electron main process.
-4. Call `check()` after the app is ready or from the Settings > Updates surface.
-5. When an update is available, let the user start the download.
-6. After `update-downloaded`, offer restart/install or allow installation on app quit.
-
-## Required launch checks
-
-Before publishing RC9 V0.1:
-
-- Build the installer and blockmap with electron-builder.
-- Verify generated `latest.yml` points to the exact RC9 V0.1 installer.
-- Verify the SHA512 in `latest.yml` matches the installer.
-- Verify the release contains all three required assets.
-- Sign the installer/application when the Windows certificate is available.
-- Test RC9 → RC9 V0.1 auto-update on a clean Windows machine.
-
-The source package delivered for RC9 V0.1 should keep this folder together with the application source so auto-update configuration is not lost.
+This mirrors the method used by the original RC9 `PUBLISH_UPDATE.cmd` and its successful publisher log.
