@@ -12,6 +12,19 @@ A finished Windows build must publish all three artifacts to the GitHub release 
 
 This preserves the same update mechanism already used by the RC9 GitHub release.
 
+## Publisher authentication
+
+`PUBLISH_UPDATE.cmd` should reuse the GitHub sign-in already present on the Windows PC rather than asking the user to paste a token.
+
+Credential discovery order:
+
+1. an existing `GH_TOKEN` / `GITHUB_TOKEN`,
+2. local `.env`,
+3. the authenticated GitHub CLI session (`gh auth token`),
+4. Git Credential Manager / GitHub Desktop credentials via `git credential fill`.
+
+The recovered credential is process-local, is not printed, and is not written into the source tree. A brand-new PC may require one normal GitHub sign-in first, but normal Qanteak publishes should not require a manual PAT paste.
+
 ## Integration
 
 1. Add `electron-updater` to the desktop application.
