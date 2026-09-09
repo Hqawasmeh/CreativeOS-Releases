@@ -21,17 +21,40 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: qanteak-desktop/package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Preflight, renderer smoke test, and build
+      - name: Preflight, renderer, interaction smoke, and build
         run: npm run build
 
-      - name: Package Windows installer once
+      - name: Resolve release metadata
+        shell: pwsh
+        run: |
+          $version = node -p "require('./package.json').version"
+          if ($version -notmatch '^1\.0\.0-rc\.9\.(\d+)$') { throw "Unexpected RC9 version: $version" }
+          $minor = $Matches[1]
+          $tag = "v$version"
+          $changelog = "CHANGELOG-RC9-V0.$minor.md"
+          if (-not (Test-Path $changelog)) { throw "Missing changelog: $changelog" }
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "RELEASE_MINOR=$minor" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "CHANGELOG_FILE=$changelog" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Refuse duplicate release before packaging
+        shell: pwsh
+        run: |
+          gh release view "$env:RELEASE_TAG" --repo "$env:GITHUB_REPOSITORY" *> $null
+          if ($LASTEXITCODE -eq 0) { throw "Release $env:RELEASE_TAG already exists. Refusing to rebuild or replace updater artifacts." }
+          exit 0
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Package Windows installer exactly once
         run: npx electron-builder --win nsis --publish never
         env:
           QANTEAK_REQUIRE_SIGNING: '0'
@@ -43,37 +66,22 @@ jobs:
         shell: pwsh
         run: ./scripts/windows-qa-preflight.ps1
 
-      - name: Validate release version and files
+      - name: Validate exact release files
         shell: pwsh
         run: |
-          $version = node -p "require('./package.json').version"
-          $expectedTag = "v$version"
-          $exe = "release/QanteakOS-Setup-$version.exe"
+          $exe = "release/QanteakOS-Setup-$env:VERSION.exe"
           $blockmap = "$exe.blockmap"
           $yml = "release/latest.yml"
-
           if (-not (Test-Path $exe)) { throw "Missing installer: $exe" }
           if (-not (Test-Path $blockmap)) { throw "Missing blockmap: $blockmap" }
           if (-not (Test-Path $yml)) { throw "Missing updater metadata: $yml" }
-
           $latest = Get-Content $yml -Raw
-          if ($latest -notmatch [regex]::Escape("QanteakOS-Setup-$version.exe")) {
-            throw "latest.yml does not reference the installer for $version"
-          }
-
-          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
-          "RELEASE_TAG=$expectedTag" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-      - name: Ensure release does not already exist
-        shell: pwsh
-        run: |
-          gh release view "$env:RELEASE_TAG" --repo "$env:GITHUB_REPOSITORY" *> $null
-          if ($LASTEXITCODE -eq 0) {
-            throw "Release $env:RELEASE_TAG already exists. Refusing to replace updater artifacts."
-          }
-          exit 0
-        env:
-          GH_TOKEN: ${{ github.token }}
+          if ($latest -notmatch [regex]::Escape("QanteakOS-Setup-$env:VERSION.exe")) { throw "latest.yml points to the wrong installer." }
+          $releaseFiles = @(Get-ChildItem release -File | Where-Object { $_.Name -match '^(QanteakOS-Setup-.*\.exe(\.blockmap)?|latest\.yml)$' })
+          $required = @("QanteakOS-Setup-$env:VERSION.exe","QanteakOS-Setup-$env:VERSION.exe.blockmap","latest.yml")
+          foreach ($r in $required) { if ($releaseFiles.Name -notcontains $r) { throw "Missing expected artifact $r" } }
+          $unexpected = @($releaseFiles.Name | Where-Object { $required -notcontains $_ })
+          if ($unexpected.Count -gt 0) { throw "Unexpected updater artifacts: $($unexpected -join ', ')" }
 
       - name: Publish exact updater artifacts
         shell: pwsh
@@ -84,8 +92,8 @@ jobs:
             "release/latest.yml" `
             --repo "$env:GITHUB_REPOSITORY" `
             --target "$env:GITHUB_SHA" `
-            --title "Qanteak OS RC9 V0.13" `
-            --notes-file "CHANGELOG-RC9-V0.13.md" `
+            --title "Qanteak OS RC9 V0.$env:RELEASE_MINOR" `
+            --notes-file "$env:CHANGELOG_FILE" `
             --prerelease
         env:
           GH_TOKEN: ${{ github.token }}
@@ -96,17 +104,10 @@ jobs:
           $json = gh release view "$env:RELEASE_TAG" --repo "$env:GITHUB_REPOSITORY" --json tagName,isPrerelease,assets | ConvertFrom-Json
           if ($json.tagName -ne $env:RELEASE_TAG) { throw "Published tag mismatch." }
           if (-not $json.isPrerelease) { throw "Release was not published as a prerelease." }
-
           $names = @($json.assets | ForEach-Object { $_.name })
-          $required = @(
-            "QanteakOS-Setup-$env:VERSION.exe",
-            "QanteakOS-Setup-$env:VERSION.exe.blockmap",
-            "latest.yml"
-          )
-          foreach ($name in $required) {
-            if ($names -notcontains $name) { throw "Published release is missing $name" }
-          }
-
-          Write-Host "Qanteak $env:VERSION is live with all updater artifacts."
+          $required = @("QanteakOS-Setup-$env:VERSION.exe","QanteakOS-Setup-$env:VERSION.exe.blockmap","latest.yml")
+          foreach ($name in $required) { if ($names -notcontains $name) { throw "Published release is missing $name" } }
+          if ($names.Count -ne 3) { throw "Published release has unexpected updater assets: $($names -join ', ')" }
+          Write-Host "Qanteak $env:VERSION is live with the exact updater trio."
         env:
           GH_TOKEN: ${{ github.token }}
