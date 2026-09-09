@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#05055d">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://cdn-uicons.flaticon.com; font-src 'self' https://cdn-uicons.flaticon.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'">
+  <title>Qanteak OS RC9 V0.13</title>
+  <link rel="preconnect" href="https://cdn-uicons.flaticon.com">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<section class="authGate" id="authGate" aria-live="polite">
+  <div class="authCard">
+    <div class="authBrand"><img id="authLogo" src="assets/qanteak-logo-black.png" alt="Qanteak OS"></div>
+    <div class="authIntro"><span class="authEyebrow">Qanteak OS · RC9 V0.13</span><h1>Sign in to your workspace</h1><p>Your projects, clients, files and business data stay hidden until your Qanteak account is authenticated.</p></div>
+    <div class="authTabs"><button class="active" type="button" data-auth-tab="signin">Sign in</button><button type="button" data-auth-tab="signup">Create account</button></div>
+    <form class="authForm" id="authGateSignIn">
+      <label>Email<input id="gateEmail" type="email" autocomplete="email" required placeholder="you@company.com"></label>
+      <label>Password<input id="gatePassword" type="password" autocomplete="current-password" required placeholder="Password"></label>
+      <button class="primary authSubmit" type="submit">Sign in</button><button class="authRecoveryLink" id="forgotPassword" type="button">Forgot password?</button>
+    </form>
+    <form class="authForm" id="authGateSignUp" hidden>
+      <div class="authTwo"><label>Name<input id="gateSignupName" required placeholder="Your name"></label><label>Workspace<input id="gateSignupWorkspace" required placeholder="Studio workspace"></label></div>
+      <label>Email<input id="gateSignupEmail" type="email" autocomplete="email" required placeholder="you@company.com"></label>
+      <label>Password<input id="gateSignupPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"></label>
+      <button class="primary authSubmit" type="submit">Create account</button>
+    </form>
+    <div class="authStatus" id="authGateStatus"><span class="statusDot"></span><span>Checking secure session…</span></div>
+  </div>
+</section>
+<div class="appShell" id="appShell" hidden>
+  <aside class="sidebar" id="sidebar">
+    <button class="brand brandLogoOnly brandThemeButton" id="brandThemeButton" type="button" title="Switch appearance"><img id="brandLogo" src="assets/qanteak-logo-black.png" alt="Qanteak OS"></button>
+    <button class="searchButton" id="openCommand"><i class="fi fi-rr-search"></i><span>Search everything</span><kbd>Ctrl K</kbd></button>
+    <div class="navLabel">Workspace</div>
+    <nav id="nav">
+      <button class="navItem active" data-view="home"><i class="fi fi-rr-home"></i><span>Home</span></button>
+      <button class="navItem" data-view="work"><i class="fi fi-rr-briefcase"></i><span>Work</span></button>
+      <button class="navItem" data-view="clients"><i class="fi fi-rr-users"></i><span>Clients</span></button>
+      <button class="navItem" data-view="documents"><i class="fi fi-rr-document"></i><span>Documents</span></button>
+      <button class="navItem" data-view="files"><i class="fi fi-rr-folder"></i><span>Files</span></button>
+    </nav>
+    <div class="navLabel">Operations</div>
+    <nav>
+      <button class="navItem" data-view="business"><i class="fi fi-rr-coins"></i><span>Business</span></button>
+      <button class="navItem" data-view="automations"><i class="fi fi-rr-bolt"></i><span>Automations</span></button>
+      <button class="navItem" id="openAi"><i class="fi fi-rr-sparkles"></i><span>Qanteak AI</span></button>
+    </nav>
+    <div class="sidebarBottom">
+      <button class="navItem" id="openNotifications"><i class="fi fi-rr-bell"></i><span>Notifications</span><b class="count" id="notificationCount">4</b></button>
+      <button class="navItem" id="openSettings" data-view="settings" type="button"><i class="fi fi-rr-settings"></i><span>Settings</span></button>
+      <div class="profile"><div class="avatar">HQ</div><div><strong>Qanteak</strong><span>Authenticated workspace</span></div></div>
+</div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="titleWrap"><button class="mobileMenu" id="mobileMenu"><i class="fi fi-rr-menu-burger"></i></button><div><h1 id="pageTitle">Home</h1><p id="pageSubtitle">Your command center for work, clients and business.</p></div></div>
+      <div class="topActions"><button class="updatePill" id="updatePill" type="button" title="Open Settings & Updates">RC9 V0.13</button><button class="iconButton" id="topNotifications" title="Notifications"><i class="fi fi-rr-bell"></i><b></b></button><button class="secondary" id="askQanteak"><i class="fi fi-rr-sparkles"></i> Ask Qanteak</button><button class="primary" id="newAction"><i class="fi fi-rr-plus"></i> New</button></div>
+    </header>
+    <section class="content" id="content"></section>
+  </main>
+</div>
+<div class="scrim" id="scrim"></div>
+<section class="drawer" id="notifications"><div class="panelHead"><div><h3>Notifications</h3><p>Filter work by urgency and category.</p></div><div class="panelHeadActions"><button class="textButton" id="markAllRead">Mark all read</button><button data-close="notifications">×</button></div></div><div class="notificationFilters" id="notificationFilters"></div><div class="panelBody" id="notificationList"></div></section>
+<button class="aiEdgeTab" id="aiEdgeTab" type="button" aria-label="Open Qanteak AI chat" title="Open Qanteak AI"><i class="fi fi-rr-angle-left"></i><span>AI</span></button>
+<section class="aiPanel" id="aiPanel"><div class="aiHead"><div><strong><i class="fi fi-rr-sparkles"></i> Ask Qanteak</strong><span id="aiContext">Context: Home</span></div><button data-close="ai">×</button></div><div class="aiMessages" id="aiMessages"><div class="bubble ai">I have the current workspace context. Ask what needs attention, find something, or create an item.</div></div><form class="aiComposer" id="aiForm"><input id="aiInput" autocomplete="off" placeholder="Ask Qanteak or request an action"><button><i class="fi fi-rr-arrow-right"></i></button></form></section>
+<section class="command" id="command"><div class="commandSearch"><i class="fi fi-rr-search"></i><input id="commandInput" placeholder="Search projects, clients, files, documents or actions"><kbd>Esc</kbd></div><div id="commandResults"></div></section>
+<section class="modal" id="modal"><div class="modalCard"><div class="panelHead"><div><h3 id="modalTitle">Create</h3><p id="modalSubtitle">Add something to Qanteak.</p></div><button data-close="modal">×</button></div><form id="modalForm" class="modalForm"></form></div></section>
+<section class="modal" id="detailModal"><div class="modalCard detailCard"><div class="panelHead"><div><h3 id="detailTitle">Details</h3><p id="detailSubtitle">Connected Qanteak context.</p></div><button data-close="detail">×</button></div><div id="detailBody" class="detailBody"></div></div></section>
+<input type="file" id="clientLogoPicker" accept="image/*" hidden>
+<input type="file" id="filePicker" multiple hidden>
+<div class="toastHost" id="toastHost"></div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+{
+  "name": "qanteak-os",
+  "version": "1.0.0-rc.9.13",
+  "private": true,
+  "description": "Qanteak OS RC9 V0.13 production hardening, recovery, collaboration, invitations, onboarding and file UX",
+  "main": "electron/main.cjs",
+  "type": "module",
+  "scripts": {
+    "start": "electron .",
+    "build": "node scripts/preflight.mjs && node --experimental-vm-modules scripts/renderer-module-smoke.cjs && node scripts/build-renderer.mjs",
+    "dist": "npm run build && electron-builder --win nsis --publish never",
+    "preflight": "node scripts/preflight.mjs",
+    "qa:release": "node scripts/verify-release.mjs release",
+    "signing:preflight": "node scripts/signing-preflight.mjs",
+    "qa:renderer-startup": "node --experimental-vm-modules scripts/renderer-module-smoke.cjs",
+    "qa:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/windows-qa-preflight.ps1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4",
+    "chokidar": "^4.0.3",
+    "cors": "^2.8.5",
+    "electron-updater": "^6.6.2",
+    "express": "^5.1.0",
+    "googleapis": "^160.0.0",
+    "helmet": "^8.1.0",
+    "lucide-react": "^0.542.0",
+    "pdfkit": "^0.17.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.2",
+    "concurrently": "^9.2.1",
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.12",
+    "vite": "^7.1.3",
+    "wait-on": "^8.0.4"
+  },
+  "build": {
+    "appId": "com.creativeos.desktop",
+    "productName": "Qanteak OS",
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "allowElevation": true,
+      "runAfterFinish": true,
+      "include": "build/installer.nsh"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Hqawasmeh",
+        "repo": "CreativeOS-Releases",
+        "releaseType": "prerelease"
+      }
+    ],
+    "artifactName": "QanteakOS-Setup-${version}.${ext}",
+    "protocols": [
+      {
+        "name": "Qanteak OS Authentication",
+        "schemes": [
+          "qanteak",
+          "creativeos"
+        ]
+      }
+    ]
+  },
+  "author": "Qanteak"
+}
