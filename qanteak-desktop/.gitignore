@@ -1,0 +1,14 @@
+node_modules/
+release/
+dist/
+.env
+*.pfx
+*.p12
+*.pem
+*.key
+PUBLISH_LOG.txt
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
