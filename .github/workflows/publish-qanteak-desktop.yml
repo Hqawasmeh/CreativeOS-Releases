@@ -2,6 +2,11 @@ name: Publish Qanteak Desktop
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'qanteak-desktop/RELEASE_REQUEST'
 
 permissions:
   contents: write
@@ -40,6 +45,10 @@ jobs:
           $tag = "v$version"
           $changelog = "CHANGELOG-RC9-V0.$minor.md"
           if (-not (Test-Path $changelog)) { throw "Missing changelog: $changelog" }
+          if ($env:GITHUB_EVENT_NAME -eq 'push') {
+            $request = (Get-Content RELEASE_REQUEST -Raw).Trim()
+            if ($request -ne $version) { throw "Release request '$request' does not match package version '$version'." }
+          }
           "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
           "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Append
           "RELEASE_MINOR=$minor" | Out-File -FilePath $env:GITHUB_ENV -Append
