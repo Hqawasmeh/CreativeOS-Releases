@@ -1,0 +1,112 @@
+name: Publish Qanteak Desktop
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    working-directory: qanteak-desktop
+
+jobs:
+  build-and-publish-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: qanteak-desktop/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Preflight, renderer smoke test, and build
+        run: npm run build
+
+      - name: Package Windows installer once
+        run: npx electron-builder --win nsis --publish never
+        env:
+          QANTEAK_REQUIRE_SIGNING: '0'
+
+      - name: Verify updater artifacts
+        run: npm run qa:release
+
+      - name: Windows artifact QA
+        shell: pwsh
+        run: ./scripts/windows-qa-preflight.ps1
+
+      - name: Validate release version and files
+        shell: pwsh
+        run: |
+          $version = node -p "require('./package.json').version"
+          $expectedTag = "v$version"
+          $exe = "release/QanteakOS-Setup-$version.exe"
+          $blockmap = "$exe.blockmap"
+          $yml = "release/latest.yml"
+
+          if (-not (Test-Path $exe)) { throw "Missing installer: $exe" }
+          if (-not (Test-Path $blockmap)) { throw "Missing blockmap: $blockmap" }
+          if (-not (Test-Path $yml)) { throw "Missing updater metadata: $yml" }
+
+          $latest = Get-Content $yml -Raw
+          if ($latest -notmatch [regex]::Escape("QanteakOS-Setup-$version.exe")) {
+            throw "latest.yml does not reference the installer for $version"
+          }
+
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "RELEASE_TAG=$expectedTag" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Ensure release does not already exist
+        shell: pwsh
+        run: |
+          gh release view "$env:RELEASE_TAG" --repo "$env:GITHUB_REPOSITORY" *> $null
+          if ($LASTEXITCODE -eq 0) {
+            throw "Release $env:RELEASE_TAG already exists. Refusing to replace updater artifacts."
+          }
+          exit 0
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Publish exact updater artifacts
+        shell: pwsh
+        run: |
+          gh release create "$env:RELEASE_TAG" `
+            "release/QanteakOS-Setup-$env:VERSION.exe" `
+            "release/QanteakOS-Setup-$env:VERSION.exe.blockmap" `
+            "release/latest.yml" `
+            --repo "$env:GITHUB_REPOSITORY" `
+            --target "$env:GITHUB_SHA" `
+            --title "Qanteak OS RC9 V0.13" `
+            --notes-file "CHANGELOG-RC9-V0.13.md" `
+            --prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Verify published GitHub release
+        shell: pwsh
+        run: |
+          $json = gh release view "$env:RELEASE_TAG" --repo "$env:GITHUB_REPOSITORY" --json tagName,isPrerelease,assets | ConvertFrom-Json
+          if ($json.tagName -ne $env:RELEASE_TAG) { throw "Published tag mismatch." }
+          if (-not $json.isPrerelease) { throw "Release was not published as a prerelease." }
+
+          $names = @($json.assets | ForEach-Object { $_.name })
+          $required = @(
+            "QanteakOS-Setup-$env:VERSION.exe",
+            "QanteakOS-Setup-$env:VERSION.exe.blockmap",
+            "latest.yml"
+          )
+          foreach ($name in $required) {
+            if ($names -notcontains $name) { throw "Published release is missing $name" }
+          }
+
+          Write-Host "Qanteak $env:VERSION is live with all updater artifacts."
+        env:
+          GH_TOKEN: ${{ github.token }}
