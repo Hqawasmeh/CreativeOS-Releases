@@ -1,0 +1,34 @@
+name: Fix Qanteak V0.14 Apply Workflow
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-qanteak-v014-workflow.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repair escaped newline in V0.14 source patcher
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('.github/workflows/apply-qanteak-v014-source.yml')
+          s=p.read_text()
+          bad="hardening=r'''\\n/* ================= RC9 V0.14 PERMISSIONS + OFFLINE + BACKUPS ================= */"
+          good="hardening=r'''\n/* ================= RC9 V0.14 PERMISSIONS + OFFLINE + BACKUPS ================= */"
+          if bad not in s:
+              raise SystemExit('Expected escaped hardening marker not found')
+          p.write_text(s.replace(bad,good))
+      - name: Commit repair
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/apply-qanteak-v014-source.yml
+          git commit -m 'Fix V0.14 renderer patch syntax'
+          git push
