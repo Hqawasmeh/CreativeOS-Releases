@@ -1,8 +1,8 @@
 {
   "name": "qanteak-os",
-  "version": "1.0.0-rc.9.14",
+  "version": "1.0.0-rc.9.15",
   "private": true,
-  "description": "Qanteak OS RC9 V0.14 cloud, permissions, resilience, recovery and update hardening",
+  "description": "Qanteak OS RC9 V0.15 creation reliability and invitation delivery fix",
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {

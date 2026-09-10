@@ -83,7 +83,7 @@ const prefersDark=window.matchMedia?.('(prefers-color-scheme: dark)');
 function resolvedAppearance(){const p=state.preferences?.appearance||'light';return p==='system'?(prefersDark?.matches?'dark':'light'):p}
 function applyAppearance(){const resolved=resolvedAppearance();document.documentElement.dataset.theme=resolved;document.documentElement.dataset.appearanceMode=state.preferences?.appearance||'light';for(const logo of [$('#brandLogo'),$('#authLogo')].filter(Boolean)){logo.src=resolved==='dark'?'assets/qanteak-logo-white.png':'assets/qanteak-logo-black.png';logo.dataset.logoTone=resolved==='dark'?'light':'dark'}const metaTheme=document.querySelector('meta[name="theme-color"]');if(metaTheme)metaTheme.content=resolved==='dark'?'#0b0d12':'#f4f6f8'}
 function setAppearance(mode){if(!['light','dark','system'].includes(mode))return;const previous=state.preferences?.appearance||'light';if(previous===mode){applyAppearance();return}state.preferences={...(state.preferences||{}),appearance:mode};save();applyAppearance();if(state.view==='settings')render('settings');toast('Appearance updated',mode==='system'?'Qanteak now follows your Windows appearance.':`Qanteak switched to ${mode} mode.`,'good')}
-function save(){persistDeviceState();updateNotificationCount()}
+function save(){persistDeviceState();updateNotificationCount();if(backendState?.session&&backendState?.workspaceId)scheduleCloudSync()}
 
 const meta={
   home:['Home','Your command center for work, clients and business.'],
@@ -726,7 +726,7 @@ document.addEventListener('submit',async e=>{
   if(type==='onboarding'){await finishOnboarding(String(new FormData(form).get('project')||''));return}
   if(type==='workspaceInvite'){
     const fd=new FormData(form),email=String(fd.get('email')||'').trim(),role=String(fd.get('role')||'Editor'),access=role==='Admin'?['Everything']:permissionObjectFromForm(fd);
-    try{const result=await window.qanteakDesktop.backendInviteCreateAndEmail({workspaceId:backendState.workspaceId,email,role,access});const row=result?.invite||result;const link=`qanteak://invite/${row?.token||''}`;await refreshWorkspaceInvites(false);closeAll();render('settings');try{await navigator.clipboard.writeText(link)}catch{}toast('Invitation sent',`Email delivery started via ${result?.delivery==='magic_link'?'secure sign-in email':'Qanteak invitation email'}. The secure link was also copied.`,'good')}catch(err){toast('Invite failed',err?.message||'Could not create or email the invitation.')}return;
+    try{let result;try{result=await window.qanteakDesktop.backendInviteCreateAndEmail({workspaceId:backendState.workspaceId,email,role,access})}catch(primaryErr){await refreshWorkspaceInvites(false);const existing=(backendState.invites||[]).find(i=>String(i.email||'').toLowerCase()===email.toLowerCase());if(existing){result={ok:true,delivery:'pending',invite:existing}}else{const created=await window.qanteakDesktop.backendInviteCreate({workspaceId:backendState.workspaceId,email,role,access});result={ok:true,delivery:'link_only',invite:created}}}const row=result?.invite||result;const link=`qanteak://invite/${row?.token||''}`;await refreshWorkspaceInvites(false);closeAll();render('settings');try{await navigator.clipboard.writeText(link)}catch{}const msg=result?.delivery==='link_only'?'The secure invite was created. Email delivery is delayed, so the invite link was copied as a fallback.':result?.delivery==='pending'?'The secure invite is ready and email delivery is still processing. The link was also copied.':`Email delivery started via ${result?.delivery==='magic_link'?'secure sign-in email':'Qanteak invitation email'}. The secure link was also copied.`;toast('Invitation ready',msg,'good')}catch(err){toast('Invite failed',err?.message||'Could not create the invitation.')}return;
   }
   if(type==='recovery'){
     const password=String(new FormData(form).get('password')||'');if(password.length<8){toast('Password too short','Use at least 8 characters.');return}try{await window.qanteakDesktop.backendUpdatePassword(password);closeAll();setAuthStatus('Password updated. You can now sign in.','good');toast('Password updated','Your new Qanteak password is active.','good')}catch(err){toast('Password update failed',err?.message||'Open the recovery link again.')}return;
@@ -774,6 +774,23 @@ window.addEventListener('offline',()=>{backendState.connectivity={online:false,l
 window.addEventListener('online',async()=>{await refreshConnectivity(false);if(backendState.session&&backendState.workspaceId){await startWorkspaceRealtime();if(backendState.offlineDirty){backendState.offlineDirty=false;await pushWorkspaceSnapshot(false)}}toast('Back online','Qanteak reconnected and resumed cloud synchronization.','good');if(state.view==='settings')render('settings')});
 document.addEventListener('visibilitychange',async()=>{if(!document.hidden&&backendState.session&&backendState.workspaceId){await refreshConnectivity(false);if(!backendState.realtime&&backendState.connectivity?.online)await startWorkspaceRealtime()}});
 /* ================= END RC9 V0.14 PERMISSIONS + OFFLINE + BACKUPS ================= */
+
+/* ================= RC9 V0.15 CREATION RELIABILITY ================= */
+const QANTEAK_CREATABLE_TYPES=new Set(['task','review','project','invoice','client','document','lead','expense','automation']);
+document.addEventListener('submit',e=>{
+  const form=e.target;
+  if(form?.id!=='modalForm'||!QANTEAK_CREATABLE_TYPES.has(form.dataset.type))return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  try{
+    createFromForm(form);
+    if(backendState?.session&&backendState?.workspaceId)scheduleCloudSync();
+  }catch(err){
+    console.error('Qanteak create failed',err);
+    toast('Create failed',err?.message||'Qanteak could not create this item.');
+  }
+},true);
+/* ================= END RC9 V0.15 CREATION RELIABILITY ================= */
 prefersDark?.addEventListener?.('change',()=>{if(state.preferences?.appearance==='system')applyAppearance()});
 applyAppearance();clearWorkspaceCollections();showAuthenticatedApp(false);
 setInterval(()=>{if(backendState.session&&state.view==='home'&&!$('#modal').classList.contains('open')&&!$('#detailModal').classList.contains('open'))render('home')},30000);
