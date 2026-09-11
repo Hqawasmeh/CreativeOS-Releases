@@ -1,8 +1,8 @@
 {
   "name": "qanteak-os",
-  "version": "1.0.0-rc.9.16",
+  "version": "1.0.0-rc.9.17",
   "private": true,
-  "description": "Qanteak OS RC9 V0.16 sheet editor, lifecycle actions and permissions polish",
+  "description": "Qanteak OS RC9 V0.17 workspace recovery and safe cloud hydration hotfix",
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
