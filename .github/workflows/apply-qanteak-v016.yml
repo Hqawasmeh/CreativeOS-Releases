@@ -26,6 +26,18 @@ jobs:
       - name: Apply V0.16 scoped changes
         run: python qanteak-desktop/scripts/upgrade-v016.py
 
+      - name: Repair generated function override
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for rel in ['qanteak-desktop/src/app.js','qanteak-desktop/scripts/upgrade-v016.py']:
+              p=Path(rel)
+              s=p.read_text()
+              s=s.replace("function docIcon(type){return type==='sheet'?'fi-rr-table-columns':type==='note'?'fi-rr-note-sticky':'fi-rr-document'}", "docIcon=function(type){return type==='sheet'?'fi-rr-table-columns':type==='note'?'fi-rr-note-sticky':'fi-rr-document'}")
+              p.write_text(s)
+          PY
+
       - name: Install dependencies
         working-directory: qanteak-desktop
         run: npm ci
@@ -50,7 +62,8 @@ jobs:
           grep -q "v016SheetEditor" src/app.js
           grep -q "data-entity-delete" src/app.js
           grep -q "permissionGrid" src/styles.css
-          if grep -q 'data-create="slide"' <(tail -n 700 src/app.js); then
+          awk '/RC9 V0.16 SHEETS \+ LIFECYCLE \+ PERMISSIONS/{flag=1} flag' src/app.js > /tmp/v016-block.txt
+          if grep -q 'data-create="slide"' /tmp/v016-block.txt; then
             echo "Slides creation control still present in active V0.16 override" >&2
             exit 1
           fi
