@@ -1,0 +1,64 @@
+name: Apply Qanteak RC9 V0.19
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-qanteak-v019.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: qanteak-desktop/package-lock.json
+
+      - name: Apply V0.19 cloud recovery hotfix
+        run: python qanteak-desktop/scripts/upgrade-v019.py
+
+      - name: Install dependencies
+        working-directory: qanteak-desktop
+        run: npm ci
+
+      - name: Verify build and interactions
+        working-directory: qanteak-desktop
+        run: npm run build
+
+      - name: Syntax checks
+        working-directory: qanteak-desktop
+        run: |
+          node --check src/app.js
+          node --check electron/backend.cjs
+          node --check electron/main.cjs
+          node --check electron/preload.cjs
+
+      - name: Verify V0.19 recovery markers
+        working-directory: qanteak-desktop
+        run: |
+          grep -q '1.0.0-rc.9.19' package.json
+          grep -q 'isRetriableRestError' electron/backend.cjs
+          grep -q 'schema cache' electron/backend.cjs
+          grep -q 'workspaceLoaded!==true' src/app.js
+          grep -q 'V0.18 NEW CREATION MENU' src/app.js
+
+      - name: Commit verified V0.19 source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add qanteak-desktop
+          if git diff --cached --quiet; then
+            echo 'No source changes to commit'
+          else
+            git commit -m 'Qanteak OS RC9 V0.19 cloud schema-cache recovery'
+            git push
+          fi
