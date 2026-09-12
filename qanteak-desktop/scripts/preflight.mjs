@@ -91,3 +91,5 @@ if (fail.length) {
 }
 console.log('Qanteak preflight OK · 1.0.0-rc.9.20');
 warn.forEach(x => console.warn('WARN: ' + x));
+
+// V0.21 workspace workflow trigger
