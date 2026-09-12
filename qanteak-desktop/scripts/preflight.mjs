@@ -17,6 +17,8 @@ const required = [
   'src/index.html',
   'src/styles.css',
   'src/app.js',
+  'src/v020-foundations.js',
+  'src/v020-foundations.css',
   'src/assets/qanteak-logo-black.png',
   'src/assets/qanteak-logo-white.png',
   'src/assets/qanteak-symbol.svg',
@@ -25,7 +27,7 @@ const required = [
   'backend/README.md',
   'backend/migrations/README.md',
   'SECURITY_AND_SIGNING.md',
-  'CHANGELOG-RC9-V0.19.md',
+  'CHANGELOG-RC9-V0.20.md',
   'WINDOWS_QA_CHECKLIST.md',
   'scripts/windows-qa-preflight.ps1'
 ];
@@ -39,7 +41,7 @@ try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); }
 catch { fail.push('package.json is missing or invalid JSON.'); }
 
 if (pkg) {
-  if (pkg.version !== '1.0.0-rc.9.19') fail.push(`Unexpected package version: ${pkg.version}`);
+  if (pkg.version !== '1.0.0-rc.9.20') fail.push(`Unexpected package version: ${pkg.version}`);
   if (pkg.main !== 'electron/main.cjs') fail.push(`Unexpected Electron entry: ${pkg.main}`);
   if (pkg?.build?.appId !== 'com.creativeos.desktop') fail.push('Windows appId must remain com.creativeos.desktop for RC9 in-place upgrades.');
   if (pkg?.build?.artifactName !== 'QanteakOS-Setup-${version}.${ext}') fail.push('Unexpected installer artifactName.');
@@ -55,7 +57,6 @@ if (fs.existsSync(path.join(root, '.env.example'))) {
   }
 }
 
-
 const rendererPath = path.join(root, 'src/app.js');
 if (fs.existsSync(rendererPath)) {
   const renderer = fs.readFileSync(rendererPath, 'utf8');
@@ -64,10 +65,14 @@ if (fs.existsSync(rendererPath)) {
   if (stateInit < 0 || defaultsInit < 0 || stateInit > defaultsInit) fail.push('Renderer backendState must be initialized before default-state construction.');
   if (/const\s+backendState\s*=/.test(renderer)) fail.push('Renderer must not redeclare backendState with const after startup helpers can access it.');
   if (!/backendEntitlement/.test(renderer)) fail.push('Subscription entitlement gate is missing from renderer.');
-  // ES modules are always strict mode. A bare assignment to an undeclared identifier
-  // crashes the renderer before auth listeners bind. Keep this guard focused on the
-  // regression that affected V0.10/V0.11 and run the module smoke test for full coverage.
   if (/^\s*invoiceTable\s*=\s*function\b/m.test(renderer)) fail.push('Renderer contains undeclared invoiceTable assignment; use a declaration in ES-module code.');
+}
+const foundationsPath = path.join(root, 'src/v020-foundations.js');
+if (fs.existsSync(foundationsPath)) {
+  const foundations = fs.readFileSync(foundationsPath, 'utf8');
+  if (!foundations.includes('qanteak.rc9.v0.20.foundations')) fail.push('V0.20 foundation storage namespace is missing.');
+  if (!foundations.includes('function renderWorkspace')) fail.push('V0.20 workspace renderer is missing.');
+  if (!foundations.includes('function openDatabase')) fail.push('V0.20 database views are missing.');
 }
 const preloadPath = path.join(root, 'electron/preload.cjs');
 if (fs.existsSync(preloadPath) && !/backendEntitlement/.test(fs.readFileSync(preloadPath,'utf8'))) fail.push('Entitlement IPC is missing from preload.');
@@ -87,5 +92,5 @@ if (fail.length) {
   fail.forEach(x => console.error(' - ' + x));
   process.exit(1);
 }
-console.log('Qanteak preflight OK · 1.0.0-rc.9.19');
+console.log('Qanteak preflight OK · 1.0.0-rc.9.20');
 warn.forEach(x => console.warn('WARN: ' + x));
