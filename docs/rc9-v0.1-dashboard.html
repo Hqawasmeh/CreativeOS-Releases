@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Qanteak — RC9 V 0.1 Command Center</title>
+<style>
+@font-face{font-family:AVEstiana;src:url('https://drive.google.com/uc?export=download&id=14u40x9vubTKi5-VZdTNakgxyiOBWPy9Z') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+:root{--navy:#05055d;--blue:#0d7ff2;--cyan:#18e8ff;--ink:#0c1020;--muted:#697386;--bg:#eef3f8;--card:#fff;--line:#e1e8f0;--soft:#f7f9fc;--danger:#d9485f;--warning:#d69d20;--success:#13a879;--r:18px;--shadow:0 24px 70px rgba(5,5,93,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:AVEstiana,Inter,Arial,sans-serif}.app{min-height:100vh;display:grid;grid-template-columns:248px 1fr}.sidebar{position:sticky;top:0;height:100vh;background:linear-gradient(180deg,#05055d 0%,#071672 58%,#06244f 100%);color:#fff;padding:20px 16px;display:flex;flex-direction:column}.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}.brand img{width:34px;height:34px;object-fit:contain}.brand strong{font-size:18px}.workspace{margin:0 4px 18px;padding:11px 12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);border-radius:13px}.workspace small{display:block;opacity:.6;font-size:10px}.workspace b{font-size:12px}.search{display:flex;align-items:center;gap:8px;margin:0 4px 20px;padding:10px 11px;border-radius:12px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.72);font-size:11px}.search kbd{margin-left:auto;border:1px solid rgba(255,255,255,.16);border-radius:6px;padding:2px 6px;font-size:9px}.navLabel{padding:0 10px;margin:12px 0 5px;font-size:9px;text-transform:uppercase;letter-spacing:.12em;opacity:.42}.navItem{display:flex;align-items:center;gap:10px;padding:10px 11px;margin:2px 0;border-radius:11px;font-size:12px;color:rgba(255,255,255,.72)}.navItem.active,.navItem:hover{background:rgba(255,255,255,.11);color:#fff}.navIcon{width:18px;text-align:center}.navItem.active:after{content:"";width:3px;height:18px;border-radius:9px;background:var(--cyan);margin-left:auto}.spacer{flex:1}.account{display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.1);padding:16px 8px 2px}.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--blue));display:grid;place-items:center;color:#fff;font-weight:800}.account b{font-size:11px}.account small{display:block;opacity:.55;font-size:9px}.main{padding:22px 26px 34px;min-width:0}.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--blue);font-weight:800}.topbar h1{font-size:28px;letter-spacing:-.03em;margin:4px 0 2px}.topbar p{margin:0;color:var(--muted);font-size:12px}.actions{display:flex;align-items:center;gap:8px}.iconBtn,.btn{border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px 12px;font:inherit;font-size:11px}.btn.primary{background:linear-gradient(100deg,var(--navy),var(--blue));color:#fff;border-color:transparent;box-shadow:0 10px 24px rgba(13,127,242,.18)}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 1px 0 rgba(255,255,255,.8) inset}.metric{padding:16px}.metricHead{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:10px}.metricIcon{width:30px;height:30px;border-radius:10px;background:#edf7ff;display:grid;place-items:center;color:var(--blue)}.metricValue{font-size:25px;font-weight:800;letter-spacing:-.04em;margin:12px 0 5px}.metricFoot{font-size:10px;color:var(--muted)}.good{color:var(--success)}.warn{color:var(--warning)}.bad{color:var(--danger)}.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.75fr);gap:12px;margin-top:12px}.sectionCard{padding:17px}.sectionHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.sectionHead h2{font-size:15px;margin:0}.sectionHead span,.sectionHead button{font-size:10px;color:var(--muted)}.taskList{display:grid;gap:8px}.task{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}.check{width:20px;height:20px;border:1px solid #cfd8e4;border-radius:7px;background:#fff}.task b{display:block;font-size:11px}.task small{font-size:9px;color:var(--muted)}.pill{padding:5px 8px;border-radius:99px;font-size:9px;background:#edf7ff;color:var(--blue);white-space:nowrap}.pill.warning{background:#fff6df;color:#9e6f00}.pill.danger{background:#fff0f3;color:#b72f48}.projects{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.project{padding:14px;border:1px solid var(--line);border-radius:14px}.projectTop{display:flex;justify-content:space-between;gap:10px}.project h3{font-size:12px;margin:0}.project small{font-size:9px;color:var(--muted)}.bar{height:7px;background:#edf1f5;border-radius:99px;overflow:hidden;margin:14px 0 8px}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px}.projectMeta{display:flex;justify-content:space-between;color:var(--muted);font-size:9px}.attention{display:grid;gap:8px}.attentionItem{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:11px;border:1px solid var(--line);border-radius:12px}.signal{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#fff0f3;color:var(--danger)}.signal.yellow{background:#fff7e6;color:var(--warning)}.attentionItem b{font-size:11px}.attentionItem p{margin:3px 0 0;color:var(--muted);font-size:9px;line-height:1.45}.aiCard{margin-top:12px;padding:16px;background:linear-gradient(135deg,#06065e,#0b6ed8 62%,#12bfd6);color:#fff;border:0;position:relative;overflow:hidden}.aiCard:after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;right:-70px;top:-90px;border:30px solid rgba(255,255,255,.08)}.aiTop{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}.aiTop b{font-size:12px}.aiCard h3{font-size:18px;max-width:440px;margin:16px 0 7px;position:relative;z-index:1}.aiCard p{font-size:10px;color:#d9efff;max-width:620px;line-height:1.6;position:relative;z-index:1}.aiInput{display:flex;gap:8px;margin-top:14px;position:relative;z-index:1}.aiInput input{flex:1;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.12);color:#fff;border-radius:11px;padding:11px 12px;outline:none}.aiInput input::placeholder{color:rgba(255,255,255,.65)}.aiInput button{border:0;border-radius:11px;padding:0 15px;background:#fff;color:var(--navy);font-weight:800}.bottom{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;margin-top:12px}.activityRow{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.activityRow:last-child{border:0}.activityDot{width:8px;height:8px;border-radius:50%;background:var(--blue);margin-top:5px}.activityRow b{font-size:10px}.activityRow p{font-size:9px;color:var(--muted);margin:2px 0}.money{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.moneyBox{padding:12px;background:var(--soft);border:1px solid var(--line);border-radius:12px}.moneyBox small{display:block;font-size:9px;color:var(--muted)}.moneyBox b{display:block;font-size:18px;margin-top:5px}.chart{height:110px;margin-top:12px;display:flex;align-items:end;gap:7px;padding:8px 2px}.chart i{flex:1;min-width:10px;background:linear-gradient(180deg,var(--cyan),var(--blue));border-radius:6px 6px 2px 2px}.mobileTop{display:none}
+@media(max-width:1100px){.grid4{grid-template-columns:repeat(2,1fr)}.layout,.bottom{grid-template-columns:1fr}.projects{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.app{display:block}.sidebar{display:none}.main{padding:14px}.mobileTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.mobileTop img{width:34px}.topbar{align-items:center}.actions .iconBtn{display:none}.grid4{grid-template-columns:1fr 1fr}.projects,.money{grid-template-columns:1fr}.metricValue{font-size:21px}.topbar h1{font-size:22px}}
+@media(max-width:480px){.grid4{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.actions{width:100%}.actions .btn{width:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><img src="assets/qanteak-hub-symbol.svg" alt="Qanteak"><strong>Qanteak</strong></div>
+  <div class="workspace"><small>Workspace</small><b>Creative Studio</b></div>
+  <div class="search">⌕ Search Qanteak <kbd>Ctrl K</kbd></div>
+  <div class="navLabel">Main</div>
+  <div class="navItem active"><span class="navIcon">⌂</span>Home</div>
+  <div class="navItem"><span class="navIcon">▦</span>Work</div>
+  <div class="navItem"><span class="navIcon">◎</span>Clients</div>
+  <div class="navLabel">Workspace</div>
+  <div class="navItem"><span class="navIcon">▤</span>Documents</div>
+  <div class="navItem"><span class="navIcon">▣</span>Files</div>
+  <div class="navItem"><span class="navIcon">◇</span>Knowledge</div>
+  <div class="navLabel">Business</div>
+  <div class="navItem"><span class="navIcon">$</span>Business</div>
+  <div class="navItem"><span class="navIcon">↯</span>Automations</div>
+  <div class="navItem"><span class="navIcon">✦</span>Qanteak AI</div>
+  <div class="spacer"></div>
+  <div class="navItem"><span class="navIcon">◌</span>Notifications</div>
+  <div class="navItem"><span class="navIcon">⚙</span>Settings</div>
+  <div class="account"><div class="avatar">HQ</div><div><b>Hamza Q.</b><small>Owner</small></div></div>
+</aside>
+<main class="main">
+  <div class="mobileTop"><img src="assets/qanteak-hub-symbol.svg" alt="Qanteak"><button class="iconBtn">☰</button></div>
+  <header class="topbar">
+    <div><div class="eyebrow">Command Center</div><h1>Good morning, Hamza</h1><p>Here is what needs your attention today.</p></div>
+    <div class="actions"><button class="iconBtn">⌕</button><button class="iconBtn">◌</button><button class="btn primary">+ New</button></div>
+  </header>
+
+  <section class="grid4">
+    <article class="card metric"><div class="metricHead"><span>Tasks due today</span><div class="metricIcon">✓</div></div><div class="metricValue">8</div><div class="metricFoot"><span class="bad">3 urgent</span> · 5 normal</div></article>
+    <article class="card metric"><div class="metricHead"><span>Reviews waiting</span><div class="metricIcon">◉</div></div><div class="metricValue">3</div><div class="metricFoot"><span class="warn">Oldest 3 days</span></div></article>
+    <article class="card metric"><div class="metricHead"><span>Outstanding invoices</span><div class="metricIcon">$</div></div><div class="metricValue">$8,950</div><div class="metricFoot"><span class="bad">$2,400 overdue</span></div></article>
+    <article class="card metric"><div class="metricHead"><span>Active projects</span><div class="metricIcon">▦</div></div><div class="metricValue">12</div><div class="metricFoot"><span class="good">9 on track</span> · 3 need attention</div></article>
+  </section>
+
+  <section class="layout">
+    <div class="card sectionCard">
+      <div class="sectionHead"><h2>Today</h2><span>Sunday, Sep 6</span></div>
+      <div class="taskList">
+        <div class="task"><div class="check"></div><div><b>Finalize Nike campaign export</b><small>Nike Campaign · Due 11:30 AM</small></div><span class="pill danger">Urgent</span></div>
+        <div class="task"><div class="check"></div><div><b>Review client feedback on brand deck</b><small>Atlas Brand Identity · Due 1:00 PM</small></div><span class="pill warning">Review</span></div>
+        <div class="task"><div class="check"></div><div><b>Send final invoice to Brightline</b><small>Brightline Website · Due 3:00 PM</small></div><span class="pill">Finance</span></div>
+        <div class="task"><div class="check"></div><div><b>Prepare Monday production brief</b><small>Internal · Due 5:00 PM</small></div><span class="pill">Planning</span></div>
+      </div>
+    </div>
+    <div class="card sectionCard">
+      <div class="sectionHead"><h2>Needs attention</h2><span>4 items</span></div>
+      <div class="attention">
+        <div class="attentionItem"><div class="signal">!</div><div><b>Invoice #1024 is overdue</b><p>$2,400 · Brightline · 8 days overdue</p></div></div>
+        <div class="attentionItem"><div class="signal yellow">◔</div><div><b>Client approval waiting</b><p>Nike Campaign · Final cut · 3 days</p></div></div>
+        <div class="attentionItem"><div class="signal yellow">⌁</div><div><b>Project deadline tomorrow</b><p>Atlas Brand Identity · 6 open tasks</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card aiCard">
+    <div class="aiTop"><b>✦ Qanteak AI</b><span>Context: Entire workspace</span></div>
+    <h3>Your day looks manageable, but two items could become blockers.</h3>
+    <p>Nike Campaign is waiting on client approval, and Brightline has an overdue invoice. I can prepare the follow-up messages, create a revised task plan, or show every project currently at risk.</p>
+    <div class="aiInput"><input placeholder="Ask Qanteak what to work on, create, find, or change..."><button>Ask</button></div>
+  </section>
+
+  <section class="bottom">
+    <div class="card sectionCard">
+      <div class="sectionHead"><h2>Current projects</h2><span>View all</span></div>
+      <div class="projects">
+        <div class="project"><div class="projectTop"><div><h3>Nike Campaign</h3><small>Client campaign</small></div><span class="pill warning">Waiting</span></div><div class="bar"><i style="width:78%"></i></div><div class="projectMeta"><span>78% complete</span><span>Due Sep 8</span></div></div>
+        <div class="project"><div class="projectTop"><div><h3>Atlas Brand Identity</h3><small>Brand system</small></div><span class="pill">In progress</span></div><div class="bar"><i style="width:55%"></i></div><div class="projectMeta"><span>55% complete</span><span>Due Sep 7</span></div></div>
+        <div class="project"><div class="projectTop"><div><h3>Wedding Film</h3><small>Post-production</small></div><span class="pill">Delivery</span></div><div class="bar"><i style="width:92%"></i></div><div class="projectMeta"><span>92% complete</span><span>Due Sep 10</span></div></div>
+        <div class="project"><div class="projectTop"><div><h3>Brightline Website</h3><small>Web design</small></div><span class="pill danger">At risk</span></div><div class="bar"><i style="width:68%"></i></div><div class="projectMeta"><span>68% complete</span><span>Due Sep 9</span></div></div>
+      </div>
+    </div>
+    <div class="card sectionCard">
+      <div class="sectionHead"><h2>Business overview</h2><span>This month</span></div>
+      <div class="money"><div class="moneyBox"><small>Revenue</small><b>$24.8k</b></div><div class="moneyBox"><small>Outstanding</small><b>$8.9k</b></div><div class="moneyBox"><small>Pipeline</small><b>$31.2k</b></div></div>
+      <div class="chart"><i style="height:31%"></i><i style="height:48%"></i><i style="height:42%"></i><i style="height:66%"></i><i style="height:59%"></i><i style="height:82%"></i><i style="height:74%"></i><i style="height:94%"></i></div>
+    </div>
+  </section>
+
+  <section class="card sectionCard" style="margin-top:12px">
+    <div class="sectionHead"><h2>Recent activity</h2><span>Live workspace feed</span></div>
+    <div class="activityRow"><div class="activityDot"></div><div><b>Sarah uploaded final-v8.psd</b><p>Nike Campaign · 12 minutes ago</p></div></div>
+    <div class="activityRow"><div class="activityDot"></div><div><b>John approved Review #3</b><p>Wedding Film · 36 minutes ago</p></div></div>
+    <div class="activityRow"><div class="activityDot"></div><div><b>Invoice #1026 was sent</b><p>Atlas Brand Identity · 1 hour ago</p></div></div>
+  </section>
+</main>
+</div>
+</body>
+</html>

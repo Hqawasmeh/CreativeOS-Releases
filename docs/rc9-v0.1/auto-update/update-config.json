@@ -1,0 +1,22 @@
+{
+  "displayVersion": "RC9 V0.1",
+  "appVersion": "1.0.0-rc.9.1",
+  "releaseTag": "v1.0.0-rc.9.1",
+  "channel": "latest",
+  "provider": {
+    "type": "github",
+    "owner": "Hqawasmeh",
+    "repo": "CreativeOS-Releases"
+  },
+  "prerelease": true,
+  "allowPrerelease": true,
+  "requiredReleaseAssets": [
+    "latest.yml",
+    "QanteakOS-Setup-1.0.0-rc.9.1.exe",
+    "QanteakOS-Setup-1.0.0-rc.9.1.exe.blockmap"
+  ],
+  "upgradeFrom": [
+    "1.0.0-rc.9"
+  ],
+  "notes": "RC9 V0.1 stays inside the RC9 release family. The semver value 1.0.0-rc.9.1 is used so electron-updater can order it after 1.0.0-rc.9 without creating RC10."
+}

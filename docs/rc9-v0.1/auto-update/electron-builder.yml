@@ -1,0 +1,30 @@
+appId: com.qanteak.os
+productName: Qanteak OS
+artifactName: QanteakOS-Setup-${version}.${ext}
+
+publish:
+  provider: github
+  owner: Hqawasmeh
+  repo: CreativeOS-Releases
+  releaseType: prerelease
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  publisherName: Qanteak
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+files:
+  - dist/**
+  - main/**
+  - package.json
+
+extraMetadata:
+  version: 1.0.0-rc.9.1
