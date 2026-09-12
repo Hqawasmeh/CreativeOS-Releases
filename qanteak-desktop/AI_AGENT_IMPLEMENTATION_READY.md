@@ -1,1 +1,0 @@
-Qanteak AI agent implementation is being prepared for RC9 V0.20.
