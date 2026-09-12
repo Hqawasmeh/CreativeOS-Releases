@@ -1,17 +1,33 @@
 const { autoUpdater } = require('electron-updater');
+const { app, ipcMain } = require('electron');
+const platform = require('./platform.cjs');
 
 let win;
 let installRequested = false;
+let platformRegistered = false;
 
 function send(channel, payload) {
   if (win && !win.isDestroyed()) win.webContents.send(channel, payload);
 }
 
+function initPlatformBridge() {
+  if (platformRegistered) return;
+  platformRegistered = true;
+  platform.configure(app.getPath('userData'));
+  ipcMain.handle('platform:load', () => platform.readState());
+  ipcMain.handle('platform:save', (_e, state) => platform.writeState(state || {}));
+  ipcMain.handle('platform:api-status', () => platform.apiStatus());
+  ipcMain.handle('platform:api-start', (_e, port) => platform.startApi(port));
+  ipcMain.handle('platform:api-stop', () => platform.stopApi());
+  ipcMain.handle('platform:webhook-send', (_e, url, payload) => platform.sendWebhook(url, payload || {}));
+  const saved = platform.readState();
+  if (saved.platform?.apiEnabled) platform.startApi(saved.platform.port || 32145).catch(err => console.warn('Qanteak local API restore failed:', err.message));
+}
+
 function initUpdater(mainWindow) {
   win = mainWindow;
+  initPlatformBridge();
   autoUpdater.autoDownload = true;
-  // We install explicitly after the UI has been closed. This avoids starting
-  // NSIS while Electron windows/processes are still unwinding.
   autoUpdater.autoInstallOnAppQuit = false;
   autoUpdater.allowPrerelease = true;
   autoUpdater.logger = console;
@@ -50,8 +66,6 @@ async function check() {
 function install() {
   if (installRequested) return { ok: true, alreadyStarted: true };
   installRequested = true;
-  // Silent=false keeps the normal installer UI if Windows needs user attention.
-  // isForceRunAfter=true starts the new Qanteak build when installation completes.
   setTimeout(() => autoUpdater.quitAndInstall(false, true), 900);
   return { ok: true };
 }
