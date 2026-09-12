@@ -1,0 +1,67 @@
+name: Apply Qanteak RC9 V0.21 Workspace Foundation
+
+on:
+  push:
+    branches: [qanteak-v021-workspace-foundation]
+    paths:
+      - 'qanteak-desktop/scripts/upgrade-v021-workspace.py'
+      - 'qanteak-desktop/scripts/preflight.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout workspace development branch
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: qanteak-desktop/package-lock.json
+
+      - name: Apply V0.21 workspace foundation
+        run: python qanteak-desktop/scripts/upgrade-v021-workspace.py
+
+      - name: Install dependencies
+        working-directory: qanteak-desktop
+        run: npm ci
+
+      - name: Verify build and interactions
+        working-directory: qanteak-desktop
+        run: npm run build
+
+      - name: Syntax checks
+        working-directory: qanteak-desktop
+        run: |
+          node --check src/app.js
+          node --check electron/backend.cjs
+          node --check electron/main.cjs
+          node --check electron/preload.cjs
+
+      - name: Verify V0.21 markers
+        working-directory: qanteak-desktop
+        run: |
+          grep -q '1.0.0-rc.9.21' package.json
+          grep -q 'QANTEAK_WORKSPACE_V021_START' src/app.js
+          grep -q 'comments' src/app.js
+          grep -q 'savedViews' src/app.js
+          grep -q 'v021EditorToolbar' src/styles.css
+          grep -q 'CHANGELOG-RC9-V0.21.md' scripts/preflight.mjs
+
+      - name: Commit verified V0.21 source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add qanteak-desktop
+          if git diff --cached --quiet; then
+            echo 'No source changes to commit'
+          else
+            git commit -m 'Qanteak OS RC9 V0.21 workspace foundation'
+            git push
+          fi
