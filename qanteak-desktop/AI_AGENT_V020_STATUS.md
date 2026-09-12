@@ -1,1 +1,0 @@
-Qanteak AI V0.20 development status: implementation in progress.
