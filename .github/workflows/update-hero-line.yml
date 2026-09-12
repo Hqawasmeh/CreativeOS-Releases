@@ -1,0 +1,35 @@
+name: Update Qanteak website hero line
+
+on:
+  push:
+    paths:
+      - '.github/workflows/update-hero-line.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace hero headline
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('docs/index.html')
+          s=p.read_text(encoding='utf-8')
+          old='<h1 class="heroTitle">Keep the creative work. <span class="gradient">Lose the tool chaos.</span></h1>'
+          new='<h1 class="heroTitle">One workspace. <span class="gradient">Your entire creative operation.</span></h1>'
+          if old not in s:
+              raise SystemExit('Hero headline marker not found')
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
+          PY
+      - name: Commit website copy update
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/index.html
+          git commit -m 'Update Qanteak website hero message'
+          git push
