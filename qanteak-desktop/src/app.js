@@ -354,7 +354,7 @@ settings=function(){const appearance=state.preferences.appearance||'light';retur
 <article class="card sectionCard">${sectionTitle('General','Device and workspace behavior.')}<div class="formGrid"><div class="field"><label>Workspace name</label><input id="prefWorkspaceName" value="${esc(state.preferences.workspaceName)}"></div><div class="field"><label>Week starts</label><select id="prefWeekStarts"><option ${state.preferences.weekStarts==='Monday'?'selected':''}>Monday</option><option ${state.preferences.weekStarts==='Sunday'?'selected':''}>Sunday</option></select></div><div class="field span2"><label>Timezone</label><input id="prefTimezone" value="${esc(state.preferences.timezone)}"></div></div><div class="formActions"><button class="primary" id="saveGeneralSettings">Save settings</button></div></article>
 <article class="card sectionCard settingsWide">${sectionTitle('Members & access','Add or remove members, assign roles, and scope access.','<button class="primary" data-create="member">+ Member</button>')}<div>${state.members.map(m=>`<div class="memberRow"><div><b>${esc(m.name)}</b><span class="sub">${esc(m.email)}</span></div><select data-member-role="${m.id}"><option ${m.role==='Owner'?'selected':''}>Owner</option><option ${String(m.role||'').toLowerCase()==='admin'?'selected':''}>Admin</option><option ${String(m.role||'').toLowerCase()==='editor'?'selected':''}>Editor</option><option ${String(m.role||'').toLowerCase()==='viewer'?'selected':''}>Viewer</option></select><select data-member-access="${m.id}"><option ${m.access?.includes('Everything')?'selected':''}>Everything</option><option ${m.access?.includes('Clients')?'selected':''}>Work, Clients, Documents</option><option ${m.access?.includes('Files')&&!m.access?.includes('Clients')?'selected':''}>Work, Files</option><option ${m.access?.includes('Business')?'selected':''}>Business only</option></select><button class="miniButton" data-member-remove="${m.id}" ${m.role==='Owner'?'disabled':''}>Remove</button></div>`).join('')}</div></article>
 <article class="card sectionCard">${sectionTitle('Notifications','Choose which desktop categories should interrupt you.')}<label class="contextBlock"><b>Desktop notifications</b><input type="checkbox" id="prefNotifyDesktop" ${state.preferences.notifyDesktop?'checked':''}></label><label class="contextBlock"><b>Finance alerts</b><input type="checkbox" id="prefNotifyFinance" ${state.preferences.notifyFinance?'checked':''}></label><label class="contextBlock"><b>Review alerts</b><input type="checkbox" id="prefNotifyReviews" ${state.preferences.notifyReviews?'checked':''}></label></article>
-<article class="card sectionCard">${sectionTitle('Data & safety','Local workspace controls for this RC.')}<div class="contextBlock"><b>Local persistence</b><span>Projects, tasks, invoices, docs and settings persist on this PC.</span></div><div class="contextBlock"><b>Release identity</b><span>Qanteak OS RC9 V0.19 · 1.0.0-rc.9.19</span></div><div class="formActions"><button class="secondary" id="resetWorkspace">Reset local data</button></div></article>
+<article class="card sectionCard">${sectionTitle('Data & safety','Local workspace controls for this RC.')}<div class="contextBlock"><b>Local persistence</b><span>Projects, tasks, invoices, docs and settings persist on this PC.</span></div><div class="contextBlock"><b>Release identity</b><span>Qanteak OS RC9 V0.20 · 1.0.0-rc.9.20</span></div><div class="formActions"><button class="secondary" id="resetWorkspace">Reset local data</button></div></article>
 <article class="card sectionCard settingsWide">${sectionTitle('Updates','Check GitHub Releases and install the next Qanteak RC update.')}<div class="updateStatusCard"><span class="statusDot" id="updateStatusDot"></span><div><b id="updateStatusTitle">Ready to check</b><span id="updateStatusText">Click Check for updates to contact the Qanteak release feed.</span></div></div><div class="formActions updateActions"><button class="primary" id="checkUpdates">Check for updates</button><button class="secondary" id="restartUpdate" hidden>Restart & Update</button></div></article></div>`}
 
 openCreate=function(type,prefill=''){
@@ -591,7 +591,7 @@ function settingsMembers(){return `<article class="card sectionCard">${sectionTi
 function settingsNotifications(){return `<article class="card sectionCard settingsNarrow">${sectionTitle('Notification categories','Choose what should interrupt you on this device.')}<div class="settingsToggleList"><label><span><b>Desktop notifications</b><small>Master desktop notification switch</small></span><input type="checkbox" id="prefNotifyDesktop" ${state.preferences.notifyDesktop?'checked':''}></label><label><span><b>Tasks</b><small>Assignments, due dates and task changes</small></span><input type="checkbox" id="prefNotifyTasks" ${state.preferences.notifyTasks?'checked':''}></label><label><span><b>Urgent</b><small>Deadline and dependency risks</small></span><input type="checkbox" id="prefNotifyUrgent" ${state.preferences.notifyUrgent?'checked':''}></label><label><span><b>Reviews</b><small>Comments and approvals</small></span><input type="checkbox" id="prefNotifyReviews" ${state.preferences.notifyReviews?'checked':''}></label><label><span><b>Finance</b><small>Invoices, overdue balances and payments</small></span><input type="checkbox" id="prefNotifyFinance" ${state.preferences.notifyFinance?'checked':''}></label><label><span><b>Files</b><small>Uploads and version changes</small></span><input type="checkbox" id="prefNotifyFiles" ${state.preferences.notifyFiles?'checked':''}></label></div><div class="formActions"><button class="primary" data-settings-save="notifications">Save notifications</button></div></article>`}
 function settingsSecurity(){const sec=backendState.security;const signed=sec?.signatureStatus==='Valid';return `<div class="grid twoCol"><article class="card sectionCard">${sectionTitle('Security','Protect your account and this Windows device.')}<div class="securityGrid">${statusBadge(!!backendState.session,backendState.session?'Account authenticated':'Not signed in')}${statusBadge(!!sec?.secureStorage,sec?.secureStorage?'OS-protected token storage':'Secure token storage unavailable')}${statusBadge(signed,signed?'Authenticode signature valid':`Signature: ${sec?.signatureStatus||'checking…'}`)}</div><div class="formGrid"><div class="field"><label>Auto-lock</label><select id="secAutoLock"><option value="0" ${state.security.autoLockMinutes===0?'selected':''}>Never</option><option value="15" ${state.security.autoLockMinutes===15?'selected':''}>15 minutes</option><option value="30" ${state.security.autoLockMinutes===30?'selected':''}>30 minutes</option><option value="60" ${state.security.autoLockMinutes===60?'selected':''}>1 hour</option></select></div></div><div class="settingsToggleList compact"><label><span><b>Require unlock after resume</b><small>Protect Qanteak after Windows sleep/lock</small></span><input type="checkbox" id="secRequireResume" ${state.security.requireUnlockOnResume?'checked':''}></label><label><span><b>Crash reports</b><small>Allow diagnostic crash metadata</small></span><input type="checkbox" id="secCrash" ${state.security.allowCrashReports?'checked':''}></label><label><span><b>Anonymous analytics</b><small>Off by default</small></span><input type="checkbox" id="secAnalytics" ${state.security.allowAnalytics?'checked':''}></label></div><div class="formActions"><button class="primary" data-settings-save="security">Save security</button></div></article><article class="card sectionCard">${sectionTitle('Privacy','Control how Qanteak uses local and AI context.')}<div class="settingsToggleList"><label><span><b>AI workspace context</b><small>Allow Qanteak AI to use the current workspace context</small></span><input type="checkbox" id="privacyAi" ${state.privacy.aiWorkspaceContext?'checked':''}></label><label><span><b>Confirm external links</b><small>Ask before opening external URLs from workspace content</small></span><input type="checkbox" id="privacyLinks" ${state.privacy.externalLinkConfirmation?'checked':''}></label><label><span><b>Store recent searches</b><small>Keep local search history for faster navigation</small></span><input type="checkbox" id="privacySearch" ${state.privacy.storeRecentSearches?'checked':''}></label></div><div class="contextBlock"><b>Publisher identity</b><span>${esc(sec?.publisher||'No verified publisher certificate detected yet.')}</span></div><div class="formActions"><button class="primary" data-settings-save="privacy">Save privacy</button></div></article></div>`}
 function settingsAccount(){const u=backendState.session?.user;const ws=backendState.workspaces.find(w=>w.id===backendState.workspaceId);if(u)return `<div class="grid twoCol"><article class="card sectionCard">${sectionTitle('Qanteak account','Authenticated through the production Supabase backend.')}<div class="accountIdentity"><div class="avatar large">${esc((u.user_metadata?.name||u.email||'Q').split(/\s|@/).filter(Boolean).map(x=>x[0]).slice(0,2).join('').toUpperCase())}</div><div><b>${esc(u.user_metadata?.name||u.email?.split('@')[0]||'Qanteak user')}</b><span>${esc(u.email||'')}</span></div></div><div class="formActions"><button class="secondary" data-backend-signout>Sign out</button></div></article><article class="card sectionCard">${sectionTitle('Workspace sync','Choose the shared workspace used on this PC.')}<div class="field"><label>Workspace</label><select id="cloudWorkspaceSelect">${backendState.workspaces.map(w=>`<option value="${w.id}" ${w.id===backendState.workspaceId?'selected':''}>${esc(w.name)}</option>`).join('')}</select></div><div class="contextBlock"><b>Status</b><span>${backendState.busy?'Syncing…':backendState.error?esc(backendState.error):`Connected${backendState.lastSync?` · last sync ${new Date(backendState.lastSync).toLocaleString()}`:''}`}</span></div><div class="formActions"><button class="secondary" data-backend-pull>Load cloud copy</button><button class="primary" data-backend-push>Sync now</button></div></article></div>`;return `<div class="grid twoCol"><article class="card sectionCard">${sectionTitle('Sign in','Use the same Qanteak account on multiple PCs.')}<div class="formGrid"><div class="field span2"><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@company.com"></div><div class="field span2"><label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password"></div></div><div class="formActions"><button class="primary" data-backend-signin>Sign in</button></div></article><article class="card sectionCard">${sectionTitle('Create account','Start a secure Qanteak workspace.')}<div class="formGrid"><div class="field"><label>Name</label><input id="signupName" placeholder="Your name"></div><div class="field"><label>Workspace name</label><input id="signupWorkspace" placeholder="Studio workspace"></div><div class="field span2"><label>Email</label><input id="signupEmail" type="email" autocomplete="email"></div><div class="field span2"><label>Password</label><input id="signupPassword" type="password" autocomplete="new-password" minlength="8"></div></div><div class="formActions"><button class="primary" data-backend-signup>Create account</button></div></article><article class="card sectionCard settingsWide"><div class="contextBlock"><b>Backend</b><span>${backendState.configured?'Supabase production foundation is configured.':'Cloud backend is not configured in this build.'}</span></div><div class="contextBlock"><b>Workspace isolation</b><span>Row-level security restricts workspace snapshots and members to authenticated workspace members.</span></div></article></div>`}
-function settingsUpdates(){return `<div class="grid twoCol"><article class="card sectionCard">${sectionTitle('Release channel','Qanteak RC update channel.')}<div class="contextBlock"><b>Installed build</b><span>Qanteak OS RC9 V0.19 · 1.0.0-rc.9.19</span></div><div class="contextBlock"><b>Windows trust</b><span>${backendState.security?.signatureStatus==='Valid'?'This running executable has a valid Authenticode signature.':'Code-signing support is wired, but a trusted certificate is still required before public production releases.'}</span></div></article><article class="card sectionCard">${sectionTitle('Updates','Check GitHub Releases and install the next Qanteak RC update.')}<div class="updateStatusCard"><span class="statusDot" id="updateStatusDot"></span><div><b id="updateStatusTitle">${esc(updateUi.title)}</b><span id="updateStatusText">${esc(updateUi.message)}</span></div></div><div class="formActions updateActions"><button class="primary" id="checkUpdates">Check for updates</button><button class="secondary" id="restartUpdate" ${updateUi.downloaded?'':'hidden'}>Restart & Update</button></div></article></div>`}
+function settingsUpdates(){return `<div class="grid twoCol"><article class="card sectionCard">${sectionTitle('Release channel','Qanteak RC update channel.')}<div class="contextBlock"><b>Installed build</b><span>Qanteak OS RC9 V0.20 · 1.0.0-rc.9.20</span></div><div class="contextBlock"><b>Windows trust</b><span>${backendState.security?.signatureStatus==='Valid'?'This running executable has a valid Authenticode signature.':'Code-signing support is wired, but a trusted certificate is still required before public production releases.'}</span></div></article><article class="card sectionCard">${sectionTitle('Updates','Check GitHub Releases and install the next Qanteak RC update.')}<div class="updateStatusCard"><span class="statusDot" id="updateStatusDot"></span><div><b id="updateStatusTitle">${esc(updateUi.title)}</b><span id="updateStatusText">${esc(updateUi.message)}</span></div></div><div class="formActions updateActions"><button class="primary" id="checkUpdates">Check for updates</button><button class="secondary" id="restartUpdate" ${updateUi.downloaded?'':'hidden'}>Restart & Update</button></div></article></div>`}
 settings=function(){const body=state.settingsTab==='workspace'?settingsWorkspace():state.settingsTab==='members'?settingsMembers():state.settingsTab==='notifications'?settingsNotifications():state.settingsTab==='security'?settingsSecurity():state.settingsTab==='account'?settingsAccount():state.settingsTab==='updates'?settingsUpdates():settingsGeneral();return settingNav()+body};
 Object.assign(renderers,{settings});
 
@@ -951,3 +951,159 @@ document.addEventListener('click',e=>{
   setTimeout(()=>openCreate(kind),0);
 },true);
 /* ================= END RC9 V0.18 NEW CREATION MENU ================= */
+
+
+/* ================= QANTEAK_AI_V020_AGENT_START ================= */
+let qanteakAiMode='ask';
+let qanteakAiHistory=[];
+const qanteakAiPendingActions=new Map();
+
+function qanteakAiEntityContext(){
+  const title=$('#detailTitle')?.textContent?.trim()||'';
+  const project=state.projects.find(p=>p.name===title)||null;
+  const client=state.clients.find(c=>c.name===title)||null;
+  const docTitle=$('#docTitle')?.value?.trim()||'';
+  const document=state.documents.find(d=>d.title===docTitle)||null;
+  if(project)return{type:'project',id:project.id,name:project.name};
+  if(client)return{type:'client',id:client.id,name:client.name};
+  if(document)return{type:'document',id:document.id,name:document.title};
+  return null;
+}
+
+function qanteakAiWorkspaceContext(){
+  const unpaid=state.invoices.filter(i=>i.status!=='Paid').map(i=>({id:i.id,number:i.number,client:i.client,project:i.project,status:i.status,due:i.due,total:calcInvoice(i).total}));
+  const paid=state.invoices.filter(i=>i.status==='Paid').map(i=>({id:i.id,number:i.number,client:i.client,project:i.project,status:i.status,due:i.due,total:calcInvoice(i).total}));
+  const outstandingTotal=unpaid.reduce((sum,i)=>sum+Number(i.total||0),0);
+  const overdueTotal=unpaid.filter(i=>i.status==='Overdue').reduce((sum,i)=>sum+Number(i.total||0),0);
+  const paidRevenue=paid.reduce((sum,i)=>sum+Number(i.total||0),0);
+  return {
+    screen:{view:state.view,label:meta[state.view]?.[0]||state.view,entity:qanteakAiEntityContext()},
+    workspace:{name:state.preferences?.workspaceName||'Qanteak Workspace',today:isoToday()},
+    projects:state.projects.slice(0,80).map(p=>({id:p.id,name:p.name,client:p.client,status:p.status,progress:p.progress,due:p.due,owner:p.owner,description:p.description})),
+    tasks:state.tasks.slice(0,160).map(t=>({id:t.id,title:t.title,project:t.project,client:t.client||'',due:t.due,date:t.date||'',done:!!t.done,priority:t.priority||''})),
+    clients:state.clients.slice(0,80).map(c=>({id:c.id,name:c.name,company:c.company,email:c.email,relationship:c.relationship,projects:state.projects.filter(p=>p.client===c.name).length})),
+    reviews:state.reviews.slice(0,100).map(r=>({id:r.id,name:r.name,client:r.client,project:r.project,status:r.status,due:r.due,age:r.age})),
+    documents:state.documents.slice(0,80).map(d=>({id:d.id,title:d.title,project:d.project,client:d.client,type:d.type,updated:d.updated})),
+    files:state.files.slice(0,120).map(f=>({id:f.id,name:f.name,project:f.project,version:f.version,review:f.review,updated:f.updated,group:f.group})),
+    finance:{paidRevenue,outstandingTotal,overdueTotal,paidInvoices:paid,unpaidInvoices:unpaid,expensesTotal:state.expenses.reduce((sum,x)=>sum+Number(x.amount||0),0)},
+    leads:state.leads.slice(0,50).map(l=>({id:l.id,name:l.name,value:l.value,stage:l.stage,next:l.next})),
+    automations:state.automations.slice(0,80).map(a=>({id:a.id,name:a.name,rule:a.rule,on:!!a.on}))
+  };
+}
+
+function qanteakAiUpdateContextLabel(){
+  const node=$('#aiContext');if(!node)return;
+  const ctx=qanteakAiEntityContext();
+  node.textContent=`Context: ${ctx?.name||meta[state.view]?.[0]||'Workspace'}`;
+}
+
+function qanteakAiAppendBubble(kind,html,extraClass=''){
+  const host=$('#aiMessages');if(!host)return null;
+  const node=document.createElement('div');node.className=`bubble ${kind} ${extraClass}`.trim();node.innerHTML=html;host.append(node);host.scrollTop=host.scrollHeight;return node;
+}
+
+function qanteakAiPlanHtml(plan=[]){
+  if(!Array.isArray(plan)||!plan.length)return'';
+  return `<div class="aiPlan"><b>Plan</b><ol>${plan.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`;
+}
+
+function qanteakAiActionHtml(action){
+  const id=esc(action.id),label=esc(action.label||action.tool),tool=esc(action.tool);
+  return `<div class="aiActionCard" data-ai-action-card="${id}"><div><span class="aiActionType">Proposed action</span><b>${label}</b><small>${tool.replaceAll('_',' ')} · requires confirmation</small></div><div class="aiActionButtons"><button type="button" class="secondary" data-ai-dismiss="${id}">Dismiss</button><button type="button" class="primary" data-ai-confirm="${id}">Confirm</button></div></div>`;
+}
+
+function qanteakAiRenderResponse(result){
+  const actions=Array.isArray(result?.actions)?result.actions:[];
+  actions.forEach(a=>{if(a?.id)qanteakAiPendingActions.set(String(a.id),a)});
+  const actionHtml=actions.map(qanteakAiActionHtml).join('');
+  qanteakAiAppendBubble('ai',`<div>${esc(result?.message||'I need more context to help with that.')}</div>${qanteakAiPlanHtml(result?.plan)}${actionHtml}`);
+}
+
+function qanteakAiFallback(message,error){
+  const local=aiReply(message);
+  qanteakAiAppendBubble('ai',`<div>${esc(local)}</div><small class="aiFallback">AI service unavailable; this answer used Qanteak's local deterministic workspace fallback${error?.message?`: ${esc(error.message)}`:''}.</small>`);
+}
+
+async function qanteakAiAsk(message){
+  const text=String(message||'').trim();if(!text)return;
+  qanteakAiAppendBubble('user',esc(text));
+  qanteakAiHistory.push({role:'user',content:text});qanteakAiHistory=qanteakAiHistory.slice(-12);
+  const thinking=qanteakAiAppendBubble('ai','<span class="aiThinking"><i></i><i></i><i></i> Thinking across your workspace…</span>','thinking');
+  try{
+    if(!window.qanteakDesktop?.aiAsk)throw new Error('This build does not include the AI bridge.');
+    const result=await window.qanteakDesktop.aiAsk({message:text,mode:qanteakAiMode,history:qanteakAiHistory.slice(0,-1),context:qanteakAiWorkspaceContext()});
+    thinking?.remove();
+    qanteakAiRenderResponse(result);
+    qanteakAiHistory.push({role:'assistant',content:String(result?.message||'')});qanteakAiHistory=qanteakAiHistory.slice(-12);
+  }catch(error){
+    thinking?.remove();qanteakAiFallback(text,error);
+  }
+}
+
+function qanteakAiFindTask(args={}){return state.tasks.find(t=>String(t.id)===String(args.id||args.task_id||''))||state.tasks.find(t=>String(t.title).toLowerCase()===String(args.title||args.task_title||'').toLowerCase())}
+function qanteakAiArg(args,...keys){for(const k of keys)if(args?.[k]!==undefined&&args?.[k]!==null&&String(args[k]).trim()!=='')return args[k];return''}
+
+async function qanteakAiExecute(action){
+  const args=action?.arguments||{};const tool=action?.tool;
+  if(tool==='create_task'){
+    if(!requireAccess('tasks','create','tasks'))return false;
+    state.tasks.unshift({id:uid(),title:String(qanteakAiArg(args,'title','name')||'New task'),project:String(qanteakAiArg(args,'project','project_name')||'Unassigned'),client:String(qanteakAiArg(args,'client','client_name')||''),due:String(qanteakAiArg(args,'due','due_label')||'No due date'),date:String(qanteakAiArg(args,'date','due_date')||''),priority:String(args.priority||''),done:false});
+  }else if(tool==='update_task'){
+    if(!requireAccess('tasks','edit','tasks'))return false;
+    const task=qanteakAiFindTask(args);if(!task)throw new Error('The task could not be found.');
+    if(qanteakAiArg(args,'new_title','title'))task.title=String(qanteakAiArg(args,'new_title','title'));
+    if(qanteakAiArg(args,'project','project_name'))task.project=String(qanteakAiArg(args,'project','project_name'));
+    if(qanteakAiArg(args,'due'))task.due=String(args.due);
+    if(qanteakAiArg(args,'date','due_date'))task.date=String(qanteakAiArg(args,'date','due_date'));
+    if(args.done!==undefined)task.done=!!args.done;
+  }else if(tool==='create_project'){
+    if(!requireAccess('projects','create','projects'))return false;
+    state.projects.unshift({id:uid(),name:String(qanteakAiArg(args,'name','title')||'New project'),client:String(qanteakAiArg(args,'client','client_name')||'Internal'),status:String(args.status||'Planning'),progress:Number(args.progress)||0,due:String(qanteakAiArg(args,'due','due_date')||'No due date'),owner:currentUserName(),description:String(args.description||'Created with Qanteak AI.')});
+  }else if(tool==='create_document'){
+    if(!requireAccess('documents','create','documents'))return false;
+    state.documents.unshift({id:uid(),title:String(qanteakAiArg(args,'title','name')||'New document'),project:String(qanteakAiArg(args,'project','project_name')||'Unassigned'),client:String(qanteakAiArg(args,'client','client_name')||'Internal'),owner:currentUserName(),updated:'Just now',type:String(args.type||'doc'),body:`<h2>${esc(String(args.heading||'Notes'))}</h2><p>${esc(String(args.body||args.content||'Created with Qanteak AI.'))}</p>`});
+  }else if(tool==='draft_invoice'){
+    if(!requireAccess('business','create','invoices'))return false;
+    const amount=Number(qanteakAiArg(args,'amount','total'))||0;
+    state.invoices.unshift({id:uid(),number:'#QTK-'+String(Math.floor(2000+Math.random()*8000)),client:String(qanteakAiArg(args,'client','client_name')||'Client'),project:String(qanteakAiArg(args,'project','project_name')||'Project'),amount,status:'Draft',due:String(qanteakAiArg(args,'due','due_date')||'Not sent'),items:[{description:String(args.description||'Creative services'),qty:1,rate:amount}],discount:0,tax:0});
+  }else if(tool==='create_reminder'){
+    if(!requireAccess('tasks','create','reminders'))return false;
+    state.tasks.unshift({id:uid(),title:String(qanteakAiArg(args,'title','message')||'Reminder'),project:String(qanteakAiArg(args,'project','project_name')||'Unassigned'),client:String(qanteakAiArg(args,'client','client_name')||''),due:String(qanteakAiArg(args,'due','when')||'Reminder'),date:String(qanteakAiArg(args,'date','due_date')||''),priority:'Reminder',done:false});
+  }else if(tool==='create_automation'){
+    if(!requireAccess('business','create','automations'))return false;
+    const trigger=String(qanteakAiArg(args,'trigger','when')||'condition is met');const actionText=String(qanteakAiArg(args,'action','then')||'notify me');
+    state.automations.unshift({id:uid(),icon:'↯',name:String(qanteakAiArg(args,'name','title')||'Qanteak AI watch'),rule:`WHEN ${trigger} → ${actionText}`,on:true});
+  }else throw new Error('This action is not enabled in Qanteak AI yet.');
+  save();render(state.view);return true;
+}
+
+async function qanteakAiConfirm(id,button){
+  const action=qanteakAiPendingActions.get(String(id));if(!action)return;
+  if(button){button.disabled=true;button.textContent='Working…'}
+  try{const ok=await qanteakAiExecute(action);if(!ok)return;qanteakAiPendingActions.delete(String(id));const card=document.querySelector(`[data-ai-action-card="${CSS.escape(String(id))}"]`);if(card){card.classList.add('completed');card.querySelector('.aiActionButtons').innerHTML='<span class="chip good">Completed</span>'}qanteakAiAppendBubble('ai',`Done: ${esc(action.label||action.tool)}.`)}catch(error){toast('AI action failed',error?.message||'Could not complete the action.');if(button){button.disabled=false;button.textContent='Confirm'}}
+}
+
+function qanteakAiSetMode(mode){
+  if(!['ask','do','watch'].includes(mode))return;qanteakAiMode=mode;
+  $$('[data-ai-mode]').forEach(b=>b.classList.toggle('active',b.dataset.aiMode===mode));
+  const hint=$('#aiModeHint'),input=$('#aiInput');
+  if(mode==='ask'){if(hint)hint.textContent='Ask across projects, tasks, clients, files, reviews, documents and business data.';if(input)input.placeholder='Ask Qanteak about your work'}
+  if(mode==='do'){if(hint)hint.textContent='Describe what you want done. Qanteak will prepare safe actions for your approval.';if(input)input.placeholder='What should Qanteak prepare or change?'}
+  if(mode==='watch'){if(hint)hint.textContent='Describe what Qanteak should watch. It will prepare an automation rule for approval.';if(input)input.placeholder='What should Qanteak watch for?'}
+}
+
+// Capture AI submits before the old keyword-response handler so the agent owns this surface.
+document.addEventListener('submit',e=>{
+  if(e.target?.id!=='aiForm')return;e.preventDefault();e.stopImmediatePropagation();
+  const input=$('#aiInput');const value=input?.value||'';if(input)input.value='';qanteakAiAsk(value);
+},true);
+
+document.addEventListener('click',e=>{
+  const mode=e.target.closest?.('[data-ai-mode]');if(mode){e.preventDefault();e.stopImmediatePropagation();qanteakAiSetMode(mode.dataset.aiMode);return}
+  const confirmButton=e.target.closest?.('[data-ai-confirm]');if(confirmButton){e.preventDefault();e.stopImmediatePropagation();qanteakAiConfirm(confirmButton.dataset.aiConfirm,confirmButton);return}
+  const dismiss=e.target.closest?.('[data-ai-dismiss]');if(dismiss){e.preventDefault();e.stopImmediatePropagation();qanteakAiPendingActions.delete(String(dismiss.dataset.aiDismiss));dismiss.closest('[data-ai-action-card]')?.remove();return}
+  if(e.target.closest?.('#openAi,#askQanteak,#openBriefAi,#openBriefAi2,#askFromDoc,#aiEdgeTab'))setTimeout(qanteakAiUpdateContextLabel,0);
+},true);
+
+qanteakAiSetMode('ask');
+/* ================= QANTEAK_AI_V020_AGENT_END ================= */

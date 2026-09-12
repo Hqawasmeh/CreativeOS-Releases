@@ -341,3 +341,17 @@ button.updatePill{font-family:inherit;line-height:1.2;cursor:pointer}.updatePill
 .quickCreateItem small{display:block;color:var(--muted);font-size:10px;line-height:1.35;margin-top:3px}
 @media(max-width:760px){.quickCreateGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.quickCreateGrid{grid-template-columns:1fr}}
+
+
+/* QANTEAK_AI_V020_STYLES_START */
+.aiModeTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:12px 14px 8px;border-bottom:1px solid var(--line,#e6e9ef)}
+.aiModeTabs button{border:1px solid var(--line,#e1e5ec);background:var(--card,#fff);border-radius:12px;padding:9px 8px;text-align:left;cursor:pointer;color:inherit}
+.aiModeTabs button b,.aiModeTabs button span{display:block}.aiModeTabs button b{font-size:12px}.aiModeTabs button span{font-size:9px;color:var(--muted,#747d89);margin-top:2px}
+.aiModeTabs button.active{border-color:#78b9ff;background:linear-gradient(135deg,#edf7ff,#effdff);box-shadow:0 7px 20px rgba(13,127,242,.08)}
+.aiModeHint{padding:6px 16px 10px;font-size:10px;line-height:1.45;color:var(--muted,#747d89);border-bottom:1px solid var(--line,#e6e9ef)}
+.bubble.user{align-self:flex-end;background:#0a2d82;color:#fff}.bubble.thinking{opacity:.72}.aiThinking{display:flex;align-items:center;gap:4px}.aiThinking i{display:block;width:5px;height:5px;border-radius:50%;background:currentColor;animation:qanteakAiDot 1s infinite ease-in-out}.aiThinking i:nth-child(2){animation-delay:.14s}.aiThinking i:nth-child(3){animation-delay:.28s}@keyframes qanteakAiDot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}
+.aiPlan{margin-top:10px;padding:10px 11px;border-radius:11px;background:rgba(13,127,242,.06);font-size:10px}.aiPlan b{display:block;margin-bottom:5px}.aiPlan ol{margin:0;padding-left:17px}.aiPlan li+li{margin-top:4px}
+.aiActionCard{margin-top:10px;padding:11px;border:1px solid #cddff4;border-radius:12px;background:var(--card,#fff);display:grid;gap:10px}.aiActionCard>div:first-child{display:grid;gap:3px}.aiActionType{text-transform:uppercase;letter-spacing:.08em;font-size:8px;font-weight:800;color:#0d7ff2}.aiActionCard b{font-size:11px}.aiActionCard small{font-size:9px;color:var(--muted,#747d89)}.aiActionButtons{display:flex;justify-content:flex-end;gap:7px}.aiActionButtons button{min-height:31px;padding:6px 10px;font-size:9px;border-radius:9px}.aiActionCard.completed{border-color:#8bd3aa;background:rgba(27,157,85,.05)}
+.aiFallback{display:block;margin-top:8px;opacity:.68;font-size:9px;line-height:1.45}
+@media(max-width:600px){.aiModeTabs{grid-template-columns:1fr}.aiModeTabs button span{display:none}}
+/* QANTEAK_AI_V020_STYLES_END */
