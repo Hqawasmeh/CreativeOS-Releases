@@ -5,6 +5,7 @@ on:
     branches: [qanteak-ai-v020]
     paths:
       - 'qanteak-desktop/scripts/upgrade-v020-ai-agent.py'
+      - 'qanteak-desktop/scripts/preflight.mjs'
   workflow_dispatch:
 
 permissions:
