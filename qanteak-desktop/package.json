@@ -1,8 +1,8 @@
 {
   "name": "qanteak-os",
-  "version": "1.0.0-rc.9.20",
+  "version": "1.0.0-rc.9.21",
   "private": true,
-  "description": "Qanteak OS RC9 V0.20 AI agent foundation",
+  "description": "Qanteak OS RC9 V0.21 workspace foundation",
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {

@@ -25,7 +25,7 @@ const required = [
   'backend/README.md',
   'backend/migrations/README.md',
   'SECURITY_AND_SIGNING.md',
-  'CHANGELOG-RC9-V0.20.md',
+  'CHANGELOG-RC9-V0.21.md',
   'WINDOWS_QA_CHECKLIST.md',
   'scripts/windows-qa-preflight.ps1'
 ];
@@ -39,7 +39,7 @@ try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); }
 catch { fail.push('package.json is missing or invalid JSON.'); }
 
 if (pkg) {
-  if (pkg.version !== '1.0.0-rc.9.20') fail.push(`Unexpected package version: ${pkg.version}`);
+  if (pkg.version !== '1.0.0-rc.9.21') fail.push(`Unexpected package version: ${pkg.version}`);
   if (pkg.main !== 'electron/main.cjs') fail.push(`Unexpected Electron entry: ${pkg.main}`);
   if (pkg?.build?.appId !== 'com.creativeos.desktop') fail.push('Windows appId must remain com.creativeos.desktop for RC9 in-place upgrades.');
   if (pkg?.build?.artifactName !== 'QanteakOS-Setup-${version}.${ext}') fail.push('Unexpected installer artifactName.');
@@ -64,6 +64,7 @@ if (fs.existsSync(rendererPath)) {
   if (/const\s+backendState\s*=/.test(renderer)) fail.push('Renderer must not redeclare backendState with const after startup helpers can access it.');
   if (!/backendEntitlement/.test(renderer)) fail.push('Subscription entitlement gate is missing from renderer.');
   if (!/QANTEAK_AI_V020_AGENT_START/.test(renderer)) fail.push('Qanteak AI V0.20 agent renderer is missing.');
+  if (!/QANTEAK_WORKSPACE_V021_START/.test(renderer)) fail.push('Qanteak Workspace V0.21 renderer is missing.');
   if (/^\s*invoiceTable\s*=\s*function\b/m.test(renderer)) fail.push('Renderer contains undeclared invoiceTable assignment; use a declaration in ES-module code.');
 }
 const preloadPath = path.join(root, 'electron/preload.cjs');
@@ -89,7 +90,7 @@ if (fail.length) {
   fail.forEach(x => console.error(' - ' + x));
   process.exit(1);
 }
-console.log('Qanteak preflight OK · 1.0.0-rc.9.20');
+console.log('Qanteak preflight OK · 1.0.0-rc.9.21');
 warn.forEach(x => console.warn('WARN: ' + x));
 
 // V0.21 workspace workflow trigger
