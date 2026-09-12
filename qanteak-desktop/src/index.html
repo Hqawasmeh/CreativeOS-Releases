@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#05055d">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://cdn-uicons.flaticon.com; font-src 'self' https://cdn-uicons.flaticon.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'">
-  <title>Qanteak OS RC9 V0.19</title>
+  <title>Qanteak OS RC9 V0.21</title>
   <link rel="preconnect" href="https://cdn-uicons.flaticon.com">
   <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
   <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
@@ -15,7 +15,7 @@
 <section class="authGate" id="authGate" aria-live="polite">
   <div class="authCard">
     <div class="authBrand"><img id="authLogo" src="assets/qanteak-logo-black.png" alt="Qanteak OS"></div>
-    <div class="authIntro"><span class="authEyebrow">Qanteak OS · RC9 V0.19</span><h1>Sign in to your workspace</h1><p>Your projects, clients, files and business data stay hidden until your Qanteak account is authenticated.</p></div>
+    <div class="authIntro"><span class="authEyebrow">Qanteak OS · RC9 V0.21</span><h1>Sign in to your workspace</h1><p>Your projects, clients, files and business data stay hidden until your Qanteak account is authenticated.</p></div>
     <div class="authTabs"><button class="active" type="button" data-auth-tab="signin">Sign in</button><button type="button" data-auth-tab="signup">Create account</button></div>
     <form class="authForm" id="authGateSignIn">
       <label>Email<input id="gateEmail" type="email" autocomplete="email" required placeholder="you@company.com"></label>
@@ -58,7 +58,7 @@
   <main class="main">
     <header class="topbar">
       <div class="titleWrap"><button class="mobileMenu" id="mobileMenu"><i class="fi fi-rr-menu-burger"></i></button><div><h1 id="pageTitle">Home</h1><p id="pageSubtitle">Your command center for work, clients and business.</p></div></div>
-      <div class="topActions"><button class="updatePill" id="updatePill" type="button" title="Open Settings & Updates">RC9 V0.19</button><button class="iconButton" id="topNotifications" title="Notifications"><i class="fi fi-rr-bell"></i><b></b></button><button class="secondary" id="askQanteak"><i class="fi fi-rr-sparkles"></i> Ask Qanteak</button><button class="primary" id="newAction"><i class="fi fi-rr-plus"></i> New</button></div>
+      <div class="topActions"><button class="updatePill" id="updatePill" type="button" title="Open Settings & Updates">RC9 V0.21</button><button class="iconButton" id="topNotifications" title="Notifications"><i class="fi fi-rr-bell"></i><b></b></button><button class="secondary" id="askQanteak"><i class="fi fi-rr-sparkles"></i> Ask Qanteak</button><button class="primary" id="newAction"><i class="fi fi-rr-plus"></i> New</button></div>
     </header>
     <section class="content" id="content"></section>
   </main>
@@ -66,7 +66,17 @@
 <div class="scrim" id="scrim"></div>
 <section class="drawer" id="notifications"><div class="panelHead"><div><h3>Notifications</h3><p>Filter work by urgency and category.</p></div><div class="panelHeadActions"><button class="textButton" id="markAllRead">Mark all read</button><button data-close="notifications">×</button></div></div><div class="notificationFilters" id="notificationFilters"></div><div class="panelBody" id="notificationList"></div></section>
 <button class="aiEdgeTab" id="aiEdgeTab" type="button" aria-label="Open Qanteak AI chat" title="Open Qanteak AI"><i class="fi fi-rr-angle-left"></i><span>AI</span></button>
-<section class="aiPanel" id="aiPanel"><div class="aiHead"><div><strong><i class="fi fi-rr-sparkles"></i> Ask Qanteak</strong><span id="aiContext">Context: Home</span></div><button data-close="ai">×</button></div><div class="aiMessages" id="aiMessages"><div class="bubble ai">I have the current workspace context. Ask what needs attention, find something, or create an item.</div></div><form class="aiComposer" id="aiForm"><input id="aiInput" autocomplete="off" placeholder="Ask Qanteak or request an action"><button><i class="fi fi-rr-arrow-right"></i></button></form></section>
+<section class="aiPanel" id="aiPanel">
+  <div class="aiHead"><div><strong><i class="fi fi-rr-sparkles"></i> Qanteak AI</strong><span id="aiContext">Context: Home</span></div><button data-close="ai">×</button></div>
+  <div class="aiModeTabs" role="tablist" aria-label="Qanteak AI mode">
+    <button type="button" class="active" data-ai-mode="ask"><b>Ask</b><span>Understand & analyze</span></button>
+    <button type="button" data-ai-mode="do"><b>Do</b><span>Prepare actions</span></button>
+    <button type="button" data-ai-mode="watch"><b>Watch</b><span>Create monitoring rules</span></button>
+  </div>
+  <div class="aiModeHint" id="aiModeHint">Ask across projects, tasks, clients, files, reviews, documents and business data.</div>
+  <div class="aiMessages" id="aiMessages"><div class="bubble ai">I understand the connected workspace around your current screen. Ask me to analyze the work, prepare an action, or create a watch rule.</div></div>
+  <form class="aiComposer" id="aiForm"><input id="aiInput" autocomplete="off" placeholder="Ask Qanteak about your work"><button aria-label="Send"><i class="fi fi-rr-arrow-right"></i></button></form>
+</section>
 <section class="command" id="command"><div class="commandSearch"><i class="fi fi-rr-search"></i><input id="commandInput" placeholder="Search projects, clients, files, documents or actions"><kbd>Esc</kbd></div><div id="commandResults"></div></section>
 <section class="modal" id="modal"><div class="modalCard"><div class="panelHead"><div><h3 id="modalTitle">Create</h3><p id="modalSubtitle">Add something to Qanteak.</p></div><button data-close="modal">×</button></div><form id="modalForm" class="modalForm"></form></div></section>
 <section class="modal" id="detailModal"><div class="modalCard detailCard"><div class="panelHead"><div><h3 id="detailTitle">Details</h3><p id="detailSubtitle">Connected Qanteak context.</p></div><button data-close="detail">×</button></div><div id="detailBody" class="detailBody"></div></div></section>

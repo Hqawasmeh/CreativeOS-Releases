@@ -1,0 +1,67 @@
+name: Apply Qanteak AI RC9 V0.20
+
+on:
+  push:
+    branches: [qanteak-ai-v020]
+    paths:
+      - 'qanteak-desktop/scripts/upgrade-v020-ai-agent.py'
+      - 'qanteak-desktop/scripts/preflight.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout AI development branch
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: qanteak-desktop/package-lock.json
+
+      - name: Apply V0.20 AI agent foundation
+        run: python qanteak-desktop/scripts/upgrade-v020-ai-agent.py
+
+      - name: Install dependencies
+        working-directory: qanteak-desktop
+        run: npm ci
+
+      - name: Verify build and interactions
+        working-directory: qanteak-desktop
+        run: npm run build
+
+      - name: Syntax checks
+        working-directory: qanteak-desktop
+        run: |
+          node --check src/app.js
+          node --check electron/backend.cjs
+          node --check electron/main.cjs
+          node --check electron/preload.cjs
+
+      - name: Verify AI V0.20 markers
+        working-directory: qanteak-desktop
+        run: |
+          grep -q '1.0.0-rc.9.20' package.json
+          grep -q "ipcMain.handle('ai:ask'" electron/main.cjs
+          grep -q 'aiAsk:(payload)' electron/preload.cjs
+          grep -q 'async function aiAsk' electron/backend.cjs
+          grep -q 'QANTEAK_AI_V020_AGENT_START' src/app.js
+          grep -q 'data-ai-mode="ask"' src/index.html
+
+      - name: Commit verified AI V0.20 source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add qanteak-desktop
+          if git diff --cached --quiet; then
+            echo 'No source changes to commit'
+          else
+            git commit -m 'Qanteak OS RC9 V0.20 AI agent foundation'
+            git push
+          fi

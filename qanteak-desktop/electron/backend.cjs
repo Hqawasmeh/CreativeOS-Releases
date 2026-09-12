@@ -108,4 +108,21 @@ async function driveUpload({workspaceId,paths,clientRef=null,projectRef=null}={}
 async function driveDownload(fileId,destinationPath){const c=loadConfig(),s=await validSession();if(!configured()||!s?.access_token)throw new Error('Sign in to Qanteak first.');const qs=new URLSearchParams({action:'download',fileId});const res=await fetch(`${c.url}/functions/v1/qanteak-drive?${qs}`,{headers:{apikey:c.key,Authorization:`Bearer ${s.access_token}`}});if(!res.ok||!res.body){let msg='Cloud download failed.';try{const d=await res.json();msg=d?.error||msg}catch{}throw new Error(msg)}const nodeStream=Readable.fromWeb(res.body);await new Promise((resolve,reject)=>{const out=fs.createWriteStream(destinationPath);nodeStream.on('error',reject);out.on('error',reject);out.on('finish',resolve);nodeStream.pipe(out)});return{ok:true,path:destinationPath}}
 async function driveDelete(fileId,workspaceId){return edgeRequest('delete',{workspaceId,method:'POST',body:{fileId,workspaceId}})}
 
-module.exports={authStatus,authSignIn,authSignUp,authSignOut,authRequestPasswordReset,authImportUrl,authUpdatePassword,getEntitlement,listWorkspaces,listMembers,listInvites,createInvite,createInviteAndEmail,revokeInvite,acceptInvite,setMemberAccess,listBackups,createBackup,restoreBackup,archiveBackup,reportTelemetry,connectivity,pullSnapshot,pushSnapshot,loadUserSettings,saveUserSettings,startRealtime,stopRealtime,driveStatus,driveList,driveUpload,driveDownload,driveDelete};
+
+async function aiAsk(payload={}){
+  const c=loadConfig(),s=await validSession();
+  if(!configured())throw new Error('Qanteak cloud backend is not configured.');
+  if(!s?.access_token)throw new Error('Sign in to Qanteak before using AI.');
+  const message=String(payload?.message||'').trim();
+  if(!message)throw new Error('Ask Qanteak something first.');
+  const mode=['ask','do','watch'].includes(String(payload?.mode))?String(payload.mode):'ask';
+  const history=Array.isArray(payload?.history)?payload.history.slice(-12):[];
+  const context=payload?.context&&typeof payload.context==='object'?payload.context:{};
+  return jsonFetch(`${c.url}/functions/v1/qanteak-ai`,{
+    method:'POST',
+    headers:{apikey:c.key,Authorization:`Bearer ${s.access_token}`,'Content-Type':'application/json'},
+    body:JSON.stringify({message:message.slice(0,8000),mode,history,context})
+  },45000);
+}
+
+module.exports={authStatus,authSignIn,authSignUp,authSignOut,authRequestPasswordReset,authImportUrl,authUpdatePassword,getEntitlement,listWorkspaces,listMembers,listInvites,createInvite,createInviteAndEmail,revokeInvite,acceptInvite,setMemberAccess,listBackups,createBackup,restoreBackup,archiveBackup,reportTelemetry,connectivity,pullSnapshot,pushSnapshot,loadUserSettings,saveUserSettings,startRealtime,stopRealtime,driveStatus,driveList,driveUpload,driveDownload,driveDelete,aiAsk};
