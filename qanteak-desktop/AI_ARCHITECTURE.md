@@ -1,1 +1,0 @@
-Qanteak AI architecture
