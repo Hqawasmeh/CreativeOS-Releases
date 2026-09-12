@@ -1,0 +1,43 @@
+/* Final desktop geometry correction: Figma frame is authored at 1440px, not 934px. */
+@media (min-width:761px){
+:root{--hero-width:min(1024px,71.111111vw)!important;--figma-page:min(1440px,100vw)!important}
+.nav{height:min(92px,6.388889vw)!important}
+.navIn{width:min(1354px,94.027778vw)!important;gap:min(31px,2.152778vw)!important}
+.brand img{width:min(163px,11.319444vw)!important}
+.navLinks{gap:min(63px,4.375vw)!important;font-size:min(16px,1.111111vw)!important}
+.navActions{gap:min(26px,1.805556vw)!important;font-size:min(16px,1.111111vw)!important}
+.navStart,.primaryBtn{border-radius:min(11px,.763889vw)!important;padding:min(9px,.625vw) min(22px,1.527778vw)!important;font-size:min(15px,1.041667vw)!important}
+.secondaryBtn{border-radius:min(11px,.763889vw)!important;padding:min(9px,.625vw) min(20px,1.388889vw)!important;font-size:min(15px,1.041667vw)!important}
+.heroSurface{height:min(1194px,82.916667vw)!important;background:
+radial-gradient(ellipse 64% 37% at 50% 15%,rgba(255,255,255,1) 0%,rgba(255,255,255,.995) 42%,rgba(255,255,255,.93) 63%,rgba(255,255,255,.28) 84%,rgba(255,255,255,0) 100%),
+radial-gradient(ellipse 59% 27% at 50% 43%,rgba(255,255,255,.99) 0%,rgba(255,255,255,.96) 46%,rgba(255,255,255,.57) 73%,rgba(255,255,255,0) 100%),
+radial-gradient(ellipse 50% 28% at 11% 79%,rgba(111,238,246,.78) 0%,rgba(118,225,243,.48) 53%,rgba(118,225,243,0) 100%),
+radial-gradient(ellipse 50% 28% at 89% 79%,rgba(99,220,247,.79) 0%,rgba(118,217,243,.42) 54%,rgba(118,217,243,0) 100%),
+linear-gradient(180deg,#d7efff 0%,#f8fcff 23%,#fff 42%,#eefbff 58%,#bfefff 76%,#7ee8f5 100%)!important}
+.heroSurface:before{content:""!important;position:absolute!important;inset:0!important;background:
+radial-gradient(circle at 1px 1px,rgba(255,255,255,.90) 0 1px,transparent 1.15px) 0 0/8px 8px,
+radial-gradient(circle at 1px 1px,rgba(68,204,239,.20) 0 .75px,transparent .9px) 4px 4px/11px 11px,
+repeating-linear-gradient(90deg,transparent 0 4px,rgba(255,255,255,.12) 4px 5px,transparent 5px 12px),
+repeating-linear-gradient(0deg,transparent 0 7px,rgba(53,191,231,.07) 7px 8px,transparent 8px 15px)!important;background-repeat:repeat!important;opacity:.88!important;mix-blend-mode:screen!important;mask-image:radial-gradient(ellipse 58% 43% at 50% 29%,rgba(0,0,0,.18) 0%,rgba(0,0,0,.23) 30%,rgba(0,0,0,.48) 57%,rgba(0,0,0,.88) 82%,#000 100%)!important;pointer-events:none!important}
+.heroSurface:after{content:""!important;position:absolute!important;inset:0!important;background:
+repeating-linear-gradient(90deg,transparent 0 17px,rgba(255,255,255,.13) 17px 18px,transparent 18px 31px),
+repeating-linear-gradient(0deg,transparent 0 23px,rgba(75,202,237,.055) 23px 24px,transparent 24px 41px),
+radial-gradient(ellipse 42% 24% at 50% 56%,rgba(255,255,255,.74),rgba(255,255,255,0) 74%)!important;opacity:.72!important;pointer-events:none!important;mask-image:linear-gradient(to bottom,rgba(0,0,0,.45) 0%,rgba(0,0,0,.16) 35%,rgba(0,0,0,.22) 53%,#000 69%,#000 100%)!important}
+.hero{padding-top:min(129px,8.958333vw)!important}
+.heroTitle{font-size:min(72px,5vw)!important;max-width:min(1000px,69.444444vw)!important;line-height:1.02!important}
+.heroCopy{font-size:min(15.5px,1.076389vw)!important;margin-top:min(18px,1.25vw)!important;max-width:min(800px,55.555556vw)!important}
+.heroCtas{gap:min(12px,.833333vw)!important;margin-top:min(18px,1.25vw)!important}
+.heroShot{width:var(--hero-width)!important;margin-top:min(37px,2.569444vw)!important;border-radius:min(15px,1.041667vw)!important;box-shadow:0 min(18px,1.25vw) min(52px,3.611111vw) rgba(34,104,134,.14)!important}
+.network{width:var(--hero-width)!important;height:min(160px,11.111111vw)!important;margin-top:min(40px,2.777778vw)!important}
+.network:after{height:min(37px,2.569444vw)!important;padding:0 min(18px,1.25vw) 0 min(40px,2.777778vw)!important;font-size:min(17.7px,1.229167vw)!important;background:radial-gradient(circle at min(19px,1.319444vw) 50%,#d4d52d 0 min(6px,.416667vw),transparent min(7px,.486111vw)),#fff!important}
+.chip{gap:min(9px,.625vw)!important;padding:min(7.5px,.520833vw) min(15.5px,1.076389vw)!important;font-size:min(17.7px,1.229167vw)!important}
+.chip i{width:min(14px,.972222vw)!important;height:min(14px,.972222vw)!important}
+.chip.qanteak{left:0!important;top:min(12px,.833333vw)!important}.chip.projects{left:14.4%!important;top:min(14px,.972222vw)!important}.chip.clients{left:36.9%!important;top:0!important}.chip.tasks{left:52.7%!important;top:min(50px,3.472222vw)!important}.chip.automations{left:70.6%!important;top:min(57px,3.958333vw)!important}.chip.reviews{left:29.4%!important;top:min(69px,4.791667vw)!important}.chip.invoices{left:48.2%!important;top:min(96px,6.666667vw)!important}.chip.files{left:67.9%!important;top:min(96px,6.666667vw)!important}.chip.ai{right:2.2%!important;top:min(78px,5.416667vw)!important}
+.chip.projects i{background:#67cdb6!important}.chip.clients i{background:#a94fdf!important}.chip.tasks i{background:#50c9bc!important}.chip.automations i{background:#5366bf!important}.chip.reviews i{background:#de4548!important}.chip.invoices i{background:#7844e2!important}.chip.files i{background:#f4b514!important}.chip.ai i{background:#1287df!important}
+.builtWrap{width:var(--hero-width)!important;margin:0 auto!important}
+.builtWrap:before{height:min(554px,38.472222vw)!important;background:
+radial-gradient(ellipse 66% 36% at 50% 0%,rgba(153,236,248,.84),rgba(153,236,248,0) 72%),
+radial-gradient(circle at 1px 1px,rgba(255,255,255,.86) 0 1px,transparent 1.15px) 0 0/8px 8px,
+linear-gradient(180deg,#8feaf5 0%,#caf5fb 46%,#fff 100%)!important;background-repeat:no-repeat,repeat,no-repeat!important;background-size:100% 100%,8px 8px,100% 100%!important}
+.builtCard{min-height:min(462px,32.083333vw)!important;border-radius:min(15px,1.041667vw)!important}.builtCopy{padding:min(37px,2.569444vw) min(42px,2.916667vw)!important}.builtCopy h2{font-size:min(34px,2.361111vw)!important;margin-bottom:min(15px,1.041667vw)!important}.builtCopy p{font-size:min(17px,1.180556vw)!important}.builtCtas{margin-top:min(28px,1.944444vw)!important;gap:min(12px,.833333vw)!important}.builtPhoto{min-height:min(462px,32.083333vw)!important}
+}
