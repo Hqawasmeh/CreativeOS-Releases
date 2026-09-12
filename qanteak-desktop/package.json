@@ -1,8 +1,8 @@
 {
   "name": "qanteak-os",
-  "version": "1.0.0-rc.9.19",
+  "version": "1.0.0-rc.9.20",
   "private": true,
-  "description": "Qanteak OS RC9 V0.19 resilient Supabase schema-cache recovery",
+  "description": "Qanteak OS RC9 V0.20 AI agent foundation",
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {

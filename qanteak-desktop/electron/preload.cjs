@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('qanteakDesktop',{
   reportRendererError:(payload)=>ipcRenderer.send('diagnostics:renderer-error',payload),
   getSecurityStatus:()=>ipcRenderer.invoke('security:status'),
   backendStatus:()=>ipcRenderer.invoke('backend:status'),
+  aiAsk:(payload)=>ipcRenderer.invoke('ai:ask',payload),
   backendSignIn:(email,password)=>ipcRenderer.invoke('backend:signin',email,password),
   backendSignUp:(payload)=>ipcRenderer.invoke('backend:signup',payload),
   backendRequestPasswordReset:(email)=>ipcRenderer.invoke('backend:password-reset-request',email),
