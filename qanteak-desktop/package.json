@@ -1,8 +1,8 @@
 {
   "name": "qanteak-os",
-  "version": "1.0.0-rc.9.19",
+  "version": "1.0.0-rc.9.20",
   "private": true,
-  "description": "Qanteak OS RC9 V0.19 resilient Supabase schema-cache recovery",
+  "description": "Qanteak OS RC9 V0.20 free workspace foundations",
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
@@ -35,7 +35,7 @@
     "electron": "^38.0.0",
     "electron-builder": "^26.0.12",
     "vite": "^7.1.3",
-    "wait-on": "^8.0.4"
+    "wait-on": "^8.4"
   },
   "build": {
     "appId": "com.creativeos.desktop",
