@@ -1,0 +1,56 @@
+name: Import Qanteak Website Figma Assets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/FIGMA_ASSET_IMPORT'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download exact Figma website assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/assets/figma-site
+          curl --fail --location --retry 3 --silent --show-error \
+            'https://www.figma.com/api/mcp/asset/0f7c86e6-3d63-4367-a938-62fc0dbc1012.png' \
+            -o docs/assets/figma-site/qanteak-home.png
+          curl --fail --location --retry 3 --silent --show-error \
+            'https://www.figma.com/api/mcp/asset/51920914-52ca-455c-9925-5c19bc31fc2b.png' \
+            -o docs/assets/figma-site/studio-republic.png
+          curl --fail --location --retry 3 --silent --show-error \
+            'https://www.figma.com/api/mcp/asset/db8263c5-b312-435f-b6be-2557cd9ce074.png' \
+            -o docs/assets/figma-site/work-scattered.png
+
+      - name: Validate images
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s docs/assets/figma-site/qanteak-home.png
+          test -s docs/assets/figma-site/studio-republic.png
+          test -s docs/assets/figma-site/work-scattered.png
+          file docs/assets/figma-site/*.png
+
+      - name: Commit imported assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/assets/figma-site
+          if git diff --cached --quiet; then
+            echo 'Assets already imported.'
+            exit 0
+          fi
+          git commit -m 'Import Qanteak website assets from Figma'
+          git push
