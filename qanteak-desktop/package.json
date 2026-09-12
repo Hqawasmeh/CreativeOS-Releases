@@ -1,8 +1,8 @@
 {
   "name": "qanteak-os",
-  "version": "1.0.0-rc.9.20",
+  "version": "1.0.0-rc.9.21",
   "private": true,
-  "description": "Qanteak OS RC9 V0.20 free workspace foundations",
+  "description": "Qanteak OS RC9 V0.21 universal work OS roadmap foundation",
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
