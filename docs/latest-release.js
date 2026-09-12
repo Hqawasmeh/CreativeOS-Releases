@@ -1,8 +1,13 @@
 (() => {
-  const style = document.createElement('link');
-  style.rel = 'stylesheet';
-  style.href = 'figma-exact.css?v=20260913-glitch2';
-  document.head.appendChild(style);
+  const exactStyle = document.createElement('link');
+  exactStyle.rel = 'stylesheet';
+  exactStyle.href = 'figma-exact.css?v=20260913-glitch2';
+  document.head.appendChild(exactStyle);
+
+  const scaleFix = document.createElement('link');
+  scaleFix.rel = 'stylesheet';
+  scaleFix.href = 'figma-scale-fix.css?v=20260913-final1';
+  document.head.appendChild(scaleFix);
 
   const REPO = 'Hqawasmeh/CreativeOS-Releases';
   const API = `https://api.github.com/repos/${REPO}/releases?per_page=100`;
