@@ -1,0 +1,65 @@
+(() => {
+'use strict';
+// Public client configuration from the desktop app's committed .env.example.
+// Never add a service-role key here. Authorization remains enforced by Supabase RLS.
+const URL='https://xohzqpattqeoowadssep.supabase.co';
+const KEY='sb_publishable_Zea_ustLC96qE3TURwemwg_OK6q56y3';
+const form=document.querySelector('#auth-form');
+const status=document.querySelector('#account-status');
+function message(target,text,error=false){if(!target)return;target.textContent=text;target.className='form-message '+(error?'error':'success')}
+if(!window.supabase){message(form?.querySelector('.form-message')||status,'Account services could not load. Please refresh and try again.',true);return}
+const client=window.supabase.createClient(URL,KEY,{auth:{storageKey:'qanteak-web-auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true},global:{fetch:(url,options={})=>fetch(url,{...options,signal:options.signal||AbortSignal.timeout(15000)})}});
+const params=new URLSearchParams(location.search);
+const plan=['basic','pro','teams'].includes(params.get('plan'))?params.get('plan'):null;
+const billing=params.get('billing')==='annual'?'annual':'monthly';
+if(plan){document.querySelector('#selected-plan').textContent=`Selected plan: ${plan[0].toUpperCase()+plan.slice(1)} · ${billing==='annual'?'Yearly':'Monthly'}. No charge today.`;const login=document.querySelector('a[href="login.html"]');if(login)login.href=`login.html?plan=${plan}&billing=${billing}`}
+const callback=new window.URL('account.html',location.href).href;
+function friendly(error){const text=error?.message||'Something went wrong. Please try again.';if(/fetch|network|timeout|abort/i.test(text))return 'We could not reach the account service. Check your connection and try again.';if(/rate limit|too many/i.test(text))return 'Too many attempts. Please wait a moment before trying again.';return text}
+form?.addEventListener('submit',async e=>{
+ e.preventDefault();const button=form.querySelector('button[type="submit"]'),feedback=form.querySelector('.form-message'),d=new FormData(form),mode=form.dataset.mode;button.disabled=true;message(feedback,'Connecting…');
+ try{
+  if(mode==='signup'){
+   const {data,error}=await client.auth.signUp({email:d.get('email').trim(),password:d.get('password'),options:{emailRedirectTo:callback,data:{name:d.get('name').trim(),workspace_name:d.get('workspace').trim(),requested_plan:plan||'none',requested_billing:billing}}});
+   if(error)throw error;
+   if(data.session){location.assign('account.html');return}
+   message(feedback,'Check your inbox for a confirmation link. If you already have an account, log in or reset your password.');form.querySelector('[name="password"]').value='';
+  }else if(mode==='login'){
+   const {error}=await client.auth.signInWithPassword({email:d.get('email').trim(),password:d.get('password')});if(error)throw error;location.assign('account.html');return;
+  }else{
+   const {error}=await client.auth.resetPasswordForEmail(d.get('email').trim(),{redirectTo:callback+'?recovery=1'});if(error)throw error;message(feedback,'If an account exists for this address, you will receive a password reset email.');
+  }
+ }catch(error){message(feedback,friendly(error),true)}finally{button.disabled=false}
+});
+let recovering=params.get('recovery')==='1'||new URLSearchParams(location.hash.slice(1)).get('type')==='recovery';
+function showRecovery(){recovering=true;document.querySelector('#account-content')?.setAttribute('hidden','');document.querySelector('#recovery-section')?.removeAttribute('hidden');if(status)status.textContent='Choose a new password for your account.'}
+client.auth.onAuthStateChange(event=>{if(event==='PASSWORD_RECOVERY')showRecovery()});
+async function loadAccount(){
+ if(!status)return;
+ try{
+  const hash=new URLSearchParams(location.hash.slice(1));if(hash.get('error_description'))throw Error(hash.get('error_description'));
+  const {data:{session},error}=await client.auth.getSession();if(error)throw error;
+  if(!session){status.textContent='Sign in to view your account and connected workspaces.';const a=document.createElement('a');a.href='login.html';a.className='button primary';a.textContent='Log in';status.append(document.createElement('br'),a);return}
+  const {data:{user},error:userError}=await client.auth.getUser();if(userError)throw userError;
+  if(recovering){showRecovery();return}
+  status.textContent='Your account, workspace access and next steps.';
+  document.querySelector('#account-content').hidden=false;
+  document.querySelector('#account-name').textContent=user.user_metadata?.name||'Your account';
+  document.querySelector('#account-email').textContent=user.email;
+  const results=await Promise.allSettled([
+   client.from('q_workspaces').select('id,name').order('created_at',{ascending:true}),
+   client.from('subscriptions').select('plan,status,current_period_end,test_mode').order('updated_at',{ascending:false}).limit(1)
+  ]);
+  const workspaces=results[0].status==='fulfilled'?results[0].value:null,subscription=results[1].status==='fulfilled'?results[1].value:null;
+  const list=document.querySelector('#workspace-list');list.replaceChildren();
+  if(!workspaces||workspaces.error){list.textContent='Workspaces could not be loaded. Please try again later.'}
+  else if(workspaces.data.length){const ul=document.createElement('ul');workspaces.data.forEach(w=>{const li=document.createElement('li');li.textContent=w.name;ul.append(li)});list.append(ul)}
+  else{list.textContent='No cloud workspace is linked yet. Sign in to the desktop app to set up or join your workspace.'}
+  const sub=subscription?.data?.[0];
+  if(!subscription||subscription.error){document.querySelector('#subscription-plan').textContent='Subscription unavailable';document.querySelector('#subscription-description').textContent='We could not load your access details. Please try again later.'}
+  else{document.querySelector('#subscription-plan').textContent=sub?`${sub.plan} · ${sub.status}`:'No active subscription';document.querySelector('#subscription-description').textContent=sub?`${sub.test_mode?'Test subscription. ':''}${sub.current_period_end?'Current period ends '+new Date(sub.current_period_end).toLocaleDateString()+'.':'Access is managed by your subscription.'}`:'Your account is ready. Selecting a plan does not activate paid access; checkout is not open on this website yet.'}
+ }catch(error){message(status,friendly(error),true)}
+}
+document.querySelector('#sign-out')?.addEventListener('click',async e=>{e.target.disabled=true;try{const {error}=await client.auth.signOut();if(error)throw error;location.replace('login.html')}catch(error){message(status,friendly(error),true);e.target.disabled=false}});
+document.querySelector('#recovery-form')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,d=new FormData(f),feedback=f.querySelector('.form-message'),button=f.querySelector('button');if(d.get('password')!==d.get('confirm')){message(feedback,'The passwords do not match.',true);return}button.disabled=true;try{const {error}=await client.auth.updateUser({password:d.get('password')});if(error)throw error;message(feedback,'Your password has been updated. You can now sign in to Qanteak.');f.reset();await client.auth.signOut();const a=document.createElement('a');a.href='login.html';a.textContent='Continue to log in →';feedback.append(document.createElement('br'),a)}catch(error){message(feedback,friendly(error),true)}finally{button.disabled=false}});
+loadAccount();
+})();
