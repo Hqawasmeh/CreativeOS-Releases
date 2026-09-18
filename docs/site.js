@@ -6,7 +6,7 @@ if (location.hash.includes('access_token=') || location.hash.includes('error_des
 }
 const menu=document.querySelector('.menu-toggle'),navigation=document.querySelector('#navigation');
 menu?.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Close menu':'Open menu');navigation.classList.toggle('open',open)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){navigation?.classList.remove('open');menu?.setAttribute('aria-expanded','false')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){navigation?.classList.remove('open');menu?.setAttribute('aria-expanded','false');menu?.setAttribute('aria-label','Open menu')}});
 document.querySelectorAll('[data-billing]').forEach(button=>button.addEventListener('click',()=>{
  const annual=button.dataset.billing==='annual';
  document.querySelectorAll('[data-billing]').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button))});
