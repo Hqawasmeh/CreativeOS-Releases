@@ -73,7 +73,7 @@ function createWindow() {
     minWidth: 980,
     minHeight: 680,
     backgroundColor: '#f4f6f8',
-    title: 'Qanteak OS RC9 V0.13',
+    title: 'Qanteak OS '+app.getVersion(),
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,

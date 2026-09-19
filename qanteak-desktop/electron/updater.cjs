@@ -20,8 +20,10 @@ function initPlatformBridge() {
   ipcMain.handle('platform:api-start', (_e, port) => platform.startApi(port));
   ipcMain.handle('platform:api-stop', () => platform.stopApi());
   ipcMain.handle('platform:webhook-send', (_e, url, payload) => platform.sendWebhook(url, payload || {}));
-  const saved = platform.readState();
-  if (saved.platform?.apiEnabled) platform.startApi(saved.platform.port || 32145).catch(err => console.warn('Qanteak local API restore failed:', err.message));
+  try {
+    const saved = platform.readState();
+    if (saved.platform?.apiEnabled) platform.startApi(saved.platform.port || 32145).catch(err => console.warn('Qanteak local API restore failed:', err.message));
+  } catch (err) { console.warn('Studio recovery needed:', err.message); }
 }
 
 function initUpdater(mainWindow) {

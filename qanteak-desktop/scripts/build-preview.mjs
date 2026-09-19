@@ -11,3 +11,4 @@ fs.writeFileSync(path.join(output,'index.html'),html);
 fs.copyFileSync('scripts/fixtures/desktop-preview.js',path.join(output,'fixture.js'));
 fs.cpSync('src/assets',path.join(output,'assets'),{recursive:true});
 console.log('Synthetic desktop preview built.');
+for(const name of ['responsive.html','responsive.js'])fs.copyFileSync('scripts/fixtures/'+name,path.join(output,name));

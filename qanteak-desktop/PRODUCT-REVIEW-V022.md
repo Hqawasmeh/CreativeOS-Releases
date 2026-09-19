@@ -47,3 +47,9 @@ The code contains two distinct data systems: the original cloud workspace snapsh
 External credential-dependent features are not considered delivered by this redesign. Release notes must distinguish verified behavior from manual Windows/buyer tests still outstanding.
 
 Technical reference: [Electron security guidance](https://www.electronjs.org/docs/latest/tutorial/security). Existing context isolation, sandboxing and nodeIntegration=false remain enabled.
+
+## Delivery evidence
+
+Implemented the V0.22 shared theme, Home, task search/filters, Studio overview, empty states, bundled font/icons, keyboard/dialog behavior, version metadata and storage/entitlement/API safeguards. The existing renderer startup check, interaction check and build pass. New behavior tests exercise expiration, test-mode rejection, explicit internal QA, corrupt state recovery/preservation, unauthenticated API access and MCP write policy. Browser interaction checks use an explicitly marked synthetic fixture (`docs/desktop-preview`), which is excluded from the packaged app. Real customer data was not used for UI testing.
+
+The audit also found that an existing 30-second Home refresh could replace Studio while working there; the refresh now verifies that Home is the currently displayed screen and skips open command/AI panels. Existing historical renderer layers remain a P1 refactor rather than being removed during the release.

@@ -9,7 +9,10 @@ function decorate(){
  document.querySelectorAll('.taskCheck').forEach(el=>{if(!el.getAttribute('aria-label'))el.setAttribute('aria-label','Toggle task: '+(el.closest('.taskItem')?.querySelector('b')?.textContent||'task'))});
  document.querySelectorAll('[data-close],[data-v21-close]').forEach(el=>el.setAttribute('aria-label','Close panel'));
  document.querySelectorAll('.field').forEach((field,index)=>{const label=field.querySelector('label'),input=field.querySelector('input,textarea,select');if(label&&input&&!label.contains(input)){if(!input.id)input.id='qanteak-field-'+index;label.htmlFor=input.id}});
+ dialogs.forEach(([id])=>{const el=document.getElementById(id);if(el){el.inert=!el.classList.contains('open');el.setAttribute('aria-hidden',String(el.inert))}});
  const opened=dialogs.map(([id,label])=>{const el=document.getElementById(id);if(!el||!el.classList.contains('open'))return null;el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');if(label)el.setAttribute('aria-labelledby',label);else el.setAttribute('aria-label',id==='command'?'Search workspace':id==='v21Modal'?(el.querySelector('h3')?.textContent||'Studio dialog'):id==='aiPanel'?'Qanteak AI':'Notifications');return el}).filter(Boolean).at(-1)||null;
+ document.getElementById('appShell').inert=!!opened;
+ document.getElementById('authGate').inert=!!opened;
  if(opened!==activeDialog){if(opened){if(!activeDialog)returnFocus=document.activeElement;activeDialog=opened;const first=opened.querySelector('input:not([type=hidden]),textarea,select,button,[tabindex="0"]');first?.focus()}else{activeDialog=null;if(returnFocus?.isConnected)returnFocus.focus();returnFocus=null}}
  const menu=document.getElementById('mobileMenu');menu?.setAttribute('aria-expanded',String(document.getElementById('sidebar')?.classList.contains('mobileOpen')));
 }

@@ -2,116 +2,119 @@
 @font-face{font-family:QanteakUicons;src:url(assets/fonts/uicons-regular-rounded.woff2) format("woff2");font-display:block}
 .fi:before{font-family:QanteakUicons!important;font-style:normal;font-weight:normal!important;line-height:1;-webkit-font-smoothing:antialiased}
 .fi-rr-angle-left:before {
-    content: "\e08e";
+    content: "\f132";
     }
 .fi-rr-angle-right:before {
-    content: "\e08f";
+    content: "\f133";
     }
 .fi-rr-apps:before {
-    content: "\e0b3";
+    content: "\f147";
     }
 .fi-rr-arrow-right:before {
-    content: "\e0ec";
+    content: "\f170";
     }
 .fi-rr-bell:before {
-    content: "\e1bc";
+    content: "\f1de";
     }
 .fi-rr-bolt:before {
-    content: "\e212";
+    content: "\f1f9";
     }
 .fi-rr-briefcase:before {
-    content: "\e2af";
+    content: "\f247";
     }
 .fi-rr-calendar:before {
-    content: "\e30c";
+    content: "\f27c";
     }
 .fi-rr-chart-histogram:before {
-    content: "\e3b5";
+    content: "\f2c8";
     }
 .fi-rr-check:before {
-    content: "\e3d7";
+    content: "\f2de";
     }
 .fi-rr-checkbox:before {
-    content: "\e3dc";
+    content: "\f2df";
     }
 .fi-rr-clock:before {
-    content: "\e46f";
+    content: "\f359";
     }
 .fi-rr-cloud-upload-alt:before {
-    content: "\e4b4";
+    content: "\f371";
     }
 .fi-rr-coins:before {
-    content: "\e4d9";
+    content: "\f38a";
     }
 .fi-rr-comment-check:before {
-    content: "\e4f5";
+    content: "\f39b";
     }
 .fi-rr-document:before {
-    content: "\e654";
+    content: "\f417";
     }
 .fi-rr-dollar:before {
-    content: "\e667";
+    content: "\f418";
     }
 .fi-rr-download:before {
-    content: "\e67e";
+    content: "\f423";
     }
 .fi-rr-edit:before {
-    content: "\e6c5";
+    content: "\f43d";
     }
 .fi-rr-folder:before {
-    content: "\e837";
+    content: "\f4ef";
     }
 .fi-rr-home:before {
-    content: "\e9d2";
+    content: "\f59d";
+    }
+.fi-rr-lock:before {
+    content: "\f635";
     }
 .fi-rr-menu-burger:before {
-    content: "\ec09";
+    content: "\f664";
     }
 .fi-rr-microphone:before {
-    content: "\ec2d";
+    content: "\f67c";
     }
 .fi-rr-note-sticky:before {
-    content: "\ecf8";
+    content: "\f6be";
     }
 .fi-rr-plus:before {
-    content: "\ee7f";
+    content: "\f745";
     }
 .fi-rr-presentation:before {
-    content: "\eeba";
+    content: "\f75a";
     }
 .fi-rr-receipt:before {
-    content: "\ef27";
+    content: "\f779";
     }
 .fi-rr-search:before {
-    content: "\f015";
+    content: "\f7d5";
     }
 .fi-rr-search-alt:before {
-    content: "\f016";
+    content: "\f7d1";
     }
 .fi-rr-settings:before {
-    content: "\f03d";
+    content: "\f7e1";
     }
 .fi-rr-shield-check:before {
-    content: "\f04f";
+    content: "\f7e6";
     }
 .fi-rr-sparkles:before {
-    content: "\f139";
+    content: "\f84e";
     }
 .fi-rr-star:before {
-    content: "\f1a9";
+    content: "\f89d";
     }
 .fi-rr-table-columns:before {
-    content: "\f22a";
+    content: "\f8ca";
     }
 .fi-rr-user-add:before {
-    content: "\f3aa";
+    content: "\f986";
     }
 .fi-rr-user-time:before {
-    content: "\f3fa";
+    content: "\f993";
     }
 .fi-rr-users:before {
-    content: "\f404";
+    content: "\f999";
     }
 .fi-rr-wallet:before {
-    content: "\f45f";
+    content: "\f9be";
     }

@@ -212,7 +212,7 @@ async function startApi(port = 32145) {
   if (server) return apiStatus();
   serverPort = Number(port) || 32145;
   await new Promise((resolve, reject) => {
-    server = http.createServer(requestHandler);
+    server = http.createServer((req,res)=>{try{requestHandler(req,res)}catch{json(res,503,{error:'Local storage is unavailable. Open Studio to check recovery.'})}});
     server.once('error', err => { server = null; reject(err); });
     server.listen(serverPort, '127.0.0.1', resolve);
   });

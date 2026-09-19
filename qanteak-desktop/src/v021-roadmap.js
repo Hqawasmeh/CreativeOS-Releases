@@ -280,7 +280,7 @@ setInterval(scheduledTick,60000);
 document.addEventListener('click',async e=>{
   const el=e.target.closest?.('#workspaceV021,[data-v21-tab],[data-v21-close],[data-v21-new-schema],[data-v21-schema-create],[data-v21-schema-open],[data-v21-property-new],[data-v21-property-create],[data-v21-record-new],[data-v21-record-save],[data-v21-record-edit],[data-v21-view-type],[data-v21-view-config],[data-v21-view-save],[data-v21-form-new],[data-v21-form-create],[data-v21-form-open],[data-v21-form-submit],[data-v21-new-dashboard],[data-v21-dashboard-create],[data-v21-dashboard-open],[data-v21-new-automation],[data-v21-auto-create],[data-v21-auto-run],[data-v21-auto-toggle],[data-v21-auto-delete],[data-v21-approval-approve],[data-v21-approval-reject],[data-v21-new-context],[data-v21-context-create],[data-v21-context-open],[data-v21-research-context],[data-v21-new-skill],[data-v21-skill-create],[data-v21-new-agent],[data-v21-agent-create],[data-v21-agent-run],[data-v21-agent-delete],[data-v21-specialist],[data-v21-research-run],[data-v21-analyst-run],[data-v21-meeting-run],[data-v21-people-run],[data-v21-api-toggle],[data-v21-new-webhook],[data-v21-webhook-create],[data-v21-connector-manifest],[data-v21-export],[data-v21-import],[data-v21-governance-save],[data-v21-audit-export],[data-v21-thread],[data-v21-comment-add],[data-v21-search],[data-v21-artifact-open],[data-v21-rollup-save]');
   if(!el)return;
-  if(el.id==='workspaceV021'){state=normalizeState(await platformLoad());e.preventDefault();activeTab='overview';render();return;}
+  if(el.id==='workspaceV021'){e.preventDefault();try{state=normalizeState(await platformLoad());activeTab='overview';render();}catch(error){toast(error.message,'error')}return;}
   if(el.dataset.v21Tab){activeTab=el.dataset.v21Tab;render();return;}
   if(el.hasAttribute('data-v21-close')){closeModal();return;}
   if(el.hasAttribute('data-v21-new-schema')){newSchemaModal();return;}
@@ -343,6 +343,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target?.id==='v21S
 document.addEventListener('click',e=>{const target=e.target.closest?.('.navItem[data-view]');if(!target)return;$('#workspaceV021')?.classList.remove('active');},true);
 
 async function init(){
+  ensureNav();
   state=normalizeState(await platformLoad());migrateV020();await platformSave();ensureNav();
   try{if(window.qanteakDesktop?.platformApiStatus)apiStatus=await window.qanteakDesktop.platformApiStatus();}catch{}
   const pill=$('#updatePill');if(pill)pill.textContent=RELEASE;document.title='Qanteak OS '+RELEASE;
