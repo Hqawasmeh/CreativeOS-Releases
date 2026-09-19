@@ -26,6 +26,9 @@ if (!fs.existsSync(path.join(dist, 'index.html'))) {
   process.exit(1);
 }
 
+const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
+fs.writeFileSync(path.join(dist,'release-info.js'),'window.QANTEAK_RELEASE=Object.freeze('+JSON.stringify({version:pkg.version,label:'RC9 V0.'+pkg.version.split('.').at(-1)})+');\n');
+
 let env = {};
 for (const name of ['.env','.env.example']) {
   const p = path.join(root,name);

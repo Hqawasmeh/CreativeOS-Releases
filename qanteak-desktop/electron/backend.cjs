@@ -1,4 +1,5 @@
 const fs = require('node:fs');
+const { entitlementFor } = require('./entitlement.cjs');
 const path = require('node:path');
 const { app, safeStorage } = require('electron');
 const { Readable } = require('node:stream');
@@ -63,7 +64,7 @@ const cloudDelay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 function isRetriableRestError(err){const msg=String(err?.message||'');const status=Number(err?.status||0);return /schema cache|PGRST00[012]|database.*schema|connection.*database|connection reset|fetch failed|temporarily unavailable|gateway/i.test(msg)||[502,503,504].includes(status)}
 async function rest(pathname,{method='GET',body,prefer}={}){const c=loadConfig();if(!configured())throw new Error('Qanteak cloud backend is not configured.');const s=await validSession();if(!s?.access_token)throw new Error('Sign in to Qanteak first.');const headers={apikey:c.key,Authorization:`Bearer ${s.access_token}`,'Content-Type':'application/json'};if(prefer)headers.Prefer=prefer;let lastErr=null;for(let attempt=0;attempt<4;attempt++){try{return await jsonFetch(`${c.url}/rest/v1/${pathname}`,{method,headers,body:body===undefined?undefined:JSON.stringify(body)},12000)}catch(err){lastErr=err;if(!isRetriableRestError(err)||attempt===3)throw err;await cloudDelay([500,1200,2500][attempt]||2500)}}throw lastErr||new Error('Qanteak cloud request failed.')}
 async function rpc(name,body){return rest(`rpc/${name}`,{method:'POST',body,prefer:'return=representation'})}
-async function getEntitlement(){const rows=await rest('subscriptions?select=provider,plan,status,current_period_end,trial_ends_at,ends_at,test_mode,updated_at&order=updated_at.desc&limit=1');const subscription=rows?.[0]||null;if(!subscription)return{allowed:false,provider:null,plan:'none',status:'inactive'};const provider=String(subscription.provider||'').toLowerCase(),status=String(subscription.status||'').toLowerCase();return{allowed:(provider==='internal_qa'&&status==='active')||['active','trialing','on_trial'].includes(status),...subscription}}
+async function getEntitlement(){const rows=await rest('subscriptions?select=provider,plan,status,current_period_end,trial_ends_at,ends_at,test_mode,updated_at&order=updated_at.desc&limit=1');return entitlementFor(rows?.[0]||null)}
 async function listWorkspaces(){return rest('q_workspaces?select=id,name,slug,owner_user_id,created_at&order=created_at.asc')}
 async function listMembers(workspaceId){return rest(`q_workspace_members?workspace_id=eq.${encodeURIComponent(workspaceId)}&select=workspace_id,user_id,role,access,status,joined_at&order=joined_at.asc`)}
 async function listInvites(workspaceId){return rest(`q_workspace_invites?workspace_id=eq.${encodeURIComponent(workspaceId)}&accepted_at=is.null&select=id,workspace_id,email,role,access,token,expires_at,created_at&order=created_at.desc`)}

@@ -22,7 +22,7 @@ function configure(dir) {
 function defaultState() {
   return {
     version: 21,
-    release: 'RC9 V0.21',
+    release: 'RC9 V0.22',
     schemas: [],
     objects: [],
     views: [],
@@ -60,23 +60,43 @@ function ensureState() {
   if (!fs.existsSync(tokenFile)) fs.writeFileSync(tokenFile, crypto.randomBytes(24).toString('hex'), { mode: 0o600 });
 }
 
+function parseState(raw) {
+  const parsed = JSON.parse(raw);
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Invalid workspace file.');
+  for (const key of ['schemas','objects','views','forms','dashboards','automations','approvals','contexts','skills','agents','audit']) {
+    if (parsed[key] !== undefined && !Array.isArray(parsed[key])) throw new Error('Invalid workspace collection: ' + key);
+  }
+  return { ...defaultState(), ...parsed, platform: { ...defaultState().platform, ...(parsed.platform || {}) }, governance: { ...defaultState().governance, ...(parsed.governance || {}) }, instructions: { ...defaultState().instructions, ...(parsed.instructions || {}) } };
+}
 function readState() {
   ensureState();
-  try {
-    const parsed = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
-    return { ...defaultState(), ...parsed, platform: { ...defaultState().platform, ...(parsed.platform || {}) }, governance: { ...defaultState().governance, ...(parsed.governance || {}) }, instructions: { ...defaultState().instructions, ...(parsed.instructions || {}) } };
-  } catch {
-    const fallback = defaultState();
-    writeState(fallback);
-    return fallback;
+  try { return parseState(fs.readFileSync(stateFile, 'utf8')); }
+  catch (error) {
+    const backup = stateFile + '.bak';
+    if (fs.existsSync(backup)) {
+      let recovered;
+      try { recovered = parseState(fs.readFileSync(backup, 'utf8')); } catch {}
+      if (recovered) {
+        fs.copyFileSync(stateFile, stateFile + '.damaged-' + Date.now());
+        const temp = stateFile + '.recovery';
+        fs.writeFileSync(temp, JSON.stringify(recovered, null, 2), { mode: 0o600 });
+        fs.renameSync(temp, stateFile);
+        return recovered;
+      }
+    }
+    throw new Error('Studio storage needs recovery. The original file has been preserved; no empty workspace was written.');
   }
 }
-
 function writeState(next) {
   if (!dataDir) throw new Error('Platform storage is not configured.');
-  const normalized = { ...defaultState(), ...clone(next || {}), version: 21, release: 'RC9 V0.21', updatedAt: now() };
-  const temp = `${stateFile}.tmp`;
-  fs.writeFileSync(temp, JSON.stringify(normalized, null, 2), 'utf8');
+  const normalized = { ...parseState(JSON.stringify(next || {})), version: 21, release: 'RC9 V0.22', updatedAt: now() };
+  // Refuse to overwrite an unreadable original, even if the renderer offers defaults.
+  if (fs.existsSync(stateFile)) {
+    parseState(fs.readFileSync(stateFile, 'utf8'));
+    fs.copyFileSync(stateFile, stateFile + '.bak');
+  }
+  const temp = stateFile + '.tmp';
+  fs.writeFileSync(temp, JSON.stringify(normalized, null, 2), { mode: 0o600 });
   fs.renameSync(temp, stateFile);
   return clone(normalized);
 }
@@ -136,15 +156,15 @@ async function readJson(req) {
 
 function mcpTools() {
   return [
-    { name: 'qanteak_search', description: 'Search permission-scoped local Qanteak objects.', inputSchema: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] } },
+    { name: 'qanteak_search', description: 'Search objects stored in local Qanteak Studio.', inputSchema: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] } },
     { name: 'qanteak_get_object', description: 'Read one local Qanteak object by ID.', inputSchema: { type: 'object', properties: { id: { type: 'string' } }, required: ['id'] } },
-    { name: 'qanteak_create_object', description: 'Create a generic local Qanteak object. Writes remain audit logged.', inputSchema: { type: 'object', properties: { type: { type: 'string' }, title: { type: 'string' }, values: { type: 'object' } }, required: ['type','title'] } }
+    { name: 'qanteak_create_object', description: 'Create a generic local Qanteak object. Requires create_object permission and direct-write approval policy; writes are audit logged.', inputSchema: { type: 'object', properties: { type: { type: 'string' }, title: { type: 'string' }, values: { type: 'object' } }, required: ['type','title'] } }
   ];
 }
 
 async function handleMcp(body) {
   const id = body?.id ?? null;
-  if (body?.method === 'initialize') return { jsonrpc: '2.0', id, result: { protocolVersion: '2025-06-18', capabilities: { tools: {} }, serverInfo: { name: 'qanteak-local', version: '0.21' } } };
+  if (body?.method === 'initialize') return { jsonrpc: '2.0', id, result: { protocolVersion: '2025-06-18', capabilities: { tools: {} }, serverInfo: { name: 'qanteak-local', version: '0.22' } } };
   if (body?.method === 'tools/list') return { jsonrpc: '2.0', id, result: { tools: mcpTools() } };
   if (body?.method === 'tools/call') {
     const name = body?.params?.name;
@@ -156,6 +176,9 @@ async function handleMcp(body) {
       return { jsonrpc: '2.0', id, result: { content: [{ type: 'text', text: JSON.stringify(safeObject(obj), null, 2) }] } };
     }
     if (name === 'qanteak_create_object') {
+      if (!(s.governance.allowedTools || []).includes('create_object')) return { jsonrpc: '2.0', id, error: { code: -32003, message: 'Object creation is disabled by Studio controls.' } };
+      if (s.governance.requireApprovalForWrites !== false) return { jsonrpc: '2.0', id, error: { code: -32003, message: 'This workspace requires approval for writes. Create the item in Studio; direct MCP writes are blocked.' } };
+
       const obj = { id: crypto.randomUUID(), type: String(args.type || 'object'), title: String(args.title || 'Untitled'), values: args.values && typeof args.values === 'object' ? args.values : {}, createdAt: now(), updatedAt: now(), source: 'mcp' };
       s.objects.push(obj);
       s.audit.unshift({ id: crypto.randomUUID(), action: 'MCP object created', detail: obj.title, actor: 'mcp-client', at: now() });
@@ -169,7 +192,7 @@ async function handleMcp(body) {
 
 function requestHandler(req, res) {
   const url = new URL(req.url, `http://127.0.0.1:${serverPort}`);
-  if (url.pathname === '/health') return json(res, 200, { ok: true, product: 'Qanteak OS', release: 'RC9 V0.21', api: true });
+  if (url.pathname === '/health') return json(res, 200, { ok: true, product: 'Qanteak OS', release: 'RC9 V0.22', api: true });
   if (!authorized(req)) return json(res, 401, { error: 'Unauthorized' });
   if (req.method === 'GET' && url.pathname === '/v1/objects') return json(res, 200, { objects: searchObjects(url.searchParams.get('q') || '') });
   if (req.method === 'GET' && url.pathname.startsWith('/v1/objects/')) {
@@ -221,7 +244,7 @@ async function sendWebhook(url, payload) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10000);
   try {
-    const response = await fetch(parsed, { method: 'POST', headers: { 'content-type': 'application/json', 'user-agent': 'QanteakOS/0.21' }, body: JSON.stringify(payload || {}), signal: controller.signal });
+    const response = await fetch(parsed, { method: 'POST', headers: { 'content-type': 'application/json', 'user-agent': 'QanteakOS/0.22' }, body: JSON.stringify(payload || {}), signal: controller.signal });
     if (!response.ok) throw new Error(`Webhook failed with HTTP ${response.status}.`);
     audit('Webhook delivered', parsed.hostname);
     return { ok: true, status: response.status };

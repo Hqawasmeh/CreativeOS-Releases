@@ -1,0 +1,117 @@
+/* Flaticon Uicons Regular Rounded — https://www.flaticon.com/uicons/interface-icons */
+@font-face{font-family:QanteakUicons;src:url(assets/fonts/uicons-regular-rounded.woff2) format("woff2");font-display:block}
+.fi:before{font-family:QanteakUicons!important;font-style:normal;font-weight:normal!important;line-height:1;-webkit-font-smoothing:antialiased}
+.fi-rr-angle-left:before {
+    content: "\e08e";
+    }
+.fi-rr-angle-right:before {
+    content: "\e08f";
+    }
+.fi-rr-apps:before {
+    content: "\e0b3";
+    }
+.fi-rr-arrow-right:before {
+    content: "\e0ec";
+    }
+.fi-rr-bell:before {
+    content: "\e1bc";
+    }
+.fi-rr-bolt:before {
+    content: "\e212";
+    }
+.fi-rr-briefcase:before {
+    content: "\e2af";
+    }
+.fi-rr-calendar:before {
+    content: "\e30c";
+    }
+.fi-rr-chart-histogram:before {
+    content: "\e3b5";
+    }
+.fi-rr-check:before {
+    content: "\e3d7";
+    }
+.fi-rr-checkbox:before {
+    content: "\e3dc";
+    }
+.fi-rr-clock:before {
+    content: "\e46f";
+    }
+.fi-rr-cloud-upload-alt:before {
+    content: "\e4b4";
+    }
+.fi-rr-coins:before {
+    content: "\e4d9";
+    }
+.fi-rr-comment-check:before {
+    content: "\e4f5";
+    }
+.fi-rr-document:before {
+    content: "\e654";
+    }
+.fi-rr-dollar:before {
+    content: "\e667";
+    }
+.fi-rr-download:before {
+    content: "\e67e";
+    }
+.fi-rr-edit:before {
+    content: "\e6c5";
+    }
+.fi-rr-folder:before {
+    content: "\e837";
+    }
+.fi-rr-home:before {
+    content: "\e9d2";
+    }
+.fi-rr-menu-burger:before {
+    content: "\ec09";
+    }
+.fi-rr-microphone:before {
+    content: "\ec2d";
+    }
+.fi-rr-note-sticky:before {
+    content: "\ecf8";
+    }
+.fi-rr-plus:before {
+    content: "\ee7f";
+    }
+.fi-rr-presentation:before {
+    content: "\eeba";
+    }
+.fi-rr-receipt:before {
+    content: "\ef27";
+    }
+.fi-rr-search:before {
+    content: "\f015";
+    }
+.fi-rr-search-alt:before {
+    content: "\f016";
+    }
+.fi-rr-settings:before {
+    content: "\f03d";
+    }
+.fi-rr-shield-check:before {
+    content: "\f04f";
+    }
+.fi-rr-sparkles:before {
+    content: "\f139";
+    }
+.fi-rr-star:before {
+    content: "\f1a9";
+    }
+.fi-rr-table-columns:before {
+    content: "\f22a";
+    }
+.fi-rr-user-add:before {
+    content: "\f3aa";
+    }
+.fi-rr-user-time:before {
+    content: "\f3fa";
+    }
+.fi-rr-users:before {
+    content: "\f404";
+    }
+.fi-rr-wallet:before {
+    content: "\f45f";
+    }
