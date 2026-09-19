@@ -51,13 +51,24 @@ form?.addEventListener('submit',async e=>{
 });
 let recovering=params.get('recovery')==='1'||new URLSearchParams(location.hash.slice(1)).get('type')==='recovery';
 function showRecovery(){recovering=true;document.querySelector('#account-content')?.setAttribute('hidden','');document.querySelector('#recovery-section')?.removeAttribute('hidden');if(status)status.textContent='Choose a new password for your account.'}
-client.auth.onAuthStateChange(event=>{if(event==='PASSWORD_RECOVERY')showRecovery()});
+function updateNavigation(session){
+ document.querySelectorAll('.login-link,.mobile-login').forEach(link=>{link.href=session?'account.html':'login.html';link.textContent=session?'My profile':'Log in'});
+ const start=document.querySelector('.nav-actions .start-button');
+ if(start){start.href=session?'account.html':'signup.html';start.textContent=session?'My account':'Start for free'}
+}
+let accountTimer;
+client.auth.onAuthStateChange((event,session)=>{
+ updateNavigation(session);
+ if(event==='PASSWORD_RECOVERY')showRecovery();
+ // Run account queries after the auth callback releases its session lock.
+ if(status){clearTimeout(accountTimer);accountTimer=setTimeout(loadAccount,0)}
+});
 async function loadAccount(){
  if(!status)return;
  try{
-  const hash=new URLSearchParams(location.hash.slice(1));if(hash.get('error_description'))throw Error(hash.get('error_description'));
+  const hash=new URLSearchParams(location.hash.slice(1));if(hash.get('error_description')||params.get('error_description'))throw Error(hash.get('error_description')||params.get('error_description'));
   const {data:{session},error}=await client.auth.getSession();if(error)throw error;
-  if(!session){status.textContent='Sign in to view your account and connected workspaces.';const a=document.createElement('a');a.href='login.html';a.className='button primary';a.textContent='Log in';status.append(document.createElement('br'),a);return}
+  if(!session){document.querySelector('#account-content').hidden=true;document.querySelector('#recovery-section').hidden=true;status.textContent='Sign in to view your account and connected workspaces.';const a=document.createElement('a');a.href='login.html';a.className='button primary';a.textContent='Log in';status.append(document.createElement('br'),a);return}
   const {data:{user},error:userError}=await client.auth.getUser();if(userError)throw userError;
   if(recovering){showRecovery();return}
   status.textContent='Your account, workspace access and next steps.';
@@ -80,5 +91,5 @@ async function loadAccount(){
 }
 document.querySelector('#sign-out')?.addEventListener('click',async e=>{e.target.disabled=true;try{const {error}=await client.auth.signOut();if(error)throw error;location.replace('login.html')}catch(error){message(status,friendly(error),true);e.target.disabled=false}});
 document.querySelector('#recovery-form')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,d=new FormData(f),feedback=f.querySelector('.form-message'),button=f.querySelector('button');if(d.get('password')!==d.get('confirm')){message(feedback,'The passwords do not match.',true);return}button.disabled=true;try{const {error}=await client.auth.updateUser({password:d.get('password')});if(error)throw error;message(feedback,'Your password has been updated. You can now sign in to Qanteak.');f.reset();await client.auth.signOut();const a=document.createElement('a');a.href='login.html';a.textContent='Continue to log in →';feedback.append(document.createElement('br'),a)}catch(error){message(feedback,friendly(error),true)}finally{button.disabled=false}});
-loadAccount();
+client.auth.getSession().then(({data,error})=>{if(error){message(status,friendly(error),true);return}updateNavigation(data.session);if(status){clearTimeout(accountTimer);accountTimer=setTimeout(loadAccount,0)}}).catch(error=>message(status,friendly(error),true));
 })();

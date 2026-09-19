@@ -1,8 +1,8 @@
 (() => {
 'use strict';
 // Supabase can return email confirmation links to the configured site root.
-if (location.hash.includes('access_token=') || location.hash.includes('error_description=')) {
- if (!location.pathname.endsWith('account.html')) { location.replace('account.html'+location.hash); return; }
+if (location.hash.includes('access_token=') || location.hash.includes('error_description=') || new URLSearchParams(location.search).has('code') || new URLSearchParams(location.search).has('error_description')) {
+ if (!location.pathname.endsWith('account.html')) { location.replace('account.html'+location.search+location.hash); return; }
 }
 const menu=document.querySelector('.menu-toggle'),navigation=document.querySelector('#navigation');
 menu?.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Close menu':'Open menu');navigation.classList.toggle('open',open)});
