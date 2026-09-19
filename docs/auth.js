@@ -9,12 +9,15 @@ const status=document.querySelector('#account-status');
 function message(target,text,error=false){if(!target)return;target.textContent=text;target.className='form-message '+(error?'error':'success')}
 if(!window.supabase){message(form?.querySelector('.form-message')||status,'Account services could not load. Please refresh and try again.',true);return}
 const client=window.supabase.createClient(URL,KEY,{auth:{storageKey:'qanteak-web-auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true},global:{fetch:(url,options={})=>fetch(url,{...options,signal:options.signal||AbortSignal.timeout(15000)})}});
+window.qanteakAuth=client;
+const confirmedFromEmail=new URLSearchParams(location.hash.slice(1)).get('type')==='signup';
 const params=new URLSearchParams(location.search);
 const plan=['basic','pro','teams'].includes(params.get('plan'))?params.get('plan'):null;
 const billing=params.get('billing')==='annual'?'annual':'monthly';
-const planQuery=plan?`?plan=${plan}&billing=${billing}`:'';
-const accountDestination='account.html'+planQuery;
-const callback=new window.URL(accountDestination,location.href).href;
+const seats=plan==='teams'?Math.max(1,Math.min(100,Number(params.get('seats'))||1)):1;
+const planQuery=plan?`?plan=${plan}&billing=${billing}&seats=${seats}`:'';
+const accountDestination=plan?'checkout.html'+planQuery:'account.html';
+const callback=new window.URL('account.html',location.href).href;
 if(plan){
  const selected=document.querySelector('#selected-plan');
  if(selected)selected.textContent=`Selected plan: ${plan[0].toUpperCase()+plan.slice(1)} · ${billing==='annual'?'Yearly':'Monthly'}. No charge today.`;
@@ -44,14 +47,14 @@ form?.addEventListener('submit',async e=>{
  e.preventDefault();const button=form.querySelector('button[type="submit"]'),feedback=form.querySelector('.form-message'),d=new FormData(form),mode=form.dataset.mode;button.disabled=true;message(feedback,'Connecting…');
  try{
   if(mode==='signup'){
-   const {data,error}=await client.auth.signUp({email:d.get('email').trim(),password:d.get('password'),options:{emailRedirectTo:callback,data:{name:d.get('name').trim(),workspace_name:d.get('workspace').trim(),requested_plan:plan||'none',requested_billing:billing}}});
+   const {data,error}=await client.auth.signUp({email:d.get('email').trim(),password:d.get('password'),options:{emailRedirectTo:callback,data:{name:d.get('name').trim(),workspace_name:d.get('workspace').trim(),requested_plan:plan||'none',requested_billing:billing,requested_seats:seats}}});
    if(error)throw error;
    if(data.session){location.assign(accountDestination);return}
    message(feedback,'Check your inbox and spam folder for a confirmation link. If you already have an account, log in or reset your password. You can request another confirmation below.');startResendCooldown();form.querySelector('[name="password"]').value='';
   }else if(mode==='login'){
    const {error}=await client.auth.signInWithPassword({email:d.get('email').trim(),password:d.get('password')});if(error)throw error;location.assign(accountDestination);return;
   }else{
-   const {error}=await client.auth.resetPasswordForEmail(d.get('email').trim(),{redirectTo:callback+(plan?'&':'?')+'recovery=1'});if(error)throw error;message(feedback,'If an account exists for this address, you will receive a password reset email.');
+   const {error}=await client.auth.resetPasswordForEmail(d.get('email').trim(),{redirectTo:callback+'?recovery=1'});if(error)throw error;message(feedback,'If an account exists for this address, you will receive a password reset email.');
   }
  }catch(error){message(feedback,friendly(error),true)}finally{button.disabled=false}
 });
@@ -60,7 +63,7 @@ function showRecovery(){recovering=true;document.querySelector('#account-content
 function updateNavigation(session){
  document.querySelectorAll('.price-card a[href*="plan="]').forEach(link=>{
   const destination=new window.URL(link.href);
-  destination.pathname=destination.pathname.replace(/[^/]+$/,session?'account.html':'signup.html');
+  destination.pathname=destination.pathname.replace(/[^/]+$/,'checkout.html');
   link.href=destination.href;
  });
  if(session&&form&&['signup','login'].includes(form.dataset.mode)){
@@ -85,6 +88,8 @@ async function loadAccount(){
   if(!session){document.querySelector('#account-content').hidden=true;document.querySelector('#recovery-section').hidden=true;status.textContent='Sign in to view your account and connected workspaces.';const a=document.createElement('a');a.href='login.html'+planQuery;a.className='button primary';a.textContent='Log in';status.append(document.createElement('br'),a);return}
   const {data:{user},error:userError}=await client.auth.getUser();if(userError)throw userError;
   if(recovering){showRecovery();return}
+  const desiredPlan=plan||(confirmedFromEmail&&['basic','pro','teams'].includes(user.user_metadata?.requested_plan)?user.user_metadata.requested_plan:null);
+  if(desiredPlan){const desiredBilling=plan?billing:user.user_metadata?.requested_billing==='annual'?'annual':'monthly';const desiredSeats=plan?seats:Math.max(1,Math.min(100,Number(user.user_metadata?.requested_seats)||1));location.replace(`checkout.html?plan=${desiredPlan}&billing=${desiredBilling}&seats=${desiredSeats}`);return}
   status.textContent='Your account, workspace access and next steps.';
   document.querySelector('#account-content').hidden=false;
   document.querySelector('#account-name').textContent=user.user_metadata?.name||'Your account';
@@ -100,7 +105,7 @@ async function loadAccount(){
   else{list.textContent='No cloud workspace is linked yet. Sign in to the desktop app to set up or join your workspace.'}
   const sub=subscription?.data?.[0];
   if(!subscription||subscription.error){document.querySelector('#subscription-plan').textContent='Subscription unavailable';document.querySelector('#subscription-description').textContent='We could not load your access details. Please try again later.'}
-  else{document.querySelector('#subscription-plan').textContent=sub?`${sub.plan} · ${sub.status}`:'No active subscription';document.querySelector('#subscription-description').textContent=sub?`${sub.test_mode?'Test subscription. ':''}${sub.current_period_end?'Current period ends '+new Date(sub.current_period_end).toLocaleDateString()+'.':'Access is managed by your subscription.'}`:'Your account is ready. Selecting a plan does not activate paid access; checkout is not open on this website yet.'}
+  else{document.querySelector('#subscription-plan').textContent=sub?`${sub.plan} · ${sub.status}`:'No active subscription';document.querySelector('#subscription-description').textContent=sub?`${sub.test_mode?'Test subscription. ':''}${sub.current_period_end?'Current period ends '+new Date(sub.current_period_end).toLocaleDateString()+'.':'Access is managed by your subscription.'}`:'Your account is ready. PayPal checkout is in Sandbox testing; test subscriptions do not activate paid access.'}
  }catch(error){message(status,friendly(error),true)}
 }
 document.querySelector('#sign-out')?.addEventListener('click',async e=>{e.target.disabled=true;try{const {error}=await client.auth.signOut();if(error)throw error;location.replace('login.html')}catch(error){message(status,friendly(error),true);e.target.disabled=false}});
