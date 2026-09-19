@@ -1,0 +1,55 @@
+/* Flaticon Uicons Regular Rounded. Source: https://www.flaticon.com/uicons/interface-icons */
+@font-face{font-family:QanteakUicons;src:url(assets/fonts/uicons-regular-rounded.woff2) format("woff2");font-display:block}
+.ui-icon{display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;flex:none;vertical-align:-.12em}
+.ui-icon:before{font-family:QanteakUicons!important;font-style:normal;font-weight:normal!important;font-variant:normal;text-transform:none;line-height:1;-webkit-font-smoothing:antialiased}
+.fi-rr-apps:before {
+    content: "\f147";
+    }
+.fi-rr-arrow-right:before {
+    content: "\f170";
+    }
+.fi-rr-arrow-up:before {
+    content: "\f18b";
+    }
+.fi-rr-arrow-up-right:before {
+    content: "\f187";
+    }
+.fi-rr-bolt:before {
+    content: "\f1f9";
+    }
+.fi-rr-check:before {
+    content: "\f2de";
+    }
+.fi-rr-checkbox:before {
+    content: "\f2df";
+    }
+.fi-rr-cross-small:before {
+    content: "\f3cb";
+    }
+.fi-rr-document:before {
+    content: "\f417";
+    }
+.fi-rr-eye:before {
+    content: "\f45d";
+    }
+.fi-rr-folder:before {
+    content: "\f4ef";
+    }
+.fi-rr-interrogation:before {
+    content: "\f5d8";
+    }
+.fi-rr-menu-burger:before {
+    content: "\f664";
+    }
+.fi-rr-plus:before {
+    content: "\f745";
+    }
+.fi-rr-receipt:before {
+    content: "\f779";
+    }
+.fi-rr-sparkles:before {
+    content: "\f84e";
+    }
+.fi-rr-users:before {
+    content: "\f999";
+    }

@@ -166,3 +166,18 @@ em{font-family:var(--heading);font-weight:inherit;font-style:italic;letter-spaci
  .footer-bottom>div{flex-wrap:wrap;gap:8px 22px}.footer-bottom a{display:inline-block;padding-block:10px}
 }
 @media(hover:none){.primary:hover,.secondary:hover,.feature-link:hover,.bento-card:hover,.price-card:hover,.resource-card:hover{transform:none}}
+
+/* Screenshot presentation and consistent Flaticon interface icons. */
+.software-preview{border-radius:24px;overflow:hidden}
+.software-preview img{aspect-ratio:1904/1005;border-radius:24px;object-fit:contain}
+.auth-software img{border-radius:16px}
+.button>.ui-icon,.text-link>.ui-icon{font-size:18px}
+.menu-toggle .ui-icon{background:none;width:24px;height:24px;font-size:24px;margin:auto}
+.line-icon>.ui-icon{font-size:24px}.detail-symbol>.ui-icon{font-size:44px}
+.ai-spark>.ui-icon,.giant-spark>.ui-icon{vertical-align:middle}
+.check-list li:before{font-family:QanteakUicons;content:"\f2de"}
+.confirmation-help{border-top:1px solid var(--line);margin-top:22px;padding-top:20px}
+.confirmation-help p{margin-bottom:12px;line-height:1.6}
+.confirmation-help .button{font-size:16px;margin-top:0}
+.footer-bottom{flex-wrap:wrap}.footer-bottom>div{flex-wrap:wrap}
+@media(max-width:600px){.software-preview,.software-preview img{border-radius:16px}.confirmation-help .button{min-height:48px}}

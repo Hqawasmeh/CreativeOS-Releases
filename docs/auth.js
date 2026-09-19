@@ -12,9 +12,28 @@ const client=window.supabase.createClient(URL,KEY,{auth:{storageKey:'qanteak-web
 const params=new URLSearchParams(location.search);
 const plan=['basic','pro','teams'].includes(params.get('plan'))?params.get('plan'):null;
 const billing=params.get('billing')==='annual'?'annual':'monthly';
-if(plan){document.querySelector('#selected-plan').textContent=`Selected plan: ${plan[0].toUpperCase()+plan.slice(1)} · ${billing==='annual'?'Yearly':'Monthly'}. No charge today.`;const login=document.querySelector('a[href="login.html"]');if(login)login.href=`login.html?plan=${plan}&billing=${billing}`}
+if(plan&&document.querySelector('#selected-plan')){document.querySelector('#selected-plan').textContent=`Selected plan: ${plan[0].toUpperCase()+plan.slice(1)} · ${billing==='annual'?'Yearly':'Monthly'}. No charge today.`;const login=document.querySelector('a[href="login.html"]');if(login)login.href=`login.html?plan=${plan}&billing=${billing}`}
 const callback=new window.URL('account.html',location.href).href;
-function friendly(error){const text=error?.message||'Something went wrong. Please try again.';if(/fetch|network|timeout|abort/i.test(text))return 'We could not reach the account service. Check your connection and try again.';if(/rate limit|too many/i.test(text))return 'Too many attempts. Please wait a moment before trying again.';return text}
+function friendly(error){const text=error?.message||'Something went wrong. Please try again.';if(/fetch|network|timeout|abort/i.test(text))return 'We could not reach the account service. Check your connection and try again.';if(error?.code==='email_address_not_authorized'||/email address not authorized/i.test(text))return 'We could not send your confirmation email. Email delivery is not available for this address yet. Please contact support.';if(/smtp|error sending|email delivery/i.test(text))return 'We could not send the email. Please try again later or contact support.';if(error?.code==='email_not_confirmed')return 'Please confirm your email before logging in. Use Resend confirmation email below if you need a new link.';if(/rate limit|too many/i.test(text))return 'Email or sign-in attempts are temporarily limited. Please wait before trying again.';return text}
+const resendButton=document.querySelector('#resend-confirmation');
+let resendReadyAt=0,resendTimer;
+function startResendCooldown(){
+ if(!resendButton)return;
+ resendReadyAt=Date.now()+60000;clearInterval(resendTimer);
+ function update(){const seconds=Math.max(0,Math.ceil((resendReadyAt-Date.now())/1000));resendButton.disabled=seconds>0;resendButton.textContent=seconds?`Resend in ${seconds}s`:'Resend confirmation email';if(!seconds)clearInterval(resendTimer)}
+ update();resendTimer=setInterval(update,1000);
+}
+resendButton?.addEventListener('click',async()=>{
+ const emailInput=form.querySelector('[name="email"]'),feedback=document.querySelector('#resend-message');
+ if(!emailInput.reportValidity()||Date.now()<resendReadyAt)return;
+ resendButton.disabled=true;message(feedback,'Requesting a new confirmation link…');
+ try{
+  const {error}=await client.auth.resend({type:'signup',email:emailInput.value.trim(),options:{emailRedirectTo:callback}});
+  if(error)throw error;
+  message(feedback,'If this address has an unconfirmed account, a new link has been requested. Check your inbox and spam folder. Already confirmed? Log in instead.');
+  startResendCooldown();
+ }catch(error){message(feedback,friendly(error),true);if(error?.status===429)startResendCooldown();else resendButton.disabled=false}
+});
 form?.addEventListener('submit',async e=>{
  e.preventDefault();const button=form.querySelector('button[type="submit"]'),feedback=form.querySelector('.form-message'),d=new FormData(form),mode=form.dataset.mode;button.disabled=true;message(feedback,'Connecting…');
  try{
@@ -22,7 +41,7 @@ form?.addEventListener('submit',async e=>{
    const {data,error}=await client.auth.signUp({email:d.get('email').trim(),password:d.get('password'),options:{emailRedirectTo:callback,data:{name:d.get('name').trim(),workspace_name:d.get('workspace').trim(),requested_plan:plan||'none',requested_billing:billing}}});
    if(error)throw error;
    if(data.session){location.assign('account.html');return}
-   message(feedback,'Check your inbox for a confirmation link. If you already have an account, log in or reset your password.');form.querySelector('[name="password"]').value='';
+   message(feedback,'Check your inbox and spam folder for a confirmation link. If you already have an account, log in or reset your password. You can request another confirmation below.');startResendCooldown();form.querySelector('[name="password"]').value='';
   }else if(mode==='login'){
    const {error}=await client.auth.signInWithPassword({email:d.get('email').trim(),password:d.get('password')});if(error)throw error;location.assign('account.html');return;
   }else{
