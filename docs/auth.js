@@ -12,8 +12,14 @@ const client=window.supabase.createClient(URL,KEY,{auth:{storageKey:'qanteak-web
 const params=new URLSearchParams(location.search);
 const plan=['basic','pro','teams'].includes(params.get('plan'))?params.get('plan'):null;
 const billing=params.get('billing')==='annual'?'annual':'monthly';
-if(plan&&document.querySelector('#selected-plan')){document.querySelector('#selected-plan').textContent=`Selected plan: ${plan[0].toUpperCase()+plan.slice(1)} · ${billing==='annual'?'Yearly':'Monthly'}. No charge today.`;const login=document.querySelector('a[href="login.html"]');if(login)login.href=`login.html?plan=${plan}&billing=${billing}`}
-const callback=new window.URL('account.html',location.href).href;
+const planQuery=plan?`?plan=${plan}&billing=${billing}`:'';
+const accountDestination='account.html'+planQuery;
+const callback=new window.URL(accountDestination,location.href).href;
+if(plan){
+ const selected=document.querySelector('#selected-plan');
+ if(selected)selected.textContent=`Selected plan: ${plan[0].toUpperCase()+plan.slice(1)} · ${billing==='annual'?'Yearly':'Monthly'}. No charge today.`;
+ form?.querySelectorAll('a[href="login.html"],a[href="signup.html"]').forEach(link=>{link.href=link.getAttribute('href')+planQuery});
+}
 function friendly(error){const text=error?.message||'Something went wrong. Please try again.';if(/fetch|network|timeout|abort/i.test(text))return 'We could not reach the account service. Check your connection and try again.';if(error?.code==='email_address_not_authorized'||/email address not authorized/i.test(text))return 'We could not send your confirmation email. Email delivery is not available for this address yet. Please contact support.';if(/smtp|error sending|email delivery/i.test(text))return 'We could not send the email. Please try again later or contact support.';if(error?.code==='email_not_confirmed')return 'Please confirm your email before logging in. Use Resend confirmation email below if you need a new link.';if(/rate limit|too many/i.test(text))return 'Email or sign-in attempts are temporarily limited. Please wait before trying again.';return text}
 const resendButton=document.querySelector('#resend-confirmation');
 let resendReadyAt=0,resendTimer;
@@ -40,18 +46,26 @@ form?.addEventListener('submit',async e=>{
   if(mode==='signup'){
    const {data,error}=await client.auth.signUp({email:d.get('email').trim(),password:d.get('password'),options:{emailRedirectTo:callback,data:{name:d.get('name').trim(),workspace_name:d.get('workspace').trim(),requested_plan:plan||'none',requested_billing:billing}}});
    if(error)throw error;
-   if(data.session){location.assign('account.html');return}
+   if(data.session){location.assign(accountDestination);return}
    message(feedback,'Check your inbox and spam folder for a confirmation link. If you already have an account, log in or reset your password. You can request another confirmation below.');startResendCooldown();form.querySelector('[name="password"]').value='';
   }else if(mode==='login'){
-   const {error}=await client.auth.signInWithPassword({email:d.get('email').trim(),password:d.get('password')});if(error)throw error;location.assign('account.html');return;
+   const {error}=await client.auth.signInWithPassword({email:d.get('email').trim(),password:d.get('password')});if(error)throw error;location.assign(accountDestination);return;
   }else{
-   const {error}=await client.auth.resetPasswordForEmail(d.get('email').trim(),{redirectTo:callback+'?recovery=1'});if(error)throw error;message(feedback,'If an account exists for this address, you will receive a password reset email.');
+   const {error}=await client.auth.resetPasswordForEmail(d.get('email').trim(),{redirectTo:callback+(plan?'&':'?')+'recovery=1'});if(error)throw error;message(feedback,'If an account exists for this address, you will receive a password reset email.');
   }
  }catch(error){message(feedback,friendly(error),true)}finally{button.disabled=false}
 });
 let recovering=params.get('recovery')==='1'||new URLSearchParams(location.hash.slice(1)).get('type')==='recovery';
 function showRecovery(){recovering=true;document.querySelector('#account-content')?.setAttribute('hidden','');document.querySelector('#recovery-section')?.removeAttribute('hidden');if(status)status.textContent='Choose a new password for your account.'}
 function updateNavigation(session){
+ document.querySelectorAll('.price-card a[href*="plan="]').forEach(link=>{
+  const destination=new window.URL(link.href);
+  destination.pathname=destination.pathname.replace(/[^/]+$/,session?'account.html':'signup.html');
+  link.href=destination.href;
+ });
+ if(session&&form&&['signup','login'].includes(form.dataset.mode)){
+  location.replace(accountDestination);return;
+ }
  document.querySelectorAll('.login-link,.mobile-login').forEach(link=>{link.href=session?'account.html':'login.html';link.textContent=session?'My profile':'Log in'});
  const start=document.querySelector('.nav-actions .start-button');
  if(start){start.href=session?'account.html':'signup.html';start.textContent=session?'My account':'Start for free'}
@@ -68,7 +82,7 @@ async function loadAccount(){
  try{
   const hash=new URLSearchParams(location.hash.slice(1));if(hash.get('error_description')||params.get('error_description'))throw Error(hash.get('error_description')||params.get('error_description'));
   const {data:{session},error}=await client.auth.getSession();if(error)throw error;
-  if(!session){document.querySelector('#account-content').hidden=true;document.querySelector('#recovery-section').hidden=true;status.textContent='Sign in to view your account and connected workspaces.';const a=document.createElement('a');a.href='login.html';a.className='button primary';a.textContent='Log in';status.append(document.createElement('br'),a);return}
+  if(!session){document.querySelector('#account-content').hidden=true;document.querySelector('#recovery-section').hidden=true;status.textContent='Sign in to view your account and connected workspaces.';const a=document.createElement('a');a.href='login.html'+planQuery;a.className='button primary';a.textContent='Log in';status.append(document.createElement('br'),a);return}
   const {data:{user},error:userError}=await client.auth.getUser();if(userError)throw userError;
   if(recovering){showRecovery();return}
   status.textContent='Your account, workspace access and next steps.';
