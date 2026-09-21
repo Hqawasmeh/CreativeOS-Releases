@@ -26,8 +26,12 @@ let activeTab = 'overview';
 let currentSchemaId = null;
 let apiStatus = {enabled:false,configured:false,port:32145,token:'',baseUrl:'http://127.0.0.1:32145',mcpPath:'/mcp'};
 let saveTimer = null;
+let sharedStudio=null,studioScope="",studioLoading=false;
+const workspaceBridge=()=>window.qanteakWorkspaceBridge;
+const studioKey=()=>{const s=workspaceBridge()?.scope();return s?.userId&&s.workspaceId?s.workspaceId+":"+s.userId:""};
 
 async function platformLoad(){
+  if(studioKey()){const rows=await workspaceBridge().request("list",{kind:"studio"});sharedStudio=rows[0]||null;studioScope=studioKey();return sharedStudio?.data?.state||blankState()}
   try {
     if(window.qanteakDesktop?.platformLoad) return await window.qanteakDesktop.platformLoad();
   } catch(e){ throw new Error('Local workspace could not be opened. Your saved file has been preserved. '+e.message); }
@@ -35,13 +39,23 @@ async function platformLoad(){
 }
 async function platformSave(next=state){
   state.updatedAt = now();
+  if(studioKey()){
+    if(studioLoading||studioScope!==studioKey())throw Error('Workspace changed. Reopen Studio before saving.');
+    const scope=studioScope;
+    const draft=structuredClone(state);
+    // Keep a workspace/user-scoped recovery draft on save failure.
+    localStorage.setItem('qanteak.studio.draft:'+scope,JSON.stringify(draft));
+    const result=await workspaceBridge().request('save',{id:sharedStudio?.id,version:sharedStudio?.version||0,kind:'studio',title:'Shared Studio',data:{state:draft}});
+    if(scope!==studioKey())throw Error('Workspace changed during save.');
+    sharedStudio=result;localStorage.removeItem('qanteak.studio.draft:'+scope);return state;
+  }
   try {
     if(window.qanteakDesktop?.platformSave) { state = await window.qanteakDesktop.platformSave(state); return state; }
   } catch(e){ throw new Error('Local workspace could not be saved. Please retry before closing. '+e.message); }
   localStorage.setItem(FALLBACK_KEY,JSON.stringify(state));
   return state;
 }
-function scheduleSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>platformSave().catch(e=>toast(e.message,'error')),120); }
+function scheduleSave(){ clearTimeout(saveTimer); const key=studioKey();saveTimer=setTimeout(()=>{if(key!==studioKey())return;platformSave().catch(e=>toast(e.message,'error'))},400); }
 function audit(action,detail='',actor='local-user'){
   state.audit = Array.isArray(state.audit)?state.audit:[];
   state.audit.unshift({id:uid('audit'),action,detail:String(detail||''),actor,at:now()});
@@ -170,7 +184,7 @@ function governancePage(){
 }
 function auditPage(){return `<article class="card sectionCard"><div class="sectionHead"><div><h3>Audit & observability</h3><p>Activity recorded on this device. This local log can be edited or exported.</p></div><button class="secondary" data-v21-audit-export>Export audit</button></div><div class="v21Audit">${state.audit.slice(0,300).map(a=>`<div><span><b>${esc(a.action)}</b><small>${esc(a.detail||'Qanteak workspace')}</small></span><em>${esc(a.actor||'local-user')}</em><time>${esc(fmtTime(a.at))}</time></div>`).join('')||'<div class="empty">No audit events yet.</div>'}</div></article>`;}
 function page(){return activeTab==='data'?dataPage():activeTab==='automations'?automationPage():activeTab==='intelligence'?intelligencePage():activeTab==='platform'?platformPage():activeTab==='governance'?governancePage():activeTab==='audit'?auditPage():overview();}
-function render(){ ensureNav();setActiveNav();setHeader();const content=$('#content');if(!content)return;content.innerHTML=`${tabs()}<div class="v21Workspace">${page()}</div>`; }
+function render(){ if(studioKey()!==studioScope&&studioKey()){switchStudio();return;} ensureNav();setActiveNav();setHeader();const content=$('#content');if(!content)return;content.innerHTML=`<p class="q24-status">${studioKey()?"Shared Studio · changes are version checked":"Local Studio"} <button class="textButton" data-studio-reload>Reload shared data</button> <button class="textButton" data-studio-publish-local>Import this device’s local Studio</button></p>${tabs()}<div class="v21Workspace">${page()}</div>`; }
 
 function modal(title,body,actions=''){
   let host=$('#v21Modal');if(!host){host=document.createElement('section');host.id='v21Modal';host.className='v21Modal';document.body.append(host);}host.innerHTML=`<div class="v21ModalCard"><div class="panelHead"><div><h3>${esc(title)}</h3><p>${RELEASE} universal workspace</p></div><button type="button" data-v21-close>×</button></div><div class="v21ModalBody">${body}</div>${actions}</div>`;host.classList.add('open');
@@ -351,3 +365,7 @@ async function init(){
   scheduledTick();
 }
 init().catch(e=>{console.error('V0.21 initialization failed',e);toast(`V0.21 initialization failed: ${e.message}`,'error');});
+
+async function switchStudio(){if(studioLoading)return;studioLoading=true;clearTimeout(saveTimer);try{state=normalizeState(await platformLoad());if($('#workspaceV021')?.classList.contains('active'))render()}catch(err){toast('Shared Studio: '+err.message,'error')}finally{studioLoading=false}}
+document.addEventListener('click',async ev=>{if(ev.target.closest?.('[data-studio-reload]')){await switchStudio();render()}if(ev.target.closest?.('[data-studio-publish-local]')){try{if(!studioKey())throw Error('Sign in first');const local=window.qanteakDesktop?.platformLoad?await window.qanteakDesktop.platformLoad():JSON.parse(localStorage.getItem(FALLBACK_KEY)||'null');if(!local)throw Error('No local Studio data found');if(sharedStudio?.data?.state?.objects?.length)throw Error('Shared Studio already has records. Export local data and use Studio import to merge intentionally.');state=normalizeState(local);await platformSave();render();toast('Local Studio copied to the shared workspace.')}catch(err){toast(err.message,'error')}}});
+setInterval(()=>{const key=studioKey();if(key&&key!==studioScope)switchStudio();else if(!key&&studioScope){clearTimeout(saveTimer);studioScope='';sharedStudio=null;state=blankState()}},2000);

@@ -984,7 +984,7 @@ const v22SettingsGeneral=settingsGeneral;
 settingsGeneral=function(){return v22SettingsGeneral()+`<p class="studioNote">Interface icons by <a href="https://www.flaticon.com/uicons/interface-icons" target="_blank" rel="noopener">Flaticon Uicons</a>. Qanteak OS ${esc(window.QANTEAK_RELEASE?.label||'RC9 V0.22')}.</p>`};
 
 /* V0.23: modular collaboration and connected-work views. Existing CRUD stays intact. */
-import {installWorkspace} from './v023-workspace.js?v=f55a7ab26f1c';
+import {installWorkspace} from './v023-workspace.js?v=d88f7e7320f7';
 const v23=installWorkspace({state,backend:()=>backendState,esc,save:()=>save(),navigate:v=>navigate(v),toast,money,calcInvoice,allowed:(m,a)=>accessAllows(m,a),openEntity:(kind,id)=>{
  const modules={client:'clients',project:'projects',task:'tasks',document:'documents',file:'files',invoice:'business',review:'reviews'};
  if(!accessAllows(modules[kind],'view'))return;
@@ -998,3 +998,11 @@ Object.assign(renderers,{tasks:()=>v23.taskBoard(),map:()=>v23.mapPage(),chat:()
 const v23CanView=canViewAppView;
 canViewAppView=function(view){if(view==='tasks')return accessAllows('tasks','view');return v23CanView(view)};
 const v23Bind=bindContent;bindContent=function(){v23Bind();v23.bind()};
+
+/* V0.24 shared apps: narrow adapter to existing CRUD and permissions. */
+import {installModules} from './v024-workspace.js?v=d88f7e7320f7';
+const v24=installModules({state,backend:()=>backendState,allowed:(m,a)=>accessAllows(m,a),save:()=>save(),toast,money,render:()=>render()});
+Object.assign(meta,{modules:['Workspace apps','Bring your clients, ideas and operations together.'],inbox:['Inbox','Updates and decisions in one place.']});
+Object.assign(renderers,{modules:()=>v24.page(),inbox:()=>v24.inbox()});
+const v24Bind=bindContent;bindContent=function(){v24Bind();v24.bind()};
+window.qanteakWorkspaceBridge={scope:()=>({workspaceId:backendState.workspaceId,userId:backendState.session?.user?.id}),request:(action,data)=>v24.api(action,data)};
