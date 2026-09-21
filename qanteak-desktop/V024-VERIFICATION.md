@@ -10,7 +10,7 @@ Status: implementation prepared; live reminder API acceptance passed before rele
 - Transactional database tests with synthetic users and complete rollback: workspace isolation, role enforcement, explicit false permissions, optimistic record versions, history, private focus data, booking overlaps, chat room membership and editing ownership, expiring/revocable scoped shares, guest feedback, concurrent different-block merging and same-block conflicts, record-created automation.
 - Reminder regression: repeating the same request creates exactly one reminder; personal reminder and attendance isolation remain enforced.
 - Desktop and authenticated web builds complete locally.
-- Earlier deployed synthetic preview exercised CRM create/edit, whiteboard persistence, and knowledge templates/history. Wide-board overflow discovered there is corrected in source. Latest V24 browser/mobile visual pass remains pending publication of an isolated preview or local preview access.
+- Earlier deployed synthetic preview exercised CRM create/edit, whiteboard persistence, and knowledge templates/history. Wide-board overflow discovered there is corrected in source. The final V24 preview confirmed no document overflow on wide boards, linked task import, and a readable 390px home layout. Browser signed-out startup and invalid client-link handling passed. A sign-in heading contrast issue found in screenshots was corrected.
 
 ## Live incident
 The REST API initially returned HTTP 503 / PGRST002 for workspace reads and collaboration requests. Direct database tests passed. Schema/config reload notifications and notification-queue checks were performed. A temporary authenticator timeout diagnostic made no improvement and was reverted to its original eight seconds. The API subsequently recovered after reloads and the redundant snapshot guard. The exact provider-internal cache failure cause was not established; do not claim the desktop patch alone repairs provider outages.
@@ -21,9 +21,9 @@ Reminder request deduplication has been applied to the database. Identical core 
 
 ## Release gates still open
 1. Live PostgREST reminder acceptance: PASSED.
-2. Review final desktop and narrow-screen preview; browser sign-in and auth redirect allowlist; private media upload/download and real-device recording.
-3. Exercise workspace AI against the configured provider using a permitted test account; SQL context isolation alone is not provider end-to-end validation.
-4. Trigger the Windows workflow only after gates pass, verify installer/blockmap/latest.yml, then test an installed-client update. RELEASE_REQUEST deliberately remains at V23.
+2. Desktop/narrow-screen visual checks and browser startup: PASSED. Web sessions use the existing website storage key and existing account confirmation/recovery callback. Real-device media recording remains unverified.
+3. Provider AI end-to-end and real-device media acceptance remain unverified; SQL authorization tests do not substitute for these checks.
+4. Windows packaging and exact updater artifact verification are handled by the release workflow. A physical installed-client update remains a user-device acceptance check.
 
 ## Known boundaries
 - Knowledge uses block-level optimistic merging and realtime refresh, not CRDT/cursors. Studio remains a shared versioned snapshot available to full-access members; core entities still use the legacy snapshot system.

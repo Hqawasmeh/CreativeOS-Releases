@@ -1,7 +1,7 @@
 import {createClient} from '@supabase/supabase-js';
 import {entitlementFor} from '../electron/entitlement.cjs';
 const config=await fetch('./qanteak-config.json').then(r=>r.json());
-const client=createClient(config.QANTEAK_SUPABASE_URL,config.QANTEAK_SUPABASE_PUBLISHABLE_KEY);
+const client=createClient(config.QANTEAK_SUPABASE_URL,config.QANTEAK_SUPABASE_PUBLISHABLE_KEY,{auth:{storageKey:'qanteak-web-auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const callbacks=new Map();let channel;
 const emit=(c,p)=>(callbacks.get(c)||[]).forEach(f=>f(p));
 const unwrap=async promise=>{const{data,error}=await promise;if(error)throw error;return data};
@@ -10,7 +10,7 @@ const row=async p=>{const r=await p;return Array.isArray(r)?r[0]:r};
 const pickedFiles=new Map();
 const drive=async(action,w,body)=>{const sess=await session();const res=await fetch(config.QANTEAK_SUPABASE_URL+'/functions/v1/qanteak-drive?'+new URLSearchParams({action,workspaceId:w||''}),{method:body?'POST':'GET',headers:{apikey:config.QANTEAK_SUPABASE_PUBLISHABLE_KEY,Authorization:'Bearer '+sess.access_token,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});if(!res.ok)throw Error((await res.json()).error||'File request failed');return res.json()};
 const session=async()=>{const data=await unwrap(client.auth.getSession());return data.session};
-const redirect=new URL('./',location.href).href;
+const redirect=new URL('../account.html',location.href).href;
 const modules=(w,a,d={})=>a==='blocks.save'?rpc('q24_document',{p_workspace_id:w,p_data:d}):a==='runs'?rpc('q24_runs',{p_workspace_id:w,p_record_id:d.id}):rpc('q24_workspace',{p_workspace_id:w,p_action:a,p_data:d});
 window.qanteakDesktop={
  on:(c,f)=>callbacks.set(c,[...(callbacks.get(c)||[]),f]),
@@ -19,7 +19,7 @@ window.qanteakDesktop={
  backendSignIn:async(email,password)=>{const d=await unwrap(client.auth.signInWithPassword({email,password}));return d.session},
  backendSignUp:async({email,password,name,workspaceName})=>{const d=await unwrap(client.auth.signUp({email,password,options:{emailRedirectTo:redirect,data:{name,workspace_name:workspaceName}}}));return{session:d.session,user:d.user,confirmationRequired:!d.session}},
  backendSignOut:async()=>{await client.removeAllChannels();return unwrap(client.auth.signOut())},
- backendRequestPasswordReset:email=>unwrap(client.auth.resetPasswordForEmail(email,{redirectTo:redirect})),
+ backendRequestPasswordReset:email=>unwrap(client.auth.resetPasswordForEmail(email,{redirectTo:redirect+'?recovery=1'})),
  backendUpdatePassword:password=>unwrap(client.auth.updateUser({password})),
  backendEntitlement:async()=>entitlementFor((await unwrap(client.from('subscriptions').select('provider,plan,status,current_period_end,trial_ends_at,ends_at,test_mode,updated_at').order('updated_at',{ascending:false}).limit(1)))[0]),
  backendWorkspaces:()=>unwrap(client.from('q_workspaces').select('id,name,slug,owner_user_id,created_at').order('created_at')),

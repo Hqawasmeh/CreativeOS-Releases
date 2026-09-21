@@ -31,7 +31,7 @@ const workspaceBridge=()=>window.qanteakWorkspaceBridge;
 const studioKey=()=>{const s=workspaceBridge()?.scope();return s?.userId&&s.workspaceId?s.workspaceId+":"+s.userId:""};
 
 async function platformLoad(){
-  if(studioKey()){const rows=await workspaceBridge().request("list",{kind:"studio"});sharedStudio=rows[0]||null;studioScope=studioKey();return sharedStudio?.data?.state||blankState()}
+  if(studioKey()){const key=studioKey();const rows=await workspaceBridge().request("list",{kind:"studio"});if(key!==studioKey())throw Error("Workspace changed during load.");sharedStudio=rows[0]||null;studioScope=key;return sharedStudio?.data?.state||blankState()}
   try {
     if(window.qanteakDesktop?.platformLoad) return await window.qanteakDesktop.platformLoad();
   } catch(e){ throw new Error('Local workspace could not be opened. Your saved file has been preserved. '+e.message); }
@@ -369,3 +369,5 @@ init().catch(e=>{console.error('V0.21 initialization failed',e);toast(`V0.21 ini
 async function switchStudio(){if(studioLoading)return;studioLoading=true;clearTimeout(saveTimer);try{state=normalizeState(await platformLoad());if($('#workspaceV021')?.classList.contains('active'))render()}catch(err){toast('Shared Studio: '+err.message,'error')}finally{studioLoading=false}}
 document.addEventListener('click',async ev=>{if(ev.target.closest?.('[data-studio-reload]')){await switchStudio();render()}if(ev.target.closest?.('[data-studio-publish-local]')){try{if(!studioKey())throw Error('Sign in first');const local=window.qanteakDesktop?.platformLoad?await window.qanteakDesktop.platformLoad():JSON.parse(localStorage.getItem(FALLBACK_KEY)||'null');if(!local)throw Error('No local Studio data found');if(sharedStudio?.data?.state?.objects?.length)throw Error('Shared Studio already has records. Export local data and use Studio import to merge intentionally.');state=normalizeState(local);await platformSave();render();toast('Local Studio copied to the shared workspace.')}catch(err){toast(err.message,'error')}}});
 setInterval(()=>{const key=studioKey();if(key&&key!==studioScope)switchStudio();else if(!key&&studioScope){clearTimeout(saveTimer);studioScope='';sharedStudio=null;state=blankState()}},2000);
+
+window.qanteakDesktop?.on?.("workspace:realtime",payload=>{if(payload.type!=="modules"||payload.new?.kind!=="studio"||!studioKey()||payload.new.workspace_id!==workspaceBridge()?.scope()?.workspaceId)return;if(Number(payload.new.version)<=Number(sharedStudio?.version||0))return;if(localStorage.getItem("qanteak.studio.draft:"+studioKey())||document.querySelector(".v21Modal.open")){toast("Shared Studio changed. Save your draft or reload to review the latest version.");return}switchStudio()});

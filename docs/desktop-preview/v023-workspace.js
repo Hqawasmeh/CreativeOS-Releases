@@ -1,4 +1,4 @@
-import {STAGES,taskStage,graphData,graphLayout,shiftDuration,duration,financeData} from './v023-model.js?v=86ee7cae6a47';
+import {STAGES,taskStage,graphData,graphLayout,shiftDuration,duration,financeData} from './v023-model.js?v=3b42fa48abf9';
 export function installWorkspace(A){
  const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],e=A.esc;
  const icon=n=>`<i class="fi fi-rr-${n}" aria-hidden="true"></i>`;

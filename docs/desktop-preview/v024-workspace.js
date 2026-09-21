@@ -1,4 +1,4 @@
-import {MODULES,escapeHTML as e,safeURL,csvCell,importRows,nextDue,hasCycle,progress} from './v024-model.js?v=86ee7cae6a47';
+import {MODULES,escapeHTML as e,safeURL,csvCell,importRows,nextDue,hasCycle,progress} from './v024-model.js?v=3b42fa48abf9';
 export function installModules(A){
  const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],icon=n=>`<i class="fi fi-rr-${n}" aria-hidden="true"></i>`;
  let scope='',records=[],inbox=[],personalReminders=[],preferences={},error='',loading=false,loaded=false,selected='',query='',board=false,epoch=0,focusEnd=0,focusRecord=null;
