@@ -991,7 +991,7 @@ const v23=installWorkspace({state,backend:()=>backendState,esc,save:()=>save(),n
  ({client:openClient,project:openProject,task:v016OpenTask,document:openDocument,file:v016OpenFile,invoice:openInvoice,review:v016OpenReview})[kind]?.(id);
 }});
 const v23HomeBase=home;
-home=()=>v23.homeWidgets()+v23HomeBase();renderers.home=home;
+home=()=>v23HomeBase().replace('<div class="v22Metrics">',v23.homeWidgets()+'<div class="v22Metrics">');renderers.home=home;
 workTasks=()=>v23.taskBoard();businessOverview=()=>v23.finance();
 Object.assign(meta,{tasks:['Tasks','Keep every next step moving.'],map:['Client map','See how your work connects.'],chat:['Chat','Conversations that move work forward.'],reminders:['Time & reminders','Make room for what matters.'],business:['Finance','A clear picture of your business.']});
 Object.assign(renderers,{tasks:()=>v23.taskBoard(),map:()=>v23.mapPage(),chat:()=>v23.chat(),reminders:()=>v23.reminders()});
