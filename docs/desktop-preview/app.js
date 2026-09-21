@@ -165,7 +165,7 @@ function settings(){const appearance=state.preferences?.appearance||'light';retu
 const renderers={home,work,clients,documents,files,business,automations,settings};
 function render(view=state.view){if(!renderers[view]||!meta[view])view='home';if(backendState?.session&&!canViewAppView(view))view='home';state.view=view;const [t,s]=meta[view];$('#pageTitle').textContent=t;$('#pageSubtitle').textContent=s;$('#aiContext').textContent=`Context: ${t}`;$('#content').innerHTML=renderers[view]();$$('.navItem[data-view]').forEach(n=>{const allowed=canViewAppView(n.dataset.view);n.hidden=!allowed;n.classList.toggle('active',n.dataset.view===view)});bindContent();save();if(innerWidth<821){$('#sidebar').classList.remove('mobileOpen');setScrim(false)}}
 function canViewAppView(view){if(!backendState?.session)return true;if(view==='home'||view==='settings'||view==='automations')return true;if(view==='clients')return accessAllows('clients','view');if(view==='documents')return accessAllows('documents','view');if(view==='files')return accessAllows('files','view');if(view==='business')return accessAllows('business','view');if(view==='work')return accessAllows('projects','view')||accessAllows('tasks','view')||accessAllows('reviews','view');return true}
-function navigate(view){if(!canViewAppView(view)){toast('Access restricted','This area is not included in your workspace permissions.');return}closeAll();render(view)}
+function navigate(view){if(!canViewAppView(view)){toast('Access restricted','This area is not included in your workspace permissions.');return}closeAll();render(view);window.scrollTo?.({top:0,behavior:'instant'})}
 
 function bindContent(){setTimeout(()=>{$$('[data-create]').forEach(b=>{const map={task:'tasks',project:'projects',review:'reviews',client:'clients',document:'documents',note:'documents',sheet:'documents',slide:'documents',invoice:'business',expense:'business',automation:'business'};const mod=map[b.dataset.create];if(mod&&!accessAllows(mod,'create')){b.hidden=true;b.dataset.permissionHidden='1'}})},0);
   $$('[data-task]').forEach(b=>b.onclick=()=>{if(!requireAccess('tasks','edit','tasks'))return;const t=state.tasks.find(x=>x.id===b.dataset.task);if(t){t.done=!t.done;save();render(state.view)}});
@@ -801,7 +801,7 @@ document.addEventListener('submit',e=>{
 /* ================= END RC9 V0.15 CREATION RELIABILITY ================= */
 prefersDark?.addEventListener?.('change',()=>{if(state.preferences?.appearance==='system')applyAppearance()});
 applyAppearance();clearWorkspaceCollections();showAuthenticatedApp(false);
-setInterval(()=>{if(backendState.session&&state.view==='home'&&$('#pageTitle')?.textContent==='Home'&&!$('#command').classList.contains('open')&&!$('#aiPanel').classList.contains('open')&&!$('#modal').classList.contains('open')&&!$('#detailModal').classList.contains('open'))render('home')},30000);
+setInterval(()=>{if(backendState.session&&state.view==='home'&&$('#pageTitle')?.textContent==='Home'&&!$('#command').classList.contains('open')&&!$('#aiPanel').classList.contains('open')&&!$('#modal').classList.contains('open')&&!$('#detailModal').classList.contains('open')&&!$('#sidebar').classList.contains('mobileOpen')&&!document.querySelector('dialog[open]'))render('home')},30000);
 
 refreshSecurityStatus();const authBoot=bootAuthenticatedApp();setTimeout(()=>{const status=$('#authGateStatus span:last-child')?.textContent||'';if(/Checking secure session/i.test(status)){setAuthStatus('Secure session check timed out. You can still sign in or create an account.','error')}},12000);authBoot.catch?.(()=>{});
 
@@ -984,7 +984,7 @@ const v22SettingsGeneral=settingsGeneral;
 settingsGeneral=function(){return v22SettingsGeneral()+`<p class="studioNote">Interface icons by <a href="https://www.flaticon.com/uicons/interface-icons" target="_blank" rel="noopener">Flaticon Uicons</a>. Qanteak OS ${esc(window.QANTEAK_RELEASE?.label||'RC9 V0.22')}.</p>`};
 
 /* V0.23: modular collaboration and connected-work views. Existing CRUD stays intact. */
-import {installWorkspace} from './v023-workspace.js';
+import {installWorkspace} from './v023-workspace.js?v=8f5319b8ea7a';
 const v23=installWorkspace({state,backend:()=>backendState,esc,save:()=>save(),navigate:v=>navigate(v),toast,money,calcInvoice,allowed:(m,a)=>accessAllows(m,a),openEntity:(kind,id)=>{
  const modules={client:'clients',project:'projects',task:'tasks',document:'documents',file:'files',invoice:'business',review:'reviews'};
  if(!accessAllows(modules[kind],'view'))return;
