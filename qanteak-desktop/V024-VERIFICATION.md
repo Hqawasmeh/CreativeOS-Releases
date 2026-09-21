@@ -1,6 +1,6 @@
 # V0.24 verification and release gate
 
-Status: implementation prepared; live reminder API acceptance passed before release publication. Windows packaging and final visual acceptance are recorded below.
+Status: V0.24 published. Live reminder API acceptance passed before publication. Windows workflow 35608666822 completed successfully, including installer packaging, artifact QA and exact installer/blockmap/latest.yml verification. Release tag: v1.0.0-rc.9.24.
 
 ## Passed
 - Renderer preflight and ES-module startup/link checks.
@@ -19,7 +19,7 @@ Authenticated live HTTP acceptance then passed: reminder create, duplicate retry
 
 Reminder request deduplication has been applied to the database. Identical core snapshot submissions now return the existing revision without emitting redundant updates. The desktop echo-write fix is included in V24.
 
-## Release gates still open
+## Acceptance status and remaining device checks
 1. Live PostgREST reminder acceptance: PASSED.
 2. Desktop/narrow-screen visual checks and browser startup: PASSED. Web sessions use the existing website storage key and existing account confirmation/recovery callback. Real-device media recording remains unverified.
 3. Provider AI end-to-end and real-device media acceptance remain unverified; SQL authorization tests do not substitute for these checks.
@@ -34,3 +34,6 @@ Reminder request deduplication has been applied to the database. Identical core 
 - Screen/voice clips have a 10 MB cap. Provider integrations and automation branching/retries remain limited.
 - Existing Supabase advisory warnings concerning legacy public security-definer functions, pg_net placement and password protection predate V24. RPC-only V24 tables intentionally have no direct-access policies and revoked grants.
 - Installer is not yet Authenticode-signed.
+
+Published release: https://github.com/Hqawasmeh/CreativeOS-Releases/releases/tag/v1.0.0-rc.9.24
+Browser workspace: https://hqawasmeh.github.io/CreativeOS-Releases/app/

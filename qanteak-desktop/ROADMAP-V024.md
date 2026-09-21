@@ -4,8 +4,8 @@ The immediate priority is reliability and coherent workflows across the new apps
 
 | Priority | Work | Done when |
 | --- | --- | --- |
-| Release blocker | Restore database API schema cache and verify reminders | Authenticated create, retry without duplicates, snooze and complete pass through the actual API |
-| Release blocker | Web and Windows acceptance | Phone/desktop screenshots, sign-in redirects, file/media permissions and auto-update verified |
+| Completed in V24 | Restore API access and harden reminders | Authenticated create, retry without duplicates, snooze, complete and delete passed through the live API |
+| Next acceptance | Real-device checks | Windows packaging and updater artifact QA passed; verify recording and an installed-client update on a physical device |
 | Next | Normalize core/Studio synchronization | Per-record cloud edits, durable outbox, conflict review, deletions and reconnection tested across two accounts/devices |
 | Next | Production document collaboration | Character-level shared editing, presence, inline comments, reliable undo and restore under concurrent edits |
 | Next | Chat completion | Room management, attachment preview, reliable unread counts, notification controls and message-to-task backlinks tested across two users |
