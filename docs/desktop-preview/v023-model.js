@@ -13,8 +13,14 @@ export function graphData(state,allowed=()=>true){
  return {nodes,edges};
 }
 export function graphLayout(nodes,saved={}){
- const pos={},counts={};
- for(const n of nodes){const depth=n.kind==='client'?0:n.kind==='project'?1:2;counts[depth]=(counts[depth]||0)+1;const p=saved[n.id];pos[n.id]=p&&Number.isFinite(p.x)&&Number.isFinite(p.y)?{x:Math.max(0,Math.min(10000,p.x)),y:Math.max(0,Math.min(10000,p.y))}:{x:70+depth*340,y:60+(counts[depth]-1)*125};}
+ const pos={},ids=new Set(nodes.map(n=>n.id)),children=new Map();let row=0;
+ for(const n of nodes){const key=ids.has(n.parent)?n.parent:null;if(!children.has(key))children.set(key,[]);children.get(key).push(n);}
+ const place=(n,depth)=>{const descendants=children.get(n.id)||[];let y;
+  if(descendants.length){const ys=descendants.map(c=>place(c,depth+1));y=(ys[0]+ys.at(-1))/2;}else y=60+row++*125;
+  pos[n.id]={x:70+depth*340,y};return y;
+ };
+ (children.get(null)||[]).forEach(n=>{place(n,0);row+=.4});
+ for(const n of nodes){const p=saved[n.id];if(p&&Number.isFinite(p.x)&&Number.isFinite(p.y))pos[n.id]={x:Math.max(0,Math.min(10000,p.x)),y:Math.max(0,Math.min(10000,p.y))};}
  return pos;
 }
 export function shiftDuration(rows,now=Date.now(),start=new Date(new Date(now).setHours(0,0,0,0)).getTime()){

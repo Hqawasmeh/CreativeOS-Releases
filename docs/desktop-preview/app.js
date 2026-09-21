@@ -984,7 +984,7 @@ const v22SettingsGeneral=settingsGeneral;
 settingsGeneral=function(){return v22SettingsGeneral()+`<p class="studioNote">Interface icons by <a href="https://www.flaticon.com/uicons/interface-icons" target="_blank" rel="noopener">Flaticon Uicons</a>. Qanteak OS ${esc(window.QANTEAK_RELEASE?.label||'RC9 V0.22')}.</p>`};
 
 /* V0.23: modular collaboration and connected-work views. Existing CRUD stays intact. */
-import {installWorkspace} from './v023-workspace.js?v=8f5319b8ea7a';
+import {installWorkspace} from './v023-workspace.js?v=f55a7ab26f1c';
 const v23=installWorkspace({state,backend:()=>backendState,esc,save:()=>save(),navigate:v=>navigate(v),toast,money,calcInvoice,allowed:(m,a)=>accessAllows(m,a),openEntity:(kind,id)=>{
  const modules={client:'clients',project:'projects',task:'tasks',document:'documents',file:'files',invoice:'business',review:'reviews'};
  if(!accessAllows(modules[kind],'view'))return;
