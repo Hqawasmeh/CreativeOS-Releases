@@ -982,3 +982,19 @@ const v22FilesTable=filesTable;
 filesTable=function(rows){return rows.length?v22FilesTable(rows):v22Empty('Your files, in one place.','Upload a file when cloud storage is connected. Your project assets will appear here.','','folder')};
 const v22SettingsGeneral=settingsGeneral;
 settingsGeneral=function(){return v22SettingsGeneral()+`<p class="studioNote">Interface icons by <a href="https://www.flaticon.com/uicons/interface-icons" target="_blank" rel="noopener">Flaticon Uicons</a>. Qanteak OS ${esc(window.QANTEAK_RELEASE?.label||'RC9 V0.22')}.</p>`};
+
+/* V0.23: modular collaboration and connected-work views. Existing CRUD stays intact. */
+import {installWorkspace} from './v023-workspace.js';
+const v23=installWorkspace({state,backend:()=>backendState,esc,save:()=>save(),navigate:v=>navigate(v),toast,money,calcInvoice,allowed:(m,a)=>accessAllows(m,a),openEntity:(kind,id)=>{
+ const modules={client:'clients',project:'projects',task:'tasks',document:'documents',file:'files',invoice:'business',review:'reviews'};
+ if(!accessAllows(modules[kind],'view'))return;
+ ({client:openClient,project:openProject,task:v016OpenTask,document:openDocument,file:v016OpenFile,invoice:openInvoice,review:v016OpenReview})[kind]?.(id);
+}});
+const v23HomeBase=home;
+home=()=>v23.homeWidgets()+v23HomeBase();renderers.home=home;
+workTasks=()=>v23.taskBoard();businessOverview=()=>v23.finance();
+Object.assign(meta,{tasks:['Tasks','Keep every next step moving.'],map:['Client map','See how your work connects.'],chat:['Chat','Conversations that move work forward.'],reminders:['Time & reminders','Make room for what matters.'],business:['Finance','A clear picture of your business.']});
+Object.assign(renderers,{tasks:()=>v23.taskBoard(),map:()=>v23.mapPage(),chat:()=>v23.chat(),reminders:()=>v23.reminders()});
+const v23CanView=canViewAppView;
+canViewAppView=function(view){if(view==='tasks')return accessAllows('tasks','view');return v23CanView(view)};
+const v23Bind=bindContent;bindContent=function(){v23Bind();v23.bind()};

@@ -110,3 +110,6 @@ async function driveDownload(fileId,destinationPath){const c=loadConfig(),s=awai
 async function driveDelete(fileId,workspaceId){return edgeRequest('delete',{workspaceId,method:'POST',body:{fileId,workspaceId}})}
 
 module.exports={authStatus,authSignIn,authSignUp,authSignOut,authRequestPasswordReset,authImportUrl,authUpdatePassword,getEntitlement,listWorkspaces,listMembers,listInvites,createInvite,createInviteAndEmail,revokeInvite,acceptInvite,setMemberAccess,listBackups,createBackup,restoreBackup,archiveBackup,reportTelemetry,connectivity,pullSnapshot,pushSnapshot,loadUserSettings,saveUserSettings,startRealtime,stopRealtime,driveStatus,driveList,driveUpload,driveDownload,driveDelete};
+
+async function collaboration(workspaceId,action,data={}){if(typeof action!=="string"||!workspaceId)throw new Error("Workspace and action required");return rpc("q23_collaboration",{p_workspace_id:workspaceId,p_action:action,p_data:data})}
+module.exports.collaboration=collaboration;

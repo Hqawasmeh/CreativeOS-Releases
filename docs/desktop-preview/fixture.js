@@ -18,3 +18,24 @@ window.qanteakDesktop={
 };
 const notice=document.createElement('div');notice.textContent='DESIGN PREVIEW · Synthetic data · Changes stay in this browser';notice.style.cssText='position:fixed;bottom:8px;left:50%;transform:translateX(-50%);z-index:150;background:#17233b;color:white;border-radius:8px;padding:6px 12px;font:11px Segoe UI,sans-serif;pointer-events:none;white-space:nowrap';document.body.append(notice);
 })();
+// Synthetic V0.23 collaboration adapter. No live users or messages.
+(() => {
+const key='qanteak.v023.preview.collaboration';
+let data=JSON.parse(localStorage.getItem(key)||'null')||{members:[{id:'preview-user',name:'Alex Morgan',role:'owner'},{id:'preview-teammate',name:'Sam Parker',role:'editor'},{id:'preview-designer',name:'Jordan Lee',role:'editor'}],rooms:[{id:'preview-room',kind:'group',title:'Creative team',created_by:'preview-user',member_ids:['preview-user','preview-teammate'],preview:'The brief is ready for review.',unread:1}],messages:{'preview-room':[{id:1,room_id:'preview-room',sender_id:'preview-teammate',body:'The brief is ready for review. Let’s keep feedback here so everyone has the same context.',created_at:new Date().toISOString()}]},attendance:[],reminders:[],positions:{}};
+const persist=()=>localStorage.setItem(key,JSON.stringify(data));
+window.qanteakDesktop.notifyReminder=async()=>({shown:false});
+window.qanteakDesktop.collaboration=async(w,action,p={})=>{
+ if(action==='bootstrap')return structuredClone(data);
+ if(action==='messages')return structuredClone(data.messages[p.room_id]||[]);
+ if(action==='room.read'){const r=data.rooms.find(r=>r.id===p.room_id);if(r)r.unread=0;persist();return []}
+ if(action==='room.create'){const id=crypto.randomUUID();data.rooms.unshift({id,kind:p.kind,title:p.title,member_ids:['preview-user',...p.members],unread:0});persist();return{id}}
+ if(action==='message.send'){const list=data.messages[p.room_id]||=[];if(!list.some(m=>m.request_id===p.request_id))list.push({id:Date.now(),room_id:p.room_id,sender_id:'preview-user',body:p.body,request_id:p.request_id,created_at:new Date().toISOString()});data.rooms.find(r=>r.id===p.room_id).preview=p.body;persist();return structuredClone(list)}
+ if(action==='attendance.in'&&!data.attendance.some(r=>!r.checked_out_at))data.attendance.unshift({id:crypto.randomUUID(),checked_in_at:new Date().toISOString(),checked_out_at:null});
+ if(action==='attendance.out')data.attendance.filter(r=>!r.checked_out_at).forEach(r=>r.checked_out_at=new Date().toISOString());
+ if(action==='attendance.team')return data.attendance.map(r=>({...r,name:'Alex Morgan'}));
+ if(action==='reminder.save'){if(p.id){Object.assign(data.reminders.find(r=>r.id===p.id),p);data.reminders=data.reminders.filter(r=>!r.done)}else data.reminders.push({id:crypto.randomUUID(),...p});data.reminders.sort((a,b)=>a.due_at.localeCompare(b.due_at));}
+ if(action==='reminder.delete')data.reminders=data.reminders.filter(r=>r.id!==p.id);
+ if(action==='layout.save')data.positions=structuredClone(p.positions);
+ persist();return {ok:true};
+};
+})();

@@ -1,6 +1,8 @@
 const {contextBridge,ipcRenderer}=require('electron');
 const allowed=['update:status','update:progress','update:downloaded','auth:deep-link','workspace:realtime','drive:progress'];
 contextBridge.exposeInMainWorld('qanteakDesktop',{
+  collaboration:(workspaceId,action,data)=>ipcRenderer.invoke('collaboration:request',workspaceId,action,data),
+  notifyReminder:(payload)=>ipcRenderer.invoke('reminder:notify',payload),
   getVersion:()=>ipcRenderer.invoke('app:version'),
   checkForUpdates:()=>ipcRenderer.invoke('update:check'),
   restartToUpdate:()=>ipcRenderer.invoke('update:install'),

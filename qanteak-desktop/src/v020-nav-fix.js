@@ -3,3 +3,5 @@ if(!document.querySelector('link[data-qanteak-v021]')){const link=document.creat
 import('./v021-roadmap.js').catch(err=>{console.error('Could not load Qanteak RC9 V0.21 workspace',err);window.qanteakDesktop?.reportRendererError?.({message:`V0.21 workspace load failed: ${err.message}`,stack:err.stack||''})});
 
 const theme=document.createElement('link');theme.rel='stylesheet';theme.href='./v022-design.css';document.head.append(theme);
+
+const theme23=document.createElement('link');theme23.rel='stylesheet';theme23.href='./v023-design.css';document.head.append(theme23);

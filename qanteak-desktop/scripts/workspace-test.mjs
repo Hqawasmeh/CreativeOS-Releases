@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {STAGES,taskStage,graphData,graphLayout,shiftDuration,financeData} from '../src/v023-model.js';
+assert.equal(taskStage({done:true,stage:'In review'}),'Done');
+assert.equal(taskStage({done:false,stage:'Done'}),'To do');
+assert.equal(taskStage({done:false,stage:'In progress'}),STAGES[1]);
+const state={clients:[{id:'c1',name:'Client'}],projects:[{id:'p1',name:'Project',client:'Client'}],tasks:[{id:'t1',title:'Task',project:'Project'},{id:'t2',title:'Archived',archivedAt:'now',project:'Project'}],documents:[{id:'d1',projectId:'p1'}],invoices:[{id:'i1',amount:100,status:'Paid'},{id:'i2',amount:50,status:'Sent'},{id:'i3',amount:800,status:'Draft'},{id:'i4',amount:200,status:'Void'}],expenses:[{amount:25,category:'Tools'}]};
+const g=graphData(state);assert.equal(g.nodes.some(n=>n.ref==='t2'),false);assert.deepEqual(g.edges.slice(0,3),[{from:'client:c1',to:'project:p1'},{from:'project:p1',to:'task:t1'},{from:'project:p1',to:'document:d1'}]);
+const restricted=graphData(state,m=>m!=='business');assert.equal(restricted.nodes.some(n=>n.kind==='invoice'),false);
+const pos=graphLayout(g.nodes,{'client:c1':{x:NaN,y:-200},'task:t1':{x:500,y:400}});assert.deepEqual(pos['task:t1'],{x:500,y:400});assert.equal(Number.isFinite(pos['client:c1'].x),true);
+const now=Date.parse('2026-09-21T10:00:00Z'),start=Date.parse('2026-09-21T00:00:00Z');assert.equal(shiftDuration([{checked_in_at:'2026-09-20T22:00:00Z',checked_out_at:'2026-09-21T01:00:00Z'},{checked_in_at:'2026-09-21T09:00:00Z'}],now,start),7200000);
+const f=financeData(state,i=>({total:i.amount}));assert.equal(f.paid,100);assert.equal(f.outstanding,50);assert.equal(f.net,75);
+console.log('V0.23 behavior tests passed: task transitions, graph links/permissions/positions, overnight shifts and finance totals.');

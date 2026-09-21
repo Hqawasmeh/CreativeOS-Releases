@@ -1,6 +1,6 @@
 const path = require('node:path');
 const fs = require('node:fs');
-const { app, BrowserWindow, ipcMain, shell, session, dialog, safeStorage } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, session, dialog, safeStorage, Notification } = require('electron');
 const { initUpdater, check, install } = require('./updater.cjs');
 const backend = require('./backend.cjs');
 const { execFile } = require('node:child_process');
@@ -255,4 +255,12 @@ ipcMain.handle('invoice:pdf', async (_event, invoice) => {
     out.on('finish',resolve);out.on('error',reject);
   });
   return {ok:true,path:result.filePath};
+});
+
+ipcMain.handle('collaboration:request',(_e,workspaceId,action,data)=>backend.collaboration(workspaceId,action,data||{}));
+ipcMain.handle('reminder:notify',async (_e,payload)=>{
+ if(!(await backend.authStatus()).session)throw new Error('Sign in first');
+ if(!Notification.isSupported())return {shown:false};
+ const n=new Notification({title:'Qanteak reminder',body:String(payload?.title||'Reminder').slice(0,200),silent:false});
+ n.on('click',()=>{mainWindow?.show();mainWindow?.focus()});n.show();return {shown:true};
 });

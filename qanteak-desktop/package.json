@@ -1,13 +1,13 @@
 {
   "name": "qanteak-os",
-  "version": "1.0.0-rc.9.22",
+  "version": "1.0.0-rc.9.23",
   "private": true,
-  "description": "Qanteak OS RC9 V0.22 \u2014 clarity, usability and recovery",
+  "description": "Qanteak OS RC9 V0.23 \u2014 connected work, conversations and time",
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
     "start": "electron .",
-    "build": "node scripts/preflight.mjs && node --experimental-vm-modules scripts/renderer-module-smoke.cjs && node scripts/interaction-smoke.mjs && node scripts/reliability-test.cjs && node scripts/build-renderer.mjs",
+    "build": "node scripts/preflight.mjs && node --experimental-vm-modules scripts/renderer-module-smoke.cjs && node scripts/interaction-smoke.mjs && node scripts/reliability-test.cjs && node scripts/workspace-test.mjs && node scripts/build-renderer.mjs",
     "dist": "npm run build && electron-builder --win nsis --publish never",
     "preflight": "node scripts/preflight.mjs",
     "qa:release": "node scripts/verify-release.mjs release",
@@ -15,7 +15,8 @@
     "qa:renderer-startup": "node --experimental-vm-modules scripts/renderer-module-smoke.cjs",
     "qa:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/windows-qa-preflight.ps1",
     "qa:interactions": "node scripts/interaction-smoke.mjs",
-    "qa:reliability": "node scripts/reliability-test.cjs"
+    "qa:reliability": "node scripts/reliability-test.cjs",
+    "qa:workspace": "node scripts/workspace-test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

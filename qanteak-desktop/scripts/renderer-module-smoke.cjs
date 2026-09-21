@@ -22,7 +22,14 @@ windowObj.window=windowObj;windowObj.document=document;windowObj.localStorage=lo
 (async()=>{
   const source=fs.readFileSync(path.join(process.cwd(),'src/app.js'),'utf8');
   const mod=new vm.SourceTextModule(source,{context,identifier:'src/app.js'});
-  await mod.link(()=>{throw new Error('Renderer unexpectedly imported another module.');});
+  const modules=new Map();
+  async function link(specifier,parent){
+    const filename=path.resolve(path.dirname(parent.identifier),specifier);
+    if(!filename.startsWith(path.resolve('src')+path.sep))throw new Error('Unexpected module path');
+    if(!modules.has(filename)){const child=new vm.SourceTextModule(fs.readFileSync(filename,'utf8'),{context,identifier:filename});modules.set(filename,child);await child.link(link);}
+    return modules.get(filename);
+  }
+  await mod.link(link);
   await mod.evaluate();
   console.log('Qanteak renderer ES-module smoke OK');
 })().catch(err=>{console.error(err && err.stack || err);process.exit(1)});
