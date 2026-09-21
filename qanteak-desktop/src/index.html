@@ -4,18 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f6f7f9">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://cdn-uicons.flaticon.com; font-src 'self' https://cdn-uicons.flaticon.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'">
-  <title>Qanteak OS RC9 V0.23</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://cdn-uicons.flaticon.com; font-src 'self' https://cdn-uicons.flaticon.com; img-src 'self' data: blob:; connect-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-src 'none'">
+  <title>Qanteak OS RC9 V0.24</title>
   <link rel="stylesheet" href="./icons.css">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./v020-foundations.css">
+  <link rel="stylesheet" href="./v024-workspace.css">
 </head>
 <body>
 <a class="skipLink" href="#content">Skip to workspace</a>
 <section class="authGate" id="authGate" aria-live="polite">
   <div class="authCard">
     <div class="authBrand"><img id="authLogo" src="assets/qanteak-logo-black.png" alt="Qanteak OS"></div>
-    <div class="authIntro"><span class="authEyebrow">Qanteak OS · RC9 V0.23</span><h1>Sign in to your workspace</h1><p>Your projects, clients, files and business data stay hidden until your Qanteak account is authenticated.</p></div>
+    <div class="authIntro"><span class="authEyebrow">Qanteak OS · RC9 V0.24</span><h1>Sign in to your workspace</h1><p>Your projects, clients, files and business data stay hidden until your Qanteak account is authenticated.</p></div>
     <div class="authTabs"><button class="active" type="button" data-auth-tab="signin">Sign in</button><button type="button" data-auth-tab="signup">Create account</button></div>
     <form class="authForm" id="authGateSignIn">
       <label>Email<input id="gateEmail" type="email" autocomplete="email" required placeholder="you@company.com"></label>
@@ -62,7 +63,7 @@
   <main class="main">
     <header class="topbar">
       <div class="titleWrap"><button class="mobileMenu" id="mobileMenu" aria-label="Toggle navigation"><i class="fi fi-rr-menu-burger"></i></button><div><h1 id="pageTitle">Home</h1><p id="pageSubtitle">Your priorities, all in one place.</p></div></div>
-      <div class="topActions"><button class="updatePill" id="updatePill" type="button" title="Open Settings & Updates">RC9 V0.23</button><button class="iconButton" id="topNotifications" title="Notifications"><i class="fi fi-rr-bell"></i><b></b></button><button class="secondary" id="askQanteak"><i class="fi fi-rr-sparkles"></i> Ask Qanteak</button><button class="primary" id="newAction"><i class="fi fi-rr-plus"></i> New</button></div>
+      <div class="topActions"><button class="updatePill" id="updatePill" type="button" title="Open Settings & Updates">RC9 V0.24</button><button class="iconButton" id="topNotifications" title="Notifications"><i class="fi fi-rr-bell"></i><b></b></button><button class="secondary" id="askQanteak"><i class="fi fi-rr-sparkles"></i> Ask Qanteak</button><button class="primary" id="newAction"><i class="fi fi-rr-plus"></i> New</button></div>
     </header>
     <section class="content" id="content" tabindex="-1"></section>
   </main>

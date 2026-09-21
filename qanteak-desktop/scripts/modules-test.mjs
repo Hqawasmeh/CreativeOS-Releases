@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {csvParse,importRows,csvCell,nextDue,hasCycle,safeURL,progress} from '../src/v024-model.js';
+assert.deepEqual(csvParse('title,notes\r\n"A, B","line 1\nline 2"\r\n"C","say ""yes"""'),[['title','notes'],['A, B','line 1\nline 2'],['C','say "yes"']]);
+assert.throws(()=>csvParse('"unclosed'),/Unclosed/);
+assert.throws(()=>importRows('name\nHello','crm'),/title/);
+assert.equal(importRows('title,value\nDeal,200','crm')[0].data.value,200);
+assert.equal(csvCell('=HYPERLINK("bad")'),'"\'=HYPERLINK(""bad"")"');
+assert.equal(nextDue('2028-01-31','Monthly'),'2028-02-29');
+assert.equal(nextDue('2026-12-31','Daily'),'2027-01-01');
+assert.equal(hasCycle([{id:'a',data:{dependsOn:'b'}},{id:'b',data:{dependsOn:''}}],'b',['a']),true);
+assert.equal(hasCycle([{id:'a',data:{dependsOn:'b'}}],'c',['a']),false);
+assert.equal(safeURL('javascript:alert(1)'),'');assert.equal(safeURL('https://example.com/a'),'https://example.com/a');
+assert.equal(progress({data:{current:150,target:100}}),100);
+console.log('V0.24 model tests pass: CSV quoting and validation, formula escaping, monthly recurrence, dependency cycles, safe links, goal progress.');

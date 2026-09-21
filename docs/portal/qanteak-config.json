@@ -1,0 +1,7 @@
+{
+  "QANTEAK_BACKEND_MODE": "supabase",
+  "QANTEAK_SUPABASE_URL": "https://xohzqpattqeoowadssep.supabase.co",
+  "QANTEAK_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_Zea_ustLC96qE3TURwemwg_OK6q56y3",
+  "QANTEAK_AUTH_REDIRECT": "qanteak://auth/confirmed",
+  "QANTEAK_RECOVERY_REDIRECT": "qanteak://auth/recovery"
+}

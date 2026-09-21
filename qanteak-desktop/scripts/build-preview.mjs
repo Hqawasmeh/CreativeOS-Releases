@@ -16,7 +16,7 @@ for(const name of ['responsive.html','responsive.js'])fs.copyFileSync('scripts/f
 // Give the browser fixture immutable module URLs, so a previous preview cannot
 // combine new HTML with stale scripts or styles from GitHub Pages caches.
 const {createHash}=await import('node:crypto');
-const revision=createHash('sha256').update(fs.readFileSync('src/app.js')).update(fs.readFileSync('src/v023-workspace.js')).update(fs.readFileSync('src/v023-design.css')).digest('hex').slice(0,12);
+const revision=createHash('sha256').update(fs.readFileSync('src/app.js')).update(fs.readFileSync('src/v023-workspace.js')).update(fs.readFileSync('src/v023-design.css')).update(fs.readFileSync('src/v024-workspace.js')).update(fs.readFileSync('src/v024-workspace.css')).digest('hex').slice(0,12);
 for(const entry of fs.readdirSync(output)){
  if(!/\.(html|js)$/.test(entry))continue;
  const file=path.join(output,entry);

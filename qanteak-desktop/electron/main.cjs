@@ -1,11 +1,12 @@
 const path = require('node:path');
 const fs = require('node:fs');
-const { app, BrowserWindow, ipcMain, shell, session, dialog, safeStorage, Notification } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, session, dialog, safeStorage, Notification, desktopCapturer } = require('electron');
 const { initUpdater, check, install } = require('./updater.cjs');
 const backend = require('./backend.cjs');
 const { execFile } = require('node:child_process');
 
 let mainWindow;
+let pendingScreenCapture=null;
 let installingUpdate = false;
 let pendingDeepLink = null;
 let realtimeWorkspaceId = null;
@@ -105,7 +106,8 @@ app.on('open-url',(event,url)=>{event.preventDefault();deliverDeepLink(url)});
 app.whenReady().then(() => {
   try{ app.setAsDefaultProtocolClient('qanteak'); }catch(e){ logLine('protocol',e?.message||e); }
   const startupLink=findDeepLink(process.argv); if(startupLink) pendingDeepLink=startupLink;
-  session.defaultSession.setPermissionRequestHandler((_wc, _permission, callback) => callback(false));
+  session.defaultSession.setDisplayMediaRequestHandler(async (request,callback)=>{try{const selection=pendingScreenCapture;pendingScreenCapture=null;if(!selection||Date.now()>selection.expires)return callback({});const sources=await desktopCapturer.getSources({types:['screen','window']});const source=sources.find(s=>s.id===selection.id);callback(source?{video:source}:{});}catch{callback({})}});
+  session.defaultSession.setPermissionRequestHandler((wc, permission, callback, details) => callback(wc===mainWindow?.webContents && permission==='media' && (details.mediaTypes||[]).every(t=>t==='audio'||t==='video')));
   createWindow();
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -264,3 +266,18 @@ ipcMain.handle('reminder:notify',async (_e,payload)=>{
  const n=new Notification({title:'Qanteak reminder',body:String(payload?.title||'Reminder').slice(0,200),silent:false});
  n.on('click',()=>{mainWindow?.show();mainWindow?.focus()});n.show();return {shown:true};
 });
+
+ipcMain.handle('modules:request',(_e,workspaceId,action,data)=>backend.workspaceModules(workspaceId,action,data||{}));
+
+ipcMain.handle('chat:request',(_e,w,a,d)=>backend.chatRequest(w,a,d));
+ipcMain.handle('chat:upload',(_e,r,n,b)=>backend.chatUpload(r,n,b));
+ipcMain.handle('chat:download',(_e,p)=>backend.chatDownload(p));
+
+ipcMain.handle('modules:ask',(_e,w,q)=>backend.workspaceAsk(w,q));
+ipcMain.handle('modules:feedback',(_e,w,id)=>backend.workspaceFeedback(w,id));
+
+ipcMain.handle('modules:upload',(_e,r,n,b)=>backend.moduleUpload(r,n,b));
+ipcMain.handle('modules:download',(_e,p)=>backend.moduleDownload(p));
+
+ipcMain.handle('capture:sources',async()=>{const sources=await desktopCapturer.getSources({types:['screen','window'],thumbnailSize:{width:240,height:150}});return sources.map(s=>({id:s.id,name:s.name,thumbnail:s.thumbnail.toDataURL()}))});
+ipcMain.handle('capture:select',async(_e,id)=>{const sources=await desktopCapturer.getSources({types:['screen','window']});if(!sources.some(s=>s.id===id))throw Error('Screen or window no longer available');pendingScreenCapture={id,expires:Date.now()+30000};return{ok:true}});

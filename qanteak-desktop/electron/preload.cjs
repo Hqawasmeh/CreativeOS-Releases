@@ -1,6 +1,16 @@
 const {contextBridge,ipcRenderer}=require('electron');
 const allowed=['update:status','update:progress','update:downloaded','auth:deep-link','workspace:realtime','drive:progress'];
 contextBridge.exposeInMainWorld('qanteakDesktop',{
+  chatRequest:(w,a,d)=>ipcRenderer.invoke('chat:request',w,a,d),
+  chatUpload:(r,n,b)=>ipcRenderer.invoke('chat:upload',r,n,b),
+  chatDownload:(p)=>ipcRenderer.invoke('chat:download',p),
+  workspaceAsk:(w,q)=>ipcRenderer.invoke('modules:ask',w,q),
+  workspaceFeedback:(w,id)=>ipcRenderer.invoke('modules:feedback',w,id),
+  moduleUpload:(r,n,b)=>ipcRenderer.invoke('modules:upload',r,n,b),
+  moduleDownload:p=>ipcRenderer.invoke('modules:download',p),
+  captureSources:()=>ipcRenderer.invoke('capture:sources'),
+  selectCaptureSource:id=>ipcRenderer.invoke('capture:select',id),
+  workspaceModules:(workspaceId,action,data)=>ipcRenderer.invoke('modules:request',workspaceId,action,data),
   collaboration:(workspaceId,action,data)=>ipcRenderer.invoke('collaboration:request',workspaceId,action,data),
   notifyReminder:(payload)=>ipcRenderer.invoke('reminder:notify',payload),
   getVersion:()=>ipcRenderer.invoke('app:version'),

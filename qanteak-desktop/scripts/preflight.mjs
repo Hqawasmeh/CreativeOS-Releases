@@ -32,7 +32,7 @@ const required = [
   'backend/README.md',
   'backend/migrations/README.md',
   'SECURITY_AND_SIGNING.md',
-  'CHANGELOG-RC9-V0.23.md',
+  'CHANGELOG-RC9-V0.24.md',
   'src/v022-design.css',
   'src/v023-design.css',
   'src/v023-model.js',
@@ -55,7 +55,7 @@ try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); }
 catch { fail.push('package.json is missing or invalid JSON.'); }
 
 if (pkg) {
-  if (pkg.version !== '1.0.0-rc.9.23') fail.push(`Unexpected package version: ${pkg.version}`);
+  if (pkg.version !== '1.0.0-rc.9.24') fail.push(`Unexpected package version: ${pkg.version}`);
   if (pkg.main !== 'electron/main.cjs') fail.push(`Unexpected Electron entry: ${pkg.main}`);
   if (pkg?.build?.appId !== 'com.creativeos.desktop') fail.push('Windows appId must remain com.creativeos.desktop for RC9 in-place upgrades.');
   if (pkg?.build?.artifactName !== 'QanteakOS-Setup-${version}.${ext}') fail.push('Unexpected installer artifactName.');
@@ -168,5 +168,5 @@ if (fail.length) {
   fail.forEach(x => console.error(' - ' + x));
   process.exit(1);
 }
-console.log('Qanteak preflight OK · 1.0.0-rc.9.23');
+console.log('Qanteak preflight OK · 1.0.0-rc.9.24');
 warn.forEach(x => console.warn('WARN: ' + x));
