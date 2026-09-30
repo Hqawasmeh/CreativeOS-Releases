@@ -3,7 +3,7 @@ declare m public.q_workspace_members; p text;
 begin
  select * into m from public.q_workspace_members where workspace_id=w and user_id=auth.uid() and status='active';
  if m.user_id is null then return false;end if;
- if k not in ('studio','settings','templates','portal','crm','content','brand','goals','requests','support','equipment','booking','onboarding','focus','whiteboard','knowledge','clips','forms','workflows','planning') then return false;end if;
+ if k not in ('studio','settings','templates','portal','crm','content','brand','goals','requests','support','equipment','booking','onboarding','focus','whiteboard','knowledge','clips','forms','workflows','planning','timesheets','dashboards') then return false;end if;
  if k='focus' then return creator is null or creator=auth.uid();end if;
  if lower(m.role) in ('owner','admin') then return true;end if;
  if k in ('settings','studio') then return k='studio' and (m.access ? 'Everything') and (act='view' or lower(m.role) not in ('viewer','guest'));end if;
