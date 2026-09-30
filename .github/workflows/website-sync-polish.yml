@@ -1,0 +1,42 @@
+name: Sync Website From Generator
+
+on:
+  push:
+    branches:
+      - website-ux-polish-20260930
+    paths:
+      - scripts/build-website.py
+      - docs/privacy.html
+      - docs/terms.html
+      - docs/refund.html
+      - docs/security.html
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: website-ux-polish-20260930
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Generate website
+        run: python scripts/build-website.py
+      - name: Validate generated website
+        run: python scripts/check-website.py
+      - name: Commit generated pages
+        run: |
+          if git diff --quiet -- docs; then
+            echo "Website already in sync."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs
+          git commit -m "Sync polished website from generator"
+          git push origin HEAD:website-ux-polish-20260930
