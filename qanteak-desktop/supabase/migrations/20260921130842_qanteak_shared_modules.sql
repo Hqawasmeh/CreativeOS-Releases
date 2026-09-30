@@ -34,7 +34,7 @@ begin
  if k='portal' then return false;end if;
  if k='requests' and creator is not null and creator<>auth.uid() then return false;end if;
  if act<>'view' and lower(m.role) in ('viewer','guest') then return false;end if;
- p:=case when k in ('crm','support','forms') then 'clients' when k in ('brand','equipment','clips') then 'files' when k in ('planning','onboarding','requests') then 'tasks' when k='knowledge' then 'documents' when k in ('workflows','timesheets','dashboards') then 'business' when k in ('content','goals','whiteboard','booking','templates') then 'projects' else null end;
+ p:=case when k in ('crm','support','forms') then 'clients' when k in ('brand','equipment','clips') then 'files' when k in ('planning','onboarding','requests') then 'tasks' when k='knowledge' then 'documents' when k='workflows' then 'business' when k in ('content','goals','whiteboard','booking') then 'projects' else null end;
  if p is null then return false;end if;
  if jsonb_typeof(m.access)='array' then return m.access ? 'Everything' or m.access ? p or m.access ? (p||'.'||act) or m.access ? (p||':'||act);end if;
  return coalesce(m.access->p='true'::jsonb or m.access->p->>'all'='true' or m.access->p->>act='true',false);
@@ -52,7 +52,7 @@ begin
  if action='list' then
  return coalesce((select jsonb_agg(x order by x.updated_at desc) from (select * from public.q24_records where workspace_id=w and not deleted and (d->>'kind' is null or kind=d->>'kind') and qanteak_private.q24_allowed(w,kind,'view',created_by) and (d->>'before' is null or updated_at<(d->>'before')::timestamptz) order by updated_at desc limit 1000)x),'[]');
  elsif action='inbox' then
- return jsonb_build_object('items',coalesce((select jsonb_agg(x order by x.id desc) from (select i.* from public.q24_inbox i left join public.q24_records qr on qr.id=i.record_id where i.workspace_id=w and i.user_id=u and (i.source_room is null or qanteak_private.q24_room_allowed(i.source_room)) and (qr.id is null or qanteak_private.q24_allowed(w,qr.kind,'view',qr.created_by)) order by i.id desc limit 300)x),'[]'),'preferences',coalesce((select data from public.q24_preferences where workspace_id=w and user_id=u),'{}'));
+ return jsonb_build_object('items',coalesce((select jsonb_agg(x order by x.id desc) from (select i.* from public.q24_inbox i left join public.q24_records r on r.id=i.record_id where i.workspace_id=w and i.user_id=u and (i.source_room is null or qanteak_private.q24_room_allowed(i.source_room)) and (r.id is null or qanteak_private.q24_allowed(w,r.kind,'view',r.created_by)) order by i.id desc limit 300)x),'[]'),'preferences',coalesce((select data from public.q24_preferences where workspace_id=w and user_id=u),'{}'));
  elsif action='inbox.read' then
  update public.q24_inbox set read_at=now() where workspace_id=w and user_id=u and (d->>'id' is null or id=(d->>'id')::bigint);return '{}';
  elsif action='preferences' then
