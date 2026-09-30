@@ -3,7 +3,23 @@ name: Website UX QA
 on:
   push:
     branches:
+      - main
       - website-ux-polish-20260930
+    paths:
+      - 'docs/**'
+      - 'scripts/build-website.py'
+      - 'scripts/check-website.py'
+      - 'scripts/check-paypal.mjs'
+      - 'supabase/functions/qanteak-paypal/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'scripts/build-website.py'
+      - 'scripts/check-website.py'
+      - 'scripts/check-paypal.mjs'
+      - 'supabase/functions/qanteak-paypal/**'
   workflow_dispatch:
 
 permissions:
