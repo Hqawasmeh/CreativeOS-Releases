@@ -3,14 +3,14 @@ declare m public.q_workspace_members; p text;
 begin
  select * into m from public.q_workspace_members where workspace_id=w and user_id=auth.uid() and status='active';
  if m.user_id is null then return false;end if;
- if k not in ('studio','settings','templates','portal','crm','content','brand','goals','requests','support','equipment','booking','onboarding','focus','whiteboard','knowledge','clips','forms','workflows','planning') then return false;end if;
+ if k not in ('studio','settings','templates','portal','crm','content','brand','goals','requests','support','equipment','booking','onboarding','focus','whiteboard','knowledge','clips','forms','workflows','planning','timesheets','dashboards') then return false;end if;
  if k='focus' then return creator is null or creator=auth.uid();end if;
  if lower(m.role) in ('owner','admin') then return true;end if;
  if k in ('settings','studio') then return k='studio' and (m.access ? 'Everything') and (act='view' or lower(m.role) not in ('viewer','guest'));end if;
  if k='portal' then return false;end if;
  if k='requests' and creator is not null and creator<>auth.uid() then return false;end if;
  if act<>'view' and lower(m.role) in ('viewer','guest') then return false;end if;
- p:=case when k in ('crm','support','forms') then 'clients' when k in ('brand','equipment','clips') then 'files' when k in ('planning','onboarding','requests') then 'tasks' when k='knowledge' then 'documents' when k='workflows' then 'business' when k in ('content','goals','whiteboard','booking','templates') then 'projects' else null end;
+ p:=case when k in ('crm','support','forms') then 'clients' when k in ('brand','equipment','clips') then 'files' when k in ('planning','onboarding','requests') then 'tasks' when k='knowledge' then 'documents' when k in ('workflows','timesheets','dashboards') then 'business' when k in ('content','goals','whiteboard','booking','templates') then 'projects' else null end;
  if p is null then return false;end if;
  if jsonb_typeof(m.access)='array' then return m.access ? 'Everything' or m.access ? p or m.access ? (p||'.'||act) or m.access ? (p||':'||act);end if;
  return coalesce(m.access->p='true'::jsonb or m.access->p->>'all'='true' or m.access->p->>act='true',false);
