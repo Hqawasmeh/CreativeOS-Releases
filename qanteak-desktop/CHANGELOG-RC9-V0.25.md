@@ -24,3 +24,7 @@ This development update deepens Qanteak's connected operating-system workflow wi
 V0.25 is a development branch update. It is not a public release until QA passes and the release is explicitly approved.
 
 - Preflight gate updated for the V0.25 package/version contract.
+
+## QA
+- Full build and smoke suite passed.
+- Windows packaging, updater artifact verification and Windows artifact QA passed.
