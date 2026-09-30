@@ -1,13 +1,13 @@
 {
   "name": "qanteak-os",
-  "version": "1.0.0-rc.9.25",
+  "version": "1.0.0-rc.9.26",
   "private": true,
-  "description": "Qanteak OS RC9 V0.25 — operations expansion",
+  "description": "Qanteak OS RC9 V0.26 — editing recovery",
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
     "start": "electron .",
-    "build": "node scripts/preflight.mjs && node --experimental-vm-modules scripts/renderer-module-smoke.cjs && node scripts/interaction-smoke.mjs && node scripts/reliability-test.cjs && node scripts/workspace-test.mjs && node scripts/modules-test.mjs && node scripts/sync-test.mjs && node scripts/build-renderer.mjs",
+    "build": "node scripts/preflight.mjs && node --experimental-vm-modules scripts/renderer-module-smoke.cjs && node scripts/interaction-smoke.mjs && node scripts/reliability-test.cjs && node scripts/workspace-test.mjs && node scripts/modules-test.mjs && node scripts/v026-test.mjs && node scripts/sync-test.mjs && node scripts/build-renderer.mjs",
     "dist": "npm run build && electron-builder --win nsis --publish never",
     "preflight": "node scripts/preflight.mjs",
     "qa:release": "node scripts/verify-release.mjs release",
