@@ -1,8 +1,8 @@
 {
   "name": "qanteak-os",
-  "version": "1.0.0-rc.9.24",
+  "version": "1.0.0-rc.9.25",
   "private": true,
-  "description": "Qanteak OS RC9 V0.24 \u2014 shared workspace apps",
+  "description": "Qanteak OS RC9 V0.25 — operations expansion",
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
