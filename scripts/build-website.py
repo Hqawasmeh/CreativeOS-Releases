@@ -119,3 +119,4 @@ page('checkout','Review your plan','''<section class="page-intro wrap checkout-i
 page('404','Page not found',intro('404 / A SMALL DETOUR','This page has<br>left the workspace.','The link may have changed. Let’s get you back to somewhere useful.')+'<div class="center section">'+btn('Back to Qanteak','index.html')+btn('Browse resources','resources.html',True)+'</div>')
 (D/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f'<url><loc>{BASE}{"" if p=="index" else p+".html"}</loc></url>' for p in ['index','product','solutions','ai','pricing','resources','about','download','contact','privacy','terms','refund','security'])+'</urlset>')
 print('Generated complete website pages.')
+# Website polish sync trigger: 2026-09-30
