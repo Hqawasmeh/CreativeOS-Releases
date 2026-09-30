@@ -34,6 +34,11 @@ const required = [
   'SECURITY_AND_SIGNING.md',
   'CHANGELOG-RC9-V0.24.md',
   'CHANGELOG-RC9-V0.25.md',
+  'CHANGELOG-RC9-V0.26.md',
+  'src/v026-reliability-model.js',
+  'src/v026-reliability.js',
+  'src/v026-reliability.css',
+  'scripts/v026-test.mjs',
   'src/v022-design.css',
   'src/v023-design.css',
   'src/v023-model.js',
@@ -56,7 +61,7 @@ try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); }
 catch { fail.push('package.json is missing or invalid JSON.'); }
 
 if (pkg) {
-  if (pkg.version !== '1.0.0-rc.9.25') fail.push(`Unexpected package version: ${pkg.version}`);
+  if (pkg.version !== '1.0.0-rc.9.26') fail.push(`Unexpected package version: ${pkg.version}`);
   if (pkg.main !== 'electron/main.cjs') fail.push(`Unexpected Electron entry: ${pkg.main}`);
   if (pkg?.build?.appId !== 'com.creativeos.desktop') fail.push('Windows appId must remain com.creativeos.desktop for RC9 in-place upgrades.');
   if (pkg?.build?.artifactName !== 'QanteakOS-Setup-${version}.${ext}') fail.push('Unexpected installer artifactName.');
@@ -117,6 +122,19 @@ if (fs.existsSync(roadmapPath)) {
   if (/\beval\s*\(|new\s+Function\s*\(/.test(src)) fail.push('V0.21 formula/runtime code must not use eval or Function constructors.');
 }
 
+
+const v026Path = path.join(root, 'src/v026-reliability.js');
+if (fs.existsSync(v026Path)) {
+  const src = fs.readFileSync(v026Path,'utf8');
+  for (const [marker,label] of [
+    ['Editing recovery', 'document recovery toolbar'],
+    ['Recovered draft available', 'recovery prompt'],
+    ['Draft saved locally', 'local draft persistence'],
+    ['data-v026-undo', 'document undo control'],
+    ['beforeunload', 'unsaved-change protection']
+  ]) if (!src.includes(marker)) fail.push(`V0.26 ${label} is missing.`);
+}
+
 const platformPath = path.join(root, 'electron/platform.cjs');
 if (fs.existsSync(platformPath)) {
   const src = fs.readFileSync(platformPath,'utf8');
@@ -153,7 +171,7 @@ if (fs.existsSync(backendPath)) {
   if (!/async function getEntitlement/.test(backendSrc)) fail.push('Backend entitlement check is missing.');
 }
 
-for (const rel of ['src/v021-roadmap.js','electron/platform.cjs','electron/updater.cjs','electron/preload.cjs']) {
+for (const rel of ['src/v021-roadmap.js','src/v026-reliability-model.js','src/v026-reliability.js','electron/platform.cjs','electron/updater.cjs','electron/preload.cjs']) {
   const abs = path.join(root, rel);
   if (!fs.existsSync(abs)) continue;
   const result = spawnSync(process.execPath, ['--check', abs], { encoding:'utf8' });
@@ -169,5 +187,5 @@ if (fail.length) {
   fail.forEach(x => console.error(' - ' + x));
   process.exit(1);
 }
-console.log('Qanteak preflight OK · 1.0.0-rc.9.25');
+console.log('Qanteak preflight OK · 1.0.0-rc.9.26');
 warn.forEach(x => console.warn('WARN: ' + x));
