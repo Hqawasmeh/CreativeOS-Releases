@@ -1,0 +1,48 @@
+name: Website UX QA
+
+on:
+  push:
+    branches:
+      - website-ux-polish-20260930
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  site-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Syntax checks
+        run: |
+          node --check docs/site.js
+          node --check docs/auth.js
+          node --check docs/checkout.js
+          python -m py_compile scripts/build-website.py scripts/check-website.py
+      - name: Website link and HTML audit
+        run: python scripts/check-website.py
+      - name: Checkout security regression
+        run: node scripts/check-paypal.mjs
+      - name: Rebuild website from source
+        run: python scripts/build-website.py
+      - name: Re-audit generated website
+        run: |
+          node --check docs/site.js
+          python scripts/check-website.py
+      - name: Generator drift check
+        run: git diff --exit-code -- docs
+      - name: UX content gates
+        run: |
+          grep -q "THE PROBLEM IS THE GAPS BETWEEN TOOLS" docs/index.html
+          grep -q "THE QANTEAK SYSTEM" docs/index.html
+          grep -q "CONTROL WITHOUT THE FRICTION" docs/index.html
+          grep -q "Current release · V0.25" docs/resources.html
+          ! grep -q "creative professionals" docs/site.webmanifest
+          ! grep -q "Lemon Squeezy as merchant of record" docs/terms.html
