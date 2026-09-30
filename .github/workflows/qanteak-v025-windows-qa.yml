@@ -1,0 +1,50 @@
+name: Qanteak V0.25 Windows QA
+
+on:
+  push:
+    branches:
+      - qanteak-v025-operations-expansion
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: qanteak-desktop
+
+jobs:
+  windows-package-qa:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: qanteak-desktop/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Full build and smoke suite
+        run: npm run build
+      - name: Package Windows installer
+        run: npx electron-builder --win nsis --publish never
+        env:
+          QANTEAK_REQUIRE_SIGNING: '0'
+      - name: Verify updater artifacts
+        run: npm run qa:release
+      - name: Windows artifact QA
+        shell: pwsh
+        run: ./scripts/windows-qa-preflight.ps1
+      - name: Upload QA installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: qanteak-v025-windows-qa
+          path: |
+            qanteak-desktop/release/QanteakOS-Setup-1.0.0-rc.9.25.exe
+            qanteak-desktop/release/QanteakOS-Setup-1.0.0-rc.9.25.exe.blockmap
+            qanteak-desktop/release/latest.yml
+          if-no-files-found: error
