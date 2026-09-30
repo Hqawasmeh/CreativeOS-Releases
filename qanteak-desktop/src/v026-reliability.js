@@ -29,7 +29,12 @@ function setStatus(dialog,text,tone=''){
 }
 
 function loadDraft(recordId){
-  try{const value=JSON.parse(localStorage.getItem(draftKey(recordId))||'null');return validDraft(value)?value:null}catch{return null}
+  try{
+    const key=draftKey(recordId),value=JSON.parse(localStorage.getItem(key)||'null');
+    if(validDraft(value))return value;
+    if(value)localStorage.removeItem(key);
+    return null;
+  }catch{return null}
 }
 
 function saveDraft(recordId,version,blocks){
@@ -107,8 +112,11 @@ function enhance(dialog){
   form.addEventListener('submit',()=>{submitted=true;clearTimeout(timer);saveDraft(recordId,version,readBlocks(dialog));setStatus(dialog,'Saving to workspace…')});
   dialog.addEventListener('close',()=>{
     clearTimeout(timer);clearTimeout(historyTimer);
-    if(submitted){localStorage.removeItem(draftKey(recordId));if(dirty){dirty=false;dirtyCount=Math.max(0,dirtyCount-1)}}
+    const errorNode=$('.q24-error',dialog),saveSucceeded=submitted&&(!errorNode||errorNode.hidden);
+    if(saveSucceeded)localStorage.removeItem(draftKey(recordId));
     else if(dirty)saveDraft(recordId,version,readBlocks(dialog));
+    if(dirty)dirtyCount=Math.max(0,dirtyCount-1);
+    dirty=false;
   },{once:true});
 }
 
