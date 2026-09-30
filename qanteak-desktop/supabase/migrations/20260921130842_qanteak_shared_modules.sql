@@ -34,7 +34,7 @@ begin
  if k='portal' then return false;end if;
  if k='requests' and creator is not null and creator<>auth.uid() then return false;end if;
  if act<>'view' and lower(m.role) in ('viewer','guest') then return false;end if;
- p:=case when k in ('crm','support','forms') then 'clients' when k in ('brand','equipment','clips') then 'files' when k in ('planning','onboarding','requests') then 'tasks' when k='knowledge' then 'documents' when k='workflows' then 'business' when k in ('content','goals','whiteboard','booking') then 'projects' else null end;
+ p:=case when k in ('crm','support','forms') then 'clients' when k in ('brand','equipment','clips') then 'files' when k in ('planning','onboarding','requests') then 'tasks' when k='knowledge' then 'documents' when k in ('workflows','timesheets','dashboards') then 'business' when k in ('content','goals','whiteboard','booking','templates') then 'projects' else null end;
  if p is null then return false;end if;
  if jsonb_typeof(m.access)='array' then return m.access ? 'Everything' or m.access ? p or m.access ? (p||'.'||act) or m.access ? (p||':'||act);end if;
  return coalesce(m.access->p='true'::jsonb or m.access->p->>'all'='true' or m.access->p->>act='true',false);
